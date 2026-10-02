@@ -5,7 +5,7 @@
 
 - SOURCE.html : la page de l’appli, telle que publiée dans Claude (sans <html>/<head>).
 - DOSSIER_SORTIE : le site prêt à publier (GitHub Pages, Netlify…).
-- --assets : redessine les icônes et les écrans de lancement (Playwright requis).
+- --assets : refait les icônes (depuis src/logo.png) et les écrans de lancement (Pillow et Playwright requis).
 - --media : dossier des photos d’exercices (ex/*.webp) à copier.
 - --fonts : dossier contenant les fichiers instrument-sans-latin(-ext)-standard-normal.woff2 et OFL.txt.
 """
@@ -20,7 +20,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from icon import icon_svg, glyph_svg  # noqa: E402
+LOGO = os.path.join(HERE, 'logo.png')  # logo rond, transparent autour de l’anneau doré
 
 BG = '#0f1210'
 NAME = 'Carnet'
@@ -50,26 +50,46 @@ def page(body, w, h, extra_css=''):
 
 
 def render_assets(out):
+    from PIL import Image, ImageDraw
+    emblem = Image.open(LOGO).convert('RGBA')
+    icons = os.path.join(out, 'icons')
+    os.makedirs(icons, exist_ok=True)
+
+    def on_canvas(size, frac, bg=None):
+        """Le logo centré, à frac de la largeur, sur fond transparent ou uni."""
+        canvas = Image.new('RGBA', (size, size), bg or (0, 0, 0, 0))
+        d = round(size * frac)
+        canvas.alpha_composite(emblem.resize((d, d), Image.LANCZOS), ((size - d) // 2, (size - d) // 2))
+        return canvas
+    black = (0, 0, 0, 255)
+    on_canvas(192, .96).save(os.path.join(icons, 'icon-192.png'), optimize=True)
+    on_canvas(512, .96).save(os.path.join(icons, 'icon-512.png'), optimize=True)
+    # Android découpe l’icône « maskable » (cercle, goutte…) : le logo reste dans la zone sûre de 80 %
+    on_canvas(192, .78, black).convert('RGB').save(os.path.join(icons, 'icon-maskable-192.png'), optimize=True)
+    on_canvas(512, .78, black).convert('RGB').save(os.path.join(icons, 'icon-maskable-512.png'), optimize=True)
+    # iPhone : pas de transparence, coins arrondis ajoutés par iOS
+    on_canvas(180, .88, black).convert('RGB').save(os.path.join(icons, 'apple-touch-icon.png'), optimize=True)
+    on_canvas(32, 1).save(os.path.join(icons, 'favicon-32.png'), optimize=True)
+    # Raccourci « Ajouter un aliment » : un + doré sur fond noir
+    S = 384
+    sc = Image.new('RGBA', (S, S), black)
+    g = ImageDraw.Draw(sc)
+    gold, w, L = (200, 152, 72, 255), 40, 104
+    g.rounded_rectangle((S / 2 - w / 2, S / 2 - L, S / 2 + w / 2, S / 2 + L), w / 2, fill=gold)
+    g.rounded_rectangle((S / 2 - L, S / 2 - w / 2, S / 2 + L, S / 2 + w / 2), w / 2, fill=gold)
+    sc.resize((96, 96), Image.LANCZOS).convert('RGB').save(os.path.join(icons, 'shortcut-add.png'), optimize=True)
+    old_svg = os.path.join(icons, 'favicon.svg')
+    if os.path.exists(old_svg):
+        os.remove(old_svg)
+    # Écrans de lancement de l’iPhone : le logo et le nom, rendus par Playwright avec la police de l’appli
     jobs = []
-    def img(svg, size, path, transparent=False):
-        jobs.append({'out': os.path.join(out, path), 'width': size, 'height': size, 'scale': 1, 'transparent': transparent,
-                     'html': page(svg.replace('<svg ', '<svg width="%d" height="%d" ' % (size, size), 1), size, size)})
-    rounded, square, maskable = icon_svg(rounded=True), icon_svg(rounded=False), icon_svg(rounded=False, scale=0.9)
-    img(rounded, 192, 'icons/icon-192.png', True)
-    img(rounded, 512, 'icons/icon-512.png', True)
-    img(maskable, 192, 'icons/icon-maskable-192.png')
-    img(maskable, 512, 'icons/icon-maskable-512.png')
-    img(square, 180, 'icons/apple-touch-icon.png')
-    img(rounded, 32, 'icons/favicon-32.png', True)
-    img(icon_svg(rounded=False, plus=True), 96, 'icons/shortcut-add.png')
-    write(os.path.join(out, 'icons/favicon.svg'), rounded)
     font = os.path.abspath(os.path.join(out, 'fonts', 'instrument-sans-latin.woff2'))
     css = ('@font-face{font-family:"IS";src:url("file://%s") format("woff2");font-weight:400 700;font-stretch:75%% 100%%}'
-           'body{background:%s!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5.5vw}'
-           '.g{width:27vw;height:27vw;margin-top:-9vh}.t{font:600 7.2vw/1 "IS",sans-serif;letter-spacing:-.01em;color:#e8ebe7}' % (font, BG))
+           'body{background:%s!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6vw}'
+           '.g{width:46vw;height:46vw;margin-top:-8vh}.t{font:600 7.2vw/1 "IS",sans-serif;letter-spacing:-.01em;color:#e8ebe7}' % (font, BG))
     for w, h, d in SPLASH:
         jobs.append({'out': os.path.join(out, 'splash/splash-%dx%d.png' % (w * d, h * d)), 'width': w, 'height': h, 'scale': d,
-                     'html': page('<div class="g">%s</div><div class="t">%s</div>' % (glyph_svg().replace('<svg ', '<svg width="100%" height="100%" ', 1), NAME), w, h, css)})
+                     'html': page('<img class="g" src="file://%s" alt=""><div class="t">%s</div>' % (os.path.abspath(LOGO), NAME), w, h, css)})
     jp = os.path.join(out, '_jobs.json')
     write(jp, json.dumps(jobs))
     subprocess.run(['node', os.path.join(HERE, 'render_assets.js'), jp], check=True)
@@ -145,8 +165,8 @@ def build(src, out, assets, media_dir, fonts_dir):
         '<meta name="theme-color" content="%s">' % BG,
         '<meta name="color-scheme" content="dark light">',
         '<link rel="manifest" href="manifest.webmanifest">',
-        '<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">',
         '<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">',
+        '<link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">',
         '<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">',
         '<meta name="mobile-web-app-capable" content="yes">',
         '<meta name="apple-mobile-web-app-capable" content="yes">',
@@ -194,11 +214,15 @@ def build(src, out, assets, media_dir, fonts_dir):
     # Service worker
     ex = [os.path.join(out, 'ex', f) for f in os.listdir(os.path.join(out, 'ex'))] if os.path.isdir(os.path.join(out, 'ex')) else []
     media_version = file_hash(ex)[:8] if ex else 'v1'
+    # Planche de vignettes : gardée sur le téléphone dès l’installation (son nom contient son empreinte)
+    atlas = sorted('ex/' + os.path.basename(p) for p in ex if os.path.basename(p).startswith('vignettes'))
+    if ex and 'url("%s")' % atlas[-1] not in source:
+        sys.exit('La source ne pointe pas vers %s : lance d’abord src/build_media.py' % atlas[-1])
     core = ['./', 'manifest.webmanifest', 'fonts/instrument-sans-latin.woff2', 'fonts/instrument-sans-latin-ext.woff2',
-            'icons/icon-192.png', 'icons/favicon.svg', 'icons/favicon-32.png']
+            'icons/icon-192.png', 'icons/favicon-32.png']
     sw = read(os.path.join(HERE, 'sw.template.js'))
     sw = (sw.replace('__VERSION__', version).replace('__MEDIA__', media_version)
-            .replace('__CORE_FILES__', json.dumps(core)).replace('__MEDIA_FILES__', json.dumps(['ex/vignettes.webp'])))
+            .replace('__CORE_FILES__', json.dumps(core)).replace('__MEDIA_FILES__', json.dumps(atlas)))
     write(os.path.join(out, 'sw.js'), sw)
     write(os.path.join(out, '.nojekyll'), '')
     print('site construit :', out, '| version', version, '| photos', media_version, '| page', len(html) // 1024, 'Ko')

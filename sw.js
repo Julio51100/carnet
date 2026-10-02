@@ -2,13 +2,13 @@
    - La page de l’appli vient du réseau quand il répond vite (3,5 s), sinon de la copie gardée sur le téléphone.
    - Polices, icônes et photos d’exercices sont servies depuis le téléphone une fois téléchargées.
    Fichier généré par src/build_site.py : ne pas modifier à la main. */
-const VERSION = '2026-10-02.54fd1f';
+const VERSION = '2026-10-02.b83dc0';
 /* Caches propres à l’adresse de l’appli : une autre appli du même site n’y touche pas */
 const PREFIX = 'carnet:' + new URL(self.registration.scope).pathname + ':';
 const CORE = PREFIX + 'core-' + VERSION;
-const MEDIA = PREFIX + 'media-7947324f';
-const CORE_FILES = ["./", "manifest.webmanifest", "fonts/instrument-sans-latin.woff2", "fonts/instrument-sans-latin-ext.woff2", "icons/icon-192.png", "icons/favicon.svg", "icons/favicon-32.png"];
-const MEDIA_FILES = ["ex/vignettes.webp"];
+const MEDIA = PREFIX + 'media-58f611e5';
+const CORE_FILES = ["./", "manifest.webmanifest", "fonts/instrument-sans-latin.woff2", "fonts/instrument-sans-latin-ext.woff2", "icons/icon-192.png", "icons/favicon-32.png"];
+const MEDIA_FILES = ["ex/vignettes-ab6a1fb5.webp"];
 const APP_PAGE = new URL('./', self.registration.scope).href;
 
 const fresh = url => new Request(url, { cache: 'reload' });

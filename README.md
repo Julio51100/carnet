@@ -22,10 +22,11 @@ La page de l’appli est `src/carnet.html`, la même que la version publiée dan
 python3 src/build_site.py src/carnet.html . --fonts src/fonts
 ```
 
-Ajouter `--assets` pour redessiner l’icône et les écrans de lancement (Playwright requis), puis publier les fichiers.
+Ajouter `--assets` pour refaire les icônes et les écrans de lancement à partir du logo `src/logo.png` (Pillow et Playwright requis), puis publier les fichiers.
 Les applis déjà installées récupèrent la nouvelle version à la prochaine ouverture avec du réseau.
 
 ## Crédits
 
-- Photos d’exercices : [Free Exercise DB](https://github.com/yuhonas/free-exercise-db), domaine public (Unlicense).
+- Photos d’exercices : [Free Exercise DB](https://github.com/yuhonas/free-exercise-db), domaine public (Unlicense). Pour en changer : `src/build_media.py`.
+- Vidéos d’exercices : liens vers des démonstrations publiées sur YouTube par leurs auteurs (chaîne citée dans chaque fiche) ; elles ne sont pas copiées dans le dépôt.
 - Police : [Instrument Sans](https://github.com/Instrument/instrument-sans), SIL Open Font License (voir `fonts/OFL.txt`).
