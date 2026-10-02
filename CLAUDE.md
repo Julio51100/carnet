@@ -15,7 +15,7 @@ Appli web installable (GitHub Pages) de Jules : nutrition, séances de musculati
 python3 src/build_site.py src/carnet.html . --fonts src/fonts
 ```
 
-Le numéro de version (date + empreinte de la source) change tout seul : les applis installées affichent « Une nouvelle version de Carnet est prête » à la prochaine ouverture. Ajoute `--assets` seulement pour refaire les icônes et les écrans de lancement à partir du logo `src/logo.png` (Pillow et Playwright requis). Le petit logo de l’en-tête est intégré à `src/carnet.html` (image WebP en data URI) : régénère-le aussi si le logo change.
+Le numéro de version (date + empreinte de la source) change tout seul : les applis installées affichent « Une nouvelle version de Carnet est prête » à la prochaine ouverture. Ajoute `--assets` seulement pour refaire les icônes et les écrans de lancement à partir du logo `src/logo.png` (Pillow et Playwright requis). Le logo sert d’icône sur l’écran d’accueil du téléphone (et d’écran de lancement) : Jules ne le veut pas dans l’en-tête de l’appli.
 
 ## Règles
 
