@@ -32,7 +32,7 @@
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin-ext.woff2) format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 </style>
-<script>window.CARNET_VERSION = "2026-10-02.0b4393";</script>
+<script>window.CARNET_VERSION = "2026-10-02.54fd1f";</script>
 <style>
 /* Carnet de bord calme : fond graphite profond, cartes à filet fin, actions en encre claire (version claire en option).
    Les couleurs des macros (protéines, glucides, lipides) sont les seules teintes vives ; les chiffres clés
@@ -97,13 +97,23 @@ svg { flex: none; }
 /* ---------- En-tête et navigation ---------- */
 .top { display: flex; align-items: center; justify-content: space-between; gap: 10px 24px; padding-block: 14px 4px; }
 .brand { display: flex; align-items: center; flex-wrap: wrap; gap: 2px 12px; min-width: 0; flex: 1 1 0; }
-.brand h1 { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.2; letter-spacing: -.005em; }
+.brand h1 { margin: 0; min-width: 0; max-width: 100%; font-size: 16px; font-weight: 600; line-height: 1.2; letter-spacing: -.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .brand h1 span { color: var(--muted); font-weight: 500; }
 .top-actions { display: flex; align-items: center; gap: 10px; }
 .theme-btn { width: 38px; height: 38px; border-color: var(--line); }
 .theme-btn .i-moon { display: none; }
 :root[data-app-theme="light"] .theme-btn .i-sun { display: none; }
 :root[data-app-theme="light"] .theme-btn .i-moon { display: block; }
+/* Profil : photo, ou initiale sur un fond teinté, ou silhouette tant que rien n’est choisi */
+.me-btn { width: 38px; height: 38px; flex: none; padding: 0; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--fg-2); overflow: hidden; transition: border-color .15s ease; }
+.me-btn:hover { border-color: var(--line-2); }
+.me-btn .avatar { font-size: 15px; }
+.avatar { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; overflow: hidden; font-weight: 600; line-height: 1; letter-spacing: -.01em; -webkit-user-select: none; user-select: none; transition: opacity .15s ease; }
+.avatar img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.avatar.ini { background: var(--surface-3); background: color-mix(in srgb, var(--av, var(--p)) 24%, var(--surface)); color: var(--av, var(--fg)); }
+.avatar.none { color: var(--muted); }
+.avatar.none .ico { width: 20px; height: 20px; }
+.avatar.busy { opacity: .45; }
 .sync { margin: 0; display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted); }
 .sync::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
 .sync[data-state="saved"]::before, .sync[data-state="local"]::before { background: var(--good); }
@@ -722,6 +732,13 @@ dialog::backdrop { background: var(--backdrop); -webkit-backdrop-filter: blur(2p
 .foot-btns { display: flex; gap: 8px; margin-left: auto; }
 .foot-info { margin: 0; display: flex; flex-direction: column; gap: 1px; font-size: 13px; font-variant-numeric: tabular-nums; min-width: 0; }
 .ok-msg { color: var(--good); font-weight: 600; }
+.me-photo { display: flex; align-items: center; gap: 18px; padding-top: 4px; }
+.me-photo .avatar { width: 92px; height: 92px; flex: none; font-size: 38px; box-shadow: 0 0 0 1px var(--line); }
+.me-photo .avatar.none { background: var(--surface-2); }
+.me-photo .avatar.none .ico { width: 42px; height: 42px; stroke-width: 1.3; }
+.me-photo-act { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; }
+.me-photo-act .btn.ghost { margin-left: -12px; }
+@media (min-width: 601px) { #meDlg { width: min(460px, calc(100% - 32px)); } }
 @media (max-width: 600px) {
   dialog { width: 100%; max-width: 100%; margin: auto 0 0; border-radius: 22px 22px 0 0; max-height: 92vh; max-height: 92dvh; }
   .dlg { max-height: 92vh; max-height: 92dvh; }
@@ -835,6 +852,8 @@ dialog::backdrop { background: var(--backdrop); -webkit-backdrop-filter: blur(2p
 .toast:not(.show) { display: none; }
 .toast button { flex: none; border: 0; background: none; padding: 0; color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bottom, 0px)); }
+/* Sur l’onglet Jour (téléphone), le message s’affiche au-dessus du bouton « Ajouter un aliment » */
+@media (max-width: 919px) { body:not(.has-rest):has(#fab:not([hidden])) .toast { bottom: calc(var(--nav-h) + 76px + env(safe-area-inset-bottom, 0px)); } }
 @media (min-width: 920px) {
   .toast { bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
   body.has-rest .toast { bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
@@ -852,7 +871,7 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
 <div class="app">
   <header class="top">
     <div class="brand">
-      <h1>Carnet <span>nutrition et muscu</span></h1>
+      <h1 id="brandTitle">Carnet <span>nutrition et muscu</span></h1>
       <p class="sync" id="sync" data-state="loading" role="status">Connexion…</p>
     </div>
     <div class="top-actions">
@@ -864,6 +883,7 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
         <button type="button" role="tab" id="t-objectifs" aria-controls="p-objectifs" aria-selected="false" data-action="tab" data-tab="objectifs"><span class="ti"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".9" fill="currentColor"/></svg></span><span>Objectifs</span></button>
       </nav>
       <button type="button" class="iconbtn theme-btn" id="themeBtn" data-action="theme" aria-label="Passer au thème clair"><svg class="ico i-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/></svg><svg class="ico i-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button>
+      <button type="button" class="me-btn" id="meBtn" data-action="me-open" aria-label="Créer ton profil"><span class="avatar none" id="meAvatar" aria-hidden="true"></span></button>
     </div>
   </header>
 
@@ -1105,6 +1125,35 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
       <button type="button" class="btn ghost danger" id="pfDelete" data-action="prod-delete">Supprimer</button>
       <div class="foot-btns">
         <button type="button" class="btn" data-action="prod-close">Annuler</button>
+        <button type="submit" class="btn primary">Enregistrer</button>
+      </div>
+    </footer>
+  </form>
+</dialog>
+
+<!-- ===== Fenêtre : profil ===== -->
+<dialog id="meDlg" aria-labelledby="meTitle">
+  <form class="dlg" id="meForm" novalidate>
+    <header class="dlg-head">
+      <h2 id="meTitle">Ton profil</h2>
+      <button type="button" class="iconbtn" data-action="me-close" aria-label="Fermer"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
+    </header>
+    <div class="dlg-body">
+      <div class="me-photo">
+        <span class="avatar none" id="meDlgAvatar" aria-hidden="true"></span>
+        <div class="me-photo-act">
+          <label class="btn small" for="meFile" id="mePhotoLabel">Choisir une photo</label>
+          <input type="file" id="meFile" class="sr" accept="image/*">
+          <button type="button" class="btn small ghost" id="mePhotoRemove" data-action="me-photo-remove" hidden>Retirer la photo</button>
+        </div>
+      </div>
+      <label class="field" for="me-name"><span>Ton pseudo</span><input type="text" id="me-name" autocomplete="nickname" autocapitalize="words" maxlength="24" placeholder="Ton prénom ou un pseudo" enterkeyhint="done"></label>
+      <p class="hint">Ton profil reste dans ton carnet : personne d’autre ne le voit.</p>
+      <p class="form-error" id="meError" role="alert"></p>
+    </div>
+    <footer class="dlg-foot">
+      <div class="foot-btns">
+        <button type="button" class="btn" data-action="me-close">Annuler</button>
         <button type="submit" class="btn primary">Enregistrer</button>
       </div>
     </footer>
@@ -2374,6 +2423,7 @@ function buildProposal(products, opts) {
     genSettings: null,
     goalsSet: false, goalsLoaded: false,
     ui: { welcomeHidden: false }, uiLoaded: false,
+    me: { name: '', photo: '', updatedAt: 0 }, meLoaded: false,
     space: 'owner'
   };
   state.day = emptyDay(state.date);
@@ -2533,7 +2583,7 @@ function buildProposal(products, opts) {
           }
         };
         const readSetting = async s => { const snap = await db.doc(prefix + 'settings/' + s).get(); if (snap.exists) out['settings/' + s] = snap.data(); };
-        await Promise.all(['products', 'meals', 'programs', 'exercises', 'days', 'workouts'].map(readCol).concat(['goals', 'profile', 'generator', 'ui'].map(readSetting)));
+        await Promise.all(['products', 'meals', 'programs', 'exercises', 'days', 'workouts'].map(readCol).concat(['goals', 'profile', 'generator', 'ui', 'me'].map(readSetting)));
         return out;
       }
     };
@@ -2815,6 +2865,13 @@ function buildProposal(products, opts) {
     state.uiLoaded = true;
     renderWelcome();
   }
+  function onMe(data) {
+    const inc = normMe(data);
+    if (inc.updatedAt >= state.me.updatedAt) state.me = inc;
+    state.meLoaded = true;
+    renderMe();
+    renderWelcome();
+  }
   function onCustomEx(list) {
     state.customEx = list.filter(d => !wasDeleted('exercises/' + d.id)).map(d => normCustomEx(d.id, d.data));
     if (isOpen('#exDlg')) renderPicker();
@@ -3000,26 +3057,35 @@ function buildProposal(products, opts) {
   function renderWelcome() {
     const el = $('#welcome');
     if (!el) return;
-    const ready = state.mode !== 'loading' && state.goalsLoaded && state.productsLoaded && state.programsLoaded && state.uiLoaded;
+    const ready = state.mode !== 'loading' && state.goalsLoaded && state.productsLoaded && state.programsLoaded && state.uiLoaded && state.meLoaded;
     if (!ready || state.ui.welcomeHidden) { el.innerHTML = ''; return; }
     const nP = state.products.length, nS = state.programs.length;
     const steps = [
+      { done: !!state.me.name, title: 'Crée ton profil', text: 'Un pseudo et une photo, pour que ce carnet soit vraiment le tien.', ok: 'Salut ' + state.me.name + ' !',
+        act: 'data-action="me-open"', label: 'Créer mon profil' },
       { done: state.goalsSet, title: 'Calcule tes besoins', text: 'Calories et macros adaptées à ton objectif : prise de masse, maintien ou perte de gras.', ok: 'Objectif : ' + fmt(state.goals.kcal, 0) + ' kcal par jour.',
-        btn: '<button type="button" class="btn small primary" data-action="tab" data-tab="objectifs">Calculer</button>' },
+        act: 'data-action="tab" data-tab="objectifs"', label: 'Calculer' },
       { done: nP > 0, title: 'Ajoute tes produits', text: 'Pars d’une liste de produits courants, puis ajuste-les avec tes emballages.', ok: nP + (nP > 1 ? ' produits' : ' produit') + ' dans ta liste.',
-        btn: '<button type="button" class="btn small" data-action="starter-products">Ajouter les produits courants</button>' },
+        act: 'data-action="starter-products"', label: 'Ajouter les produits courants' },
       { done: nS > 0, title: 'Choisis un programme', text: 'Full body, haut et bas du corps ou Push, Pull, Legs, selon tes séances par semaine.', ok: nS + (nS > 1 ? ' séances prêtes.' : ' séance prête.'),
-        btn: '<button type="button" class="btn small" data-action="tab" data-tab="seances">Voir les programmes</button>' }
+        act: 'data-action="tab" data-tab="seances"', label: 'Voir les programmes' }
     ];
     const n = steps.filter(x => x.done).length;
     if (n === steps.length) { el.innerHTML = ''; return; }
+    /* Carnet déjà en route : seul le profil manque, on le présente comme une nouveauté */
+    if (!steps[0].done && n === steps.length - 1) {
+      el.innerHTML = '<section class="card nudge" aria-labelledby="welTitle"><p><strong id="welTitle">Nouveau : ton profil</strong>Un pseudo et une photo pour que ce carnet soit vraiment le tien.</p>' +
+        '<div class="row"><button type="button" class="btn small primary" data-action="me-open">Créer mon profil</button><button type="button" class="btn small ghost" data-action="me-later">Plus tard</button></div></section>';
+      return;
+    }
+    const next = steps.findIndex(x => !x.done);
     el.innerHTML = '<section class="card welcome" aria-labelledby="welTitle">' +
-      '<div class="wel-head"><div><h2 id="welTitle">Pour bien démarrer</h2><p class="sub">' + n + (n > 1 ? ' étapes terminées' : ' étape terminée') + ' sur 3</p></div>' +
+      '<div class="wel-head"><div><h2 id="welTitle">Pour bien démarrer</h2><p class="sub">' + n + (n > 1 ? ' étapes terminées' : ' étape terminée') + ' sur ' + steps.length + '</p></div>' +
         '<button type="button" class="btn ghost small" data-action="welcome-hide">Masquer</button></div>' +
       '<ol class="wel-steps">' + steps.map((st, i) => '<li class="' + (st.done ? 'done' : '') + '">' +
         '<span class="wel-n" aria-hidden="true">' + (st.done ? ICON.check : String(i + 1)) + '</span>' +
         '<div class="wel-txt"><strong>' + st.title + '</strong><span>' + esc(st.done ? st.ok : st.text) + '</span></div>' +
-        (st.done ? '' : '<div class="wel-act">' + st.btn + '</div>') + '</li>').join('') + '</ol>' +
+        (st.done ? '' : '<div class="wel-act"><button type="button" class="btn small' + (i === next ? ' primary' : '') + '" ' + st.act + '>' + st.label + '</button></div>') + '</li>').join('') + '</ol>' +
       (state.space === 'device' ? '<p class="wel-note">Ton carnet est enregistré sur cet appareil uniquement. Fais une sauvegarde de temps en temps depuis l’onglet Objectifs.</p>' : '') +
       '</section>';
   }
@@ -4965,7 +5031,8 @@ function buildProposal(products, opts) {
   const backupPayload = data => JSON.stringify({ app: 'carnet', version: 1, exportedAt: new Date().toISOString(), data });
   async function exportBackup() {
     if (!state.store) return;
-    const name = 'carnet-sauvegarde-' + todayISO() + '.json';
+    const slug = slugName(state.me.name);
+    const name = 'carnet-sauvegarde-' + (slug ? slug + '-' : '') + todayISO() + '.json';
     /* Site installé : partage du fichier (Enregistrer dans Fichiers, AirDrop…) ou téléchargement.
        Rien n’est attendu avant le partage, pour garder le geste de l’utilisateur. */
     if (!inClaude()) {
@@ -5073,6 +5140,106 @@ function buildProposal(products, opts) {
       '<div class="row"><button type="button" class="btn small primary" data-action="backup-export">Sauvegarder</button><button type="button" class="btn small ghost" data-action="nudge-later">Plus tard</button></div></section>';
   }
 
+  /* ================= Profil : pseudo et photo ================= */
+  const ME_MAX = 24;
+  const cleanName = v => Array.from(String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f]/g, '').replace(/\s+/g, ' ').trim()).slice(0, ME_MAX).join('').trim();
+  function normMe(d) {
+    d = d || {};
+    const p = d.photo;
+    const photo = typeof p === 'string' && p.length < 400000 && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(p) ? p : '';
+    return { name: cleanName(d.name), photo, updatedAt: Number(d.updatedAt) || 0 };
+  }
+  const slugName = n => String(n || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 20);
+  /* « Carnet de Julios », « Carnet d’Emma » */
+  const deName = n => (/^[aeiouyhàâäéèêëîïôöùûüœæ]/i.test(n) ? 'd’' : 'de ') + n;
+  const AV_COLORS = ['var(--p)', 'var(--c)', 'var(--f)'];
+  function avatarColor(name) { let h = 7; for (const ch of name) h = (h * 31 + ch.codePointAt(0)) >>> 0; return AV_COLORS[h % AV_COLORS.length]; }
+  const PERSON_SVG = svgIco('<circle cx="12" cy="8.6" r="3.7"/><path d="M4.8 19.6c1.3-3.5 4-5.2 7.2-5.2s5.9 1.7 7.2 5.2"/>');
+  function paintAvatar(el, me) {
+    if (!el) return;
+    const busy = el.classList.contains('busy') ? ' busy' : '';
+    el.style.removeProperty('--av');
+    if (me.photo) { el.className = 'avatar' + busy; el.innerHTML = '<img src="' + me.photo + '" alt="">'; return; }
+    if (me.name) {
+      el.className = 'avatar ini' + busy;
+      el.style.setProperty('--av', avatarColor(me.name));
+      el.textContent = Array.from(me.name)[0].toLocaleUpperCase('fr-FR');
+      return;
+    }
+    el.className = 'avatar none' + busy;
+    el.innerHTML = PERSON_SVG;
+  }
+  function renderMe() {
+    const me = state.me;
+    paintAvatar($('#meAvatar'), me);
+    const b = $('#meBtn');
+    if (b) b.setAttribute('aria-label', me.name ? 'Profil ' + deName(me.name) : 'Créer ton profil');
+    const h = $('#brandTitle');
+    if (h) h.innerHTML = 'Carnet <span>' + (me.name ? esc(deName(me.name)) : 'nutrition et muscu') + '</span>';
+  }
+  const meDraft = { name: '', photo: '' };
+  function openMe() {
+    meDraft.name = state.me.name;
+    meDraft.photo = state.me.photo;
+    $('#me-name').value = meDraft.name;
+    $('#meError').textContent = '';
+    renderMeDraft();
+    openDlg('#meDlg');
+    if (!coarse) requestAnimationFrame(() => $('#me-name').focus());
+  }
+  function renderMeDraft() {
+    paintAvatar($('#meDlgAvatar'), { name: cleanName(meDraft.name), photo: meDraft.photo });
+    $('#mePhotoRemove').hidden = !meDraft.photo;
+    $('#mePhotoLabel').textContent = meDraft.photo ? 'Changer de photo' : 'Choisir une photo';
+  }
+  async function onMePhoto(file) {
+    const box = $('#meDlgAvatar');
+    $('#meError').textContent = '';
+    box.classList.add('busy');
+    try { meDraft.photo = await photoFromFile(file); }
+    catch (e) { $('#meError').textContent = 'Cette image n’a pas pu être lue. Essaie avec une autre photo.'; }
+    box.classList.remove('busy');
+    renderMeDraft();
+  }
+  /* Photo recadrée au carré (un peu au-dessus du centre pour un portrait) et réduite à 320 px :
+     légère à garder sur le téléphone et dans les sauvegardes */
+  async function photoFromFile(file) {
+    if (file.type && !/^image\//.test(file.type)) throw new Error('type');
+    const url = URL.createObjectURL(file);
+    try {
+      const img = new Image();
+      img.src = url;
+      if (img.decode) await img.decode();
+      else await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+      const w = img.naturalWidth, h = img.naturalHeight;
+      if (!w || !h) throw new Error('size');
+      const side = Math.min(w, h);
+      const sx = (w - side) / 2, sy = h > w ? (h - side) * 0.3 : (h - side) / 2;
+      const N = 320;
+      const c = document.createElement('canvas');
+      c.width = N;
+      c.height = N;
+      const g = c.getContext('2d');
+      g.fillStyle = '#e8ebe7';
+      g.fillRect(0, 0, N, N);
+      g.imageSmoothingEnabled = true;
+      g.imageSmoothingQuality = 'high';
+      g.drawImage(img, sx, sy, side, side, 0, 0, N, N);
+      const data = c.toDataURL('image/jpeg', 0.85);
+      if (!/^data:image\/jpeg;base64,/.test(data)) throw new Error('encode');
+      return data;
+    } finally { URL.revokeObjectURL(url); }
+  }
+  function saveMe() {
+    const name = cleanName($('#me-name').value);
+    state.me = { name, photo: meDraft.photo || '', updatedAt: Date.now() };
+    save('settings/me', state.me);
+    renderMe();
+    renderWelcome();
+    closeDlg('#meDlg');
+    toast(name ? 'Profil enregistré. Salut ' + name + ' !' : 'Profil enregistré');
+  }
+
   /* ================= Appli installée sur l’écran d’accueil (version site) ================= */
   function installMode() {
     if (inClaude() || isStandalone()) return null;
@@ -5129,7 +5296,8 @@ function buildProposal(products, opts) {
   async function shareApp() {
     const url = appURL();
     if (navigator.share) {
-      try { await navigator.share({ title: 'Carnet', text: 'Carnet : repas, macros, séances de muscu et suivi du poids. Gratuit, à installer sur ton écran d’accueil.', url }); return; }
+      const pitch = 'repas, macros, séances de muscu et suivi du poids. Gratuit, à installer sur ton écran d’accueil.';
+      try { await navigator.share({ title: 'Carnet', text: (state.me.name ? state.me.name + ' te recommande Carnet : ' : 'Carnet : ') + pitch, url }); return; }
       catch (e) { if (e && e.name === 'AbortError') return; }
     }
     try { await navigator.clipboard.writeText(url); toast('Lien copié : ' + url); } catch (e) { toast('Lien de l’appli : ' + url); }
@@ -5210,6 +5378,7 @@ function buildProposal(products, opts) {
     clearTimeout(genSaveTimer);
     genSaveTimer = null;
     state.genSettings = normGenSettings(null);
+    state.me = normMe(null);
     state.goalsDirty = false;
     recentlyDeleted.clear();
     stopRest();
@@ -5275,13 +5444,17 @@ function buildProposal(products, opts) {
       switch (a) {
         case 'tab': setTab(b.dataset.tab); window.scrollTo(0, 0); break;
         case 'theme': applyTheme(document.documentElement.getAttribute('data-app-theme') === 'light' ? 'dark' : 'light', true); break;
-        case 'welcome-hide': state.ui = { welcomeHidden: true }; save('settings/ui', { welcomeHidden: true, updatedAt: Date.now() }); renderWelcome(); toast('Tu retrouveras ces étapes dans les onglets Objectifs, Produits et Séances'); break;
+        case 'welcome-hide': state.ui = { welcomeHidden: true }; save('settings/ui', { welcomeHidden: true, updatedAt: Date.now() }); renderWelcome(); toast('Tu retrouveras ces étapes dans les onglets Objectifs, Produits et Séances, et ton profil en haut de l’écran'); break;
         case 'starter-products': addStarterProducts(); break;
         case 'backup-export': exportBackup(); break;
         case 'nudge-later': lsSet('cpm.nudgeLater', Date.now() + 7 * 864e5); renderBackupNudge(); break;
         case 'install': promptInstall(); break;
         case 'install-later': lsSet('cpm.installLater', Date.now() + 7 * 864e5); renderInstall(); break;
         case 'share-app': shareApp(); break;
+        case 'me-open': openMe(); break;
+        case 'me-later': state.ui = { welcomeHidden: true }; save('settings/ui', { welcomeHidden: true, updatedAt: Date.now() }); renderWelcome(); toast('Tu retrouveras ton profil en touchant le rond en haut de l’écran'); break;
+        case 'me-close': closeDlg('#meDlg'); break;
+        case 'me-photo-remove': meDraft.photo = ''; renderMeDraft(); break;
         case 'reload': location.reload(); break;
         case 'backup-confirm': confirmImport(); break;
         case 'backup-cancel': pendingImport = null; $('#backupConfirm').innerHTML = ''; break;
@@ -5452,6 +5625,7 @@ function buildProposal(products, opts) {
       else if (t.closest('#prodForm')) updatePfCheck();
       else if (t.id === 'importText') renderImportPreview();
       else if (t.id === 'exSearch') { picker.q = t.value; renderPicker(); }
+      else if (t.id === 'me-name') { meDraft.name = t.value; renderMeDraft(); }
       else if (t.id === 'weName') { const w = curWorkout(); if (w) { w.name = t.value.slice(0, 40); touchWorkout(w); } }
       else if (t.id === 'weNotes') { const w = curWorkout(); if (w) { w.notes = t.value.slice(0, 2000); touchWorkout(w); } }
       else if (t.matches('[data-pf]')) onProfileNum(t);
@@ -5465,6 +5639,7 @@ function buildProposal(products, opts) {
       const t = e.target;
       if (t.id === 'datePick') { if (t.value) setDate(t.value); }
       else if (t.id === 'backupFile') { const f = t.files && t.files[0]; t.value = ''; if (f) readBackup(f); }
+      else if (t.id === 'meFile') { const f = t.files && t.files[0]; t.value = ''; if (f) onMePhoto(f); }
       else if (t.id === 'runToggle') { state.day.run = t.checked; touchDay(true); renderSummary(); renderExtras(); }
       else if (t.id === 'creaToggle') { state.day.creatine = t.checked; touchDay(true); renderHabits(); }
       else if (t.id === 'waterToggle') { state.day.water = t.checked; touchDay(true); }
@@ -5522,6 +5697,7 @@ function buildProposal(products, opts) {
       const f = e.target;
       e.preventDefault();
       if (f.id === 'prodForm') saveProductForm();
+      else if (f.id === 'meForm') saveMe();
       else if (f.id === 'goalsForm') { const g = readGoalsForm(true); if (g) commitGoals(g, 'Objectifs enregistrés'); }
       else if (f.id === 'exNewForm') createCustomExercise();
       else if (f.dataset.wnaming) saveAsProgram(curWorkout(), f.querySelector('input').value);
@@ -5609,6 +5785,7 @@ function buildProposal(products, opts) {
   /* ================= Démarrage ================= */
   async function boot() {
     applyTheme(document.documentElement.getAttribute('data-app-theme') === 'light' ? 'light' : 'dark', false);
+    renderMe();
     fillStaticSelects();
     bindEvents();
     renderCalcForm();
@@ -5665,6 +5842,7 @@ function buildProposal(products, opts) {
     s.watchDoc('settings/profile', onProfile);
     s.watchDoc('settings/generator', onGenSettings);
     s.watchDoc('settings/ui', onUi);
+    s.watchDoc('settings/me', onMe);
     s.watchCol('days', onHistory, { order: 'date', dir: 'desc', limit: 70 });
     s.watchCol('workouts', onWorkouts, { order: 'date', dir: 'desc', limit: 400 });
     s.watchCol('programs', onPrograms);

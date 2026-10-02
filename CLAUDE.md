@@ -17,7 +17,7 @@ Le numéro de version (date + empreinte de la source) change tout seul : les app
 
 ## Règles
 
-- Les données de chacun restent sur son téléphone (IndexedDB, base `carnet:<chemin de l’appli>`, documents rangés par chemin : `days/AAAA-MM-JJ`, `products/<id>`, `workouts/<id>`, `programs/<id>`, `meals/<id>`, `exercises/<id>`, `settings/goals|profile|generator|ui`). Une mise à jour ne doit jamais effacer ni renommer ces chemins sans migration.
+- Les données de chacun restent sur son téléphone (IndexedDB, base `carnet:<chemin de l’appli>`, documents rangés par chemin : `days/AAAA-MM-JJ`, `products/<id>`, `workouts/<id>`, `programs/<id>`, `meals/<id>`, `exercises/<id>`, `settings/goals|profile|generator|ui|me`). `settings/me` est le profil (pseudo et photo en data URL JPEG 320 px). Une mise à jour ne doit jamais effacer ni renommer ces chemins sans migration.
 - Le format de sauvegarde (`{ app: 'carnet', version: 1, exportedAt, data }`) doit rester lisible par les anciennes versions et inversement.
 - Aucune donnée personnelle dans le dépôt : il est public.
 - Teste sur une largeur de téléphone (390 px) en thème sombre et clair, hors ligne compris, avant de publier.
