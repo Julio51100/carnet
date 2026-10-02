@@ -1,0 +1,92 @@
+{
+  "id": "./",
+  "name": "Carnet · nutrition et muscu",
+  "short_name": "Carnet",
+  "description": "Ton carnet de nutrition et de musculation : repas et macros, séances, poids et objectifs. Fonctionne sans réseau.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f1210",
+  "theme_color": "#0f1210",
+  "categories": [
+    "health",
+    "fitness",
+    "food"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ajouter un aliment",
+      "short_name": "Ajouter",
+      "url": "./?ajouter",
+      "icons": [
+        {
+          "src": "icons/shortcut-add.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Séances",
+      "url": "./#seances",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screens/screen-1.webp",
+      "sizes": "1170x2532",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Le journal du jour"
+    },
+    {
+      "src": "screens/screen-2.webp",
+      "sizes": "1170x2532",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Les séances"
+    },
+    {
+      "src": "screens/screen-3.webp",
+      "sizes": "1170x2532",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Le suivi du poids"
+    }
+  ]
+}
