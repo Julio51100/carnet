@@ -1,4 +1,4 @@
-<title>Carnet Nutrition et Muscu</title>
+<title>Nutrisport</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,400..700&display=swap">
@@ -853,7 +853,7 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
 <div class="app">
   <header class="top">
     <div class="brand">
-      <h1 id="brandTitle">Carnet <span>nutrition et muscu</span></h1>
+      <h1 id="brandTitle">Nutrisport <span>nutrition et muscu</span></h1>
       <p class="sync" id="sync" data-state="loading" role="status">Connexion…</p>
     </div>
     <div class="top-actions">
@@ -970,7 +970,7 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
       <div class="goals-wrap">
         <form class="card" id="goalsForm" novalidate>
           <h2>Objectifs du jour</h2>
-          <p class="sub">Ce que le carnet utilise chaque jour. Tu peux les remplir avec le calcul ci-dessus ou les régler à la main. Un jour de cardio ajoute son bonus aux calories et aux glucides.</p>
+          <p class="sub">Ce que l’appli utilise chaque jour. Tu peux les remplir avec le calcul ci-dessus ou les régler à la main. Un jour de cardio ajoute son bonus aux calories et aux glucides.</p>
           <div class="gfields">
             <label class="gfield" for="g-kcal"><span class="gname">Calories</span><span class="inp"><input type="text" id="g-kcal" inputmode="decimal" autocomplete="off"><em>kcal</em></span></label>
             <label class="gfield" for="g-protein"><span class="gname"><i class="dot x-p"></i>Protéines</span><span class="inp"><input type="text" id="g-protein" inputmode="decimal" autocomplete="off"><em>g</em></span></label>
@@ -1094,7 +1094,7 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
       <div class="field">
         <label for="pf-portion">Portion fixe pour les propositions <span class="muted">(facultatif)</span></label>
         <span class="inp"><input type="text" id="pf-portion" inputmode="decimal" autocomplete="off" placeholder="libre"><em id="pfPortionUnit">g</em></span>
-        <span class="f-help">Ex. 250 si ta barquette de 500 g fait 2 repas : le carnet proposera 250 g ou 500 g, jamais 230 g. Laisse vide si la quantité peut s’adapter (riz, légumes surgelés…).</span>
+        <span class="f-help">Ex. 250 si ta barquette de 500 g fait 2 repas : l’appli proposera 250 g ou 500 g, jamais 230 g. Laisse vide si la quantité peut s’adapter (riz, légumes surgelés…).</span>
       </div>
       <details class="paste">
         <summary>Remplir depuis une ligne Excel</summary>
@@ -1238,7 +1238,7 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
       </div>
       <details class="paste">
         <summary id="genProdsSum">Produits utilisés</summary>
-        <p class="hint">Décoche ce que tu ne veux pas. <strong>Portion fixe</strong> : 250 si ta barquette de 500 g fait 2 repas, le carnet ne proposera que 250 g ou 500 g ; laisse « libre » pour ce qui s’adapte (riz, pâtes, légumes surgelés). <strong>Prioritaire</strong> : le carnet l’utilise dès qu’il peut, par exemple à midi et le soir.</p>
+        <p class="hint">Décoche ce que tu ne veux pas. <strong>Portion fixe</strong> : 250 si ta barquette de 500 g fait 2 repas, l’appli ne proposera que 250 g ou 500 g ; laisse « libre » pour ce qui s’adapte (riz, pâtes, légumes surgelés). <strong>Prioritaire</strong> : l’appli l’utilise dès qu’elle peut, par exemple à midi et le soir.</p>
         <ul class="gen-prods" id="genProdList"></ul>
       </details>
       <section class="gen-result" id="genResult" aria-label="Journée proposée"></section>
@@ -1902,7 +1902,7 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
   /* Chrome et Edge proposent l’installation : on garde l’événement pour notre propre bouton « Installer » */
   let installEvt = null;
   window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; if (typeof renderInstall === 'function') renderInstall(); });
-  window.addEventListener('appinstalled', () => { installEvt = null; renderInstall(); toast('Carnet est installé : ouvre-le depuis ton écran d’accueil'); });
+  window.addEventListener('appinstalled', () => { installEvt = null; renderInstall(); toast('Nutrisport est installé : ouvre-le depuis ton écran d’accueil'); });
   /* Icônes au trait, dessinées dans la couleur du texte */
   const svgIco = d => '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + d + '</svg>';
   const ICON = {
@@ -2464,7 +2464,7 @@ function buildProposal(products, opts) {
   }
 
   /* ================= Indicateur de sauvegarde ================= */
-  const SYNC_TEXT = { loading: 'Connexion…', saved: 'Enregistré', saving: 'Enregistrement…', local: 'Enregistré sur cet appareil', readonly: 'Lecture seule', error: 'Échec de l’enregistrement', blocked: 'Carnet indisponible' };
+  const SYNC_TEXT = { loading: 'Connexion…', saved: 'Enregistré', saving: 'Enregistrement…', local: 'Enregistré sur cet appareil', readonly: 'Lecture seule', error: 'Échec de l’enregistrement', blocked: 'Données indisponibles' };
   function setSync(s) { const el = $('#sync'); el.dataset.state = s; el.textContent = SYNC_TEXT[s] || ''; }
   let inflight = 0;
 
@@ -2482,7 +2482,7 @@ function buildProposal(products, opts) {
   }
   function onWatchError(e) {
     if (e && e.code === 'revoked') { state.readOnly = true; setSync('readonly'); }
-    else if (window.console) console.warn('Carnet : lecture impossible', e);
+    else if (window.console) console.warn('Nutrisport : lecture impossible', e);
   }
 
   /* ================= Stockage : base de l’artefact ================= */
@@ -3158,7 +3158,7 @@ function buildProposal(products, opts) {
       $('#dayCta').innerHTML = '';
       return;
     }
-    $('#dayCta').innerHTML = state.day.entries.length || !state.products.length ? '' : '<div class="gen-cta"><div class="gen-cta-txt"><strong>Ta journée est vide</strong><span>Le carnet peut te proposer une journée complète avec tes produits, calée sur tes objectifs.</span></div><button type="button" class="btn primary" data-action="gen-open">Proposer une journée</button></div>';
+    $('#dayCta').innerHTML = state.day.entries.length || !state.products.length ? '' : '<div class="gen-cta"><div class="gen-cta-txt"><strong>Ta journée est vide</strong><span>Nutrisport peut te proposer une journée complète avec tes produits, calée sur tes objectifs.</span></div><button type="button" class="btn primary" data-action="gen-open">Proposer une journée</button></div>';
     el.innerHTML = MEALS.map(m => {
       const items = state.day.entries.filter(e => e.meal === m.id);
       const tv = sumVals(items.map(entryVals));
@@ -3657,7 +3657,7 @@ function buildProposal(products, opts) {
     const g0 = gen.target;
     if (g0) {
       const mk = 4 * g0.protein + 4 * g0.carbs + 9 * g0.fat;
-      if (Math.abs(mk - g0.kcal) > g0.kcal * 0.1) list.unshift('Tes macros font ' + fmt(mk, 0) + ' kcal alors que tu vises ' + fmt(g0.kcal, 0) + ' kcal : le carnet donne la priorité aux calories.');
+      if (Math.abs(mk - g0.kcal) > g0.kcal * 0.1) list.unshift('Tes macros font ' + fmt(mk, 0) + ' kcal alors que tu vises ' + fmt(g0.kcal, 0) + ' kcal : l’appli donne la priorité aux calories.');
     }
     const notes = list.length ? '<ul class="notes">' + list.map(n => '<li>' + esc(n) + '</li>').join('') + '</ul>' : '';
     if (!r || !r.meals.length) { box.innerHTML = notes || '<p class="muted">Aucune proposition possible avec cette sélection.</p>'; return; }
@@ -5056,7 +5056,7 @@ function buildProposal(products, opts) {
   async function exportBackup() {
     if (!state.store) return;
     const slug = slugName(state.me.name);
-    const name = 'carnet-sauvegarde-' + (slug ? slug + '-' : '') + todayISO() + '.json';
+    const name = 'nutrisport-sauvegarde-' + (slug ? slug + '-' : '') + todayISO() + '.json';
     /* Site installé : partage du fichier (Enregistrer dans Fichiers, AirDrop…) ou téléchargement.
        Rien n’est attendu avant le partage, pour garder le geste de l’utilisateur. */
     if (!inClaude()) {
@@ -5146,7 +5146,7 @@ function buildProposal(products, opts) {
     card.hidden = false;
     $('#backupSub').textContent = device
       ? 'Ton carnet est enregistré sur cet appareil uniquement. Exporte-le de temps en temps pour ne rien perdre, ou pour le retrouver sur un autre téléphone.'
-      : 'Télécharge une copie de tout ton carnet : repas, produits, séances, poids et objectifs. Elle sert aussi à le transférer dans l’appli Carnet installée sur ton téléphone.';
+      : 'Télécharge une copie de tout ton carnet : repas, produits, séances, poids et objectifs. Elle sert aussi à le transférer dans l’appli Nutrisport installée sur ton téléphone.';
     $('#backupImport').hidden = !device;
     const meta = $('#backupMeta');
     const last = Number(lsGet('cpm.lastBackup')) || 0;
@@ -5174,7 +5174,7 @@ function buildProposal(products, opts) {
     return { name: cleanName(d.name), photo, updatedAt: Number(d.updatedAt) || 0 };
   }
   const slugName = n => String(n || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 20);
-  /* « Carnet de Julios », « Carnet d’Emma » */
+  /* « Nutrisport de Julios », « Nutrisport d’Emma » */
   const deName = n => (/^[aeiouyhàâäéèêëîïôöùûüœæ]/i.test(n) ? 'd’' : 'de ') + n;
   const AV_COLORS = ['var(--p)', 'var(--c)', 'var(--f)'];
   function avatarColor(name) { let h = 7; for (const ch of name) h = (h * 31 + ch.codePointAt(0)) >>> 0; return AV_COLORS[h % AV_COLORS.length]; }
@@ -5199,7 +5199,7 @@ function buildProposal(products, opts) {
     const b = $('#meBtn');
     if (b) b.setAttribute('aria-label', me.name ? 'Profil ' + deName(me.name) : 'Créer ton profil');
     const h = $('#brandTitle');
-    if (h) h.innerHTML = 'Carnet <span>' + (me.name ? esc(deName(me.name)) : 'nutrition et muscu') + '</span>';
+    if (h) h.innerHTML = 'Nutrisport <span>' + (me.name ? esc(deName(me.name)) : 'nutrition et muscu') + '</span>';
   }
   const meDraft = { name: '', photo: '' };
   function openMe() {
@@ -5274,7 +5274,7 @@ function buildProposal(products, opts) {
   }
   function installHelp(mode) {
     if (mode === 'ios') return '<p>Dans Safari, touche Partager <span class="ui-key">' + ICON.share + '</span> (ou « … » puis Partager), puis « Sur l’écran d’accueil ».</p>' +
-      '<p>Ouvre ensuite Carnet depuis son icône et note tout dans l’appli : ce que tu notes dans Safari reste dans Safari.</p>';
+      '<p>Ouvre ensuite Nutrisport depuis son icône et note tout dans l’appli : ce que tu notes dans Safari reste dans Safari.</p>';
     if (mode === 'android') return '<p>Ouvre le menu <span class="ui-key">' + ICON.dots + '</span> de ton navigateur, puis « Installer l’application » ou « Ajouter à l’écran d’accueil ».</p>';
     return '<p>Une icône sur ton écran d’accueil, en plein écran, qui marche même sans réseau.</p>';
   }
@@ -5287,7 +5287,7 @@ function buildProposal(products, opts) {
     else {
       const where = PLATFORM.ios || PLATFORM.android || coarse ? 'sur ton écran d’accueil' : 'sur cet ordinateur';
       el.innerHTML = '<section class="card inst" aria-labelledby="instTitle"><img class="inst-icon" src="icons/icon-192.png" alt="" width="44" height="44">' +
-        '<div><h2 id="instTitle">Installe Carnet ' + where + '</h2>' + installHelp(mode) + '</div>' +
+        '<div><h2 id="instTitle">Installe Nutrisport ' + where + '</h2>' + installHelp(mode) + '</div>' +
         '<div class="row">' + (mode === 'prompt' ? '<button type="button" class="btn small primary" data-action="install">Installer</button>' : '') +
         '<button type="button" class="btn small ghost" data-action="install-later">Plus tard</button></div></section>';
     }
@@ -5300,10 +5300,10 @@ function buildProposal(products, opts) {
     card.hidden = false;
     const mode = installMode();
     let html;
-    if (isStandalone()) html = '<p class="app-state">Carnet est installé sur cet appareil. Les mises à jour arrivent toutes seules dès que tu as du réseau. Avant de supprimer l’icône ou de changer de téléphone, exporte ton carnet.</p>';
-    else if (mode === 'prompt') html = '<p class="app-state">Installe Carnet pour l’ouvrir depuis ton écran d’accueil, en plein écran et même sans réseau.</p>';
+    if (isStandalone()) html = '<p class="app-state">Nutrisport est installé sur cet appareil. Les mises à jour arrivent toutes seules dès que tu as du réseau. Avant de supprimer l’icône ou de changer de téléphone, exporte ton carnet.</p>';
+    else if (mode === 'prompt') html = '<p class="app-state">Installe Nutrisport pour l’ouvrir depuis ton écran d’accueil, en plein écran et même sans réseau.</p>';
     else if (mode) html = '<div class="inst"><img class="inst-icon" src="icons/icon-192.png" alt="" width="44" height="44"><div>' + installHelp(mode) + '</div></div>';
-    else html = '<p class="app-state">Ouvre ce lien sur ton téléphone pour installer Carnet sur ton écran d’accueil.</p>';
+    else html = '<p class="app-state">Ouvre ce lien sur ton téléphone pour installer Nutrisport sur ton écran d’accueil.</p>';
     $('#appBody').innerHTML = html;
     $('#appInstall').hidden = mode !== 'prompt';
     const vm = /^(\d{4}-\d{2}-\d{2})\.(\w+)$/.exec(APP_VERSION);
@@ -5321,7 +5321,7 @@ function buildProposal(products, opts) {
     const url = appURL();
     if (navigator.share) {
       const pitch = 'repas, macros, séances de muscu et suivi du poids. Gratuit, à installer sur ton écran d’accueil.';
-      try { await navigator.share({ title: 'Carnet', text: (state.me.name ? state.me.name + ' te recommande Carnet : ' : 'Carnet : ') + pitch, url }); return; }
+      try { await navigator.share({ title: 'Nutrisport', text: (state.me.name ? state.me.name + ' te recommande Nutrisport : ' : 'Nutrisport : ') + pitch, url }); return; }
       catch (e) { if (e && e.name === 'AbortError') return; }
     }
     try { await navigator.clipboard.writeText(url); toast('Lien copié : ' + url); } catch (e) { toast('Lien de l’appli : ' + url); }
@@ -5347,7 +5347,7 @@ function buildProposal(products, opts) {
     const hadController = !!sw.controller;
     sw.addEventListener('message', e => {
       const m = e.data || {};
-      if (m.type === 'version' && m.version && APP_VERSION && m.version !== APP_VERSION) toast('Une nouvelle version de Carnet est prête', 'Recharger', () => location.reload());
+      if (m.type === 'version' && m.version && APP_VERSION && m.version !== APP_VERSION) toast('Une nouvelle version de Nutrisport est prête', 'Recharger', () => location.reload());
     });
     sw.addEventListener('controllerchange', () => {
       if (!hadController) { warmMedia(); return; }
@@ -5369,7 +5369,7 @@ function buildProposal(products, opts) {
       try { obj = JSON.parse(String(r.result)); } catch (e) { obj = null; }
       if (!obj || obj.app !== 'carnet' || !obj.data || typeof obj.data !== 'object') {
         pendingImport = null;
-        box.innerHTML = '<p class="alert">Ce fichier n’est pas une sauvegarde du carnet. Choisis le fichier « carnet-sauvegarde » que tu as exporté.</p>';
+        box.innerHTML = '<p class="alert">Ce fichier n’est pas une sauvegarde. Choisis le fichier que tu as exporté : son nom commence par « nutrisport-sauvegarde » (ou « carnet-sauvegarde » pour les plus anciennes).</p>';
         return;
       }
       pendingImport = obj.data;
@@ -5413,7 +5413,7 @@ function buildProposal(products, opts) {
     state.store.load(pendingImport);
     pendingImport = null;
     $('#backupConfirm').innerHTML = '';
-    toast('Carnet restauré depuis la sauvegarde');
+    toast('Données restaurées depuis la sauvegarde');
   }
 
   /* ================= Notification ================= */

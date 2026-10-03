@@ -1,4 +1,4 @@
-/* Carnet : fonctionnement hors ligne et mises à jour.
+/* Nutrisport : fonctionnement hors ligne et mises à jour.
    - La page de l’appli vient du réseau quand il répond vite (3,5 s), sinon de la copie gardée sur le téléphone.
    - Polices, icônes et photos d’exercices sont servies depuis le téléphone une fois téléchargées.
    Fichier généré par src/build_site.py : ne pas modifier à la main. */

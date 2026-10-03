@@ -1,6 +1,6 @@
-# Carnet : consignes pour les mises à jour
+# Nutrisport (anciennement Carnet) : consignes pour les mises à jour
 
-Appli web installable (GitHub Pages) de Jules : nutrition, séances de musculation, suivi du poids. Interface en français, thème sombre par défaut.
+Appli web installable (GitHub Pages) de Jules, appelée Nutrisport : nutrition, séances de musculation, suivi du poids. Interface en français, thème sombre par défaut.
 
 ## Où modifier
 
@@ -15,13 +15,14 @@ Appli web installable (GitHub Pages) de Jules : nutrition, séances de musculati
 python3 src/build_site.py src/carnet.html . --fonts src/fonts
 ```
 
-Le numéro de version (date + empreinte de la source) change tout seul : les applis installées affichent « Une nouvelle version de Carnet est prête » à la prochaine ouverture. Ajoute `--assets` seulement pour refaire les icônes et les écrans de lancement à partir du logo `src/logo.png` (Pillow et Playwright requis). Le logo sert d’icône sur l’écran d’accueil du téléphone (et d’écran de lancement) : Jules ne le veut pas dans l’en-tête de l’appli.
+Le numéro de version (date + empreinte de la source) change tout seul : les applis installées affichent « Une nouvelle version de Nutrisport est prête » à la prochaine ouverture. Ajoute `--assets` seulement pour refaire les icônes et les écrans de lancement à partir du logo `src/logo.png` (Pillow et Playwright requis). Le logo sert d’icône sur l’écran d’accueil du téléphone (et d’écran de lancement) : Jules ne le veut pas dans l’en-tête de l’appli.
 
 ## Règles
 
 - Les données de chacun restent sur son téléphone (IndexedDB, base `carnet:<chemin de l’appli>`, documents rangés par chemin : `days/AAAA-MM-JJ`, `products/<id>`, `workouts/<id>`, `programs/<id>`, `meals/<id>`, `exercises/<id>`, `settings/goals|profile|generator|ui|me`). `settings/me` est le profil (pseudo et photo en data URL JPEG 320 px). Une mise à jour ne doit jamais effacer ni renommer ces chemins sans migration.
 - Le format de sauvegarde (`{ app: 'carnet', version: 1, exportedAt, data }`) doit rester lisible par les anciennes versions et inversement.
 - Aucune donnée personnelle dans le dépôt : il est public.
+- Le nom affiché est « Nutrisport » (titre, nom sous l’icône, écran de lancement, textes de l’appli). Les identifiants internes gardent « carnet » : dépôt et adresse `/carnet/`, fichier `src/carnet.html`, base IndexedDB `carnet:<chemin>`, caches du service worker, clés `cpm.*` et champ `app: 'carnet'` des sauvegardes. Ne les renomme pas : les données et les applis déjà installées en dépendent.
 - Photo d’un exercice : seulement si elle montre le bon matériel (machine guidée, machine à disques, poulie, Smith, barre, haltères…) et le bon mouvement. Pour une variante proche (prise, un bras, barre EZ au lieu de droite…), ajoute une légende qui dit ce qui change. Sinon pas de photo : la fiche montre la vidéo en premier.
 - Vidéo d’un exercice : uniquement un identifiant relevé dans un vrai résultat et vérifié avec `https://www.youtube.com/oembed?url=https://youtu.be/<id>&format=json` (titre et chaîne recopiés tels quels) ; elle doit montrer cet exercice sur ce matériel. Ajoute une précision (5ᵉ valeur) quand elle montre une variante proche. Dans le doute, pas de vidéo : la recherche `EX_VQ` prend le relais.
 - Teste sur une largeur de téléphone (390 px) en thème sombre et clair, hors ligne compris, avant de publier.

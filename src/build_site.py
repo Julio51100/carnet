@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Construit le site installable de Carnet à partir de la page de l’appli (la même que dans Claude).
+"""Construit le site installable de Nutrisport à partir de la page de l’appli (la même que dans Claude).
 
     python3 build_site.py SOURCE.html DOSSIER_SORTIE [--assets] [--media DOSSIER_PHOTOS] [--fonts DOSSIER_POLICES]
 
@@ -23,7 +23,7 @@ sys.path.insert(0, HERE)
 LOGO = os.path.join(HERE, 'logo.png')  # logo rond, transparent autour de l’anneau doré
 
 BG = '#0f1210'
-NAME = 'Carnet'
+NAME = 'Nutrisport'
 DESCRIPTION = 'Ton carnet de nutrition et de musculation : repas et macros, séances, poids et objectifs. Fonctionne sans réseau.'
 
 # Écrans de lancement de l’iPhone (largeur et hauteur en points, densité) — portrait

@@ -1,11 +1,11 @@
-# Carnet
+# Nutrisport
 
-Carnet de nutrition et de musculation : repas et macros, séances, poids et objectifs.
+Nutrisport (anciennement Carnet) : carnet de nutrition et de musculation, avec repas et macros, séances, poids et objectifs.
 Une appli web à installer sur l’écran d’accueil du téléphone, qui fonctionne aussi sans réseau.
 
 ## Installer l’appli
 
-- **iPhone** : ouvrir le lien dans Safari, toucher Partager, puis « Sur l’écran d’accueil ». Ouvrir ensuite Carnet depuis son icône.
+- **iPhone** : ouvrir le lien dans Safari, toucher Partager, puis « Sur l’écran d’accueil ». Ouvrir ensuite Nutrisport depuis son icône.
 - **Android** : ouvrir le lien dans Chrome, puis toucher « Installer » dans l’appli (ou menu ⋮, « Installer l’application »).
 
 ## Les données
