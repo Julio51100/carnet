@@ -32,7 +32,7 @@
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin-ext.woff2) format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 </style>
-<script>window.CARNET_VERSION = "2026-10-03.b29f8f";</script>
+<script>window.CARNET_VERSION = "2026-10-04.85c3ec";</script>
 <style>
 /* Carnet de bord calme : fond graphite profond, cartes à filet fin, actions en encre claire (version claire en option).
    Les couleurs des macros (protéines, glucides, lipides) sont les seules teintes vives ; les chiffres clés
@@ -471,8 +471,61 @@ input.we-name { font-family: var(--font-display); font-stretch: var(--narrow); f
 .add-exo:hover { background: var(--surface); color: var(--fg); }
 .we-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .we-actions .spacer { flex: 1; }
+.we-end { display: flex; gap: 8px; align-items: center; }
 .naming { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; width: 100%; }
 .naming input { flex: 1 1 180px; }
+
+/* ---------- Mes séances, planning, historique ---------- */
+.card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.card-head h2 { margin: 0; }
+.w-stats-more { margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+.ms-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.ms-item { border: 1px solid var(--line); border-radius: var(--r-md); padding: 12px 12px 12px 14px; background: var(--surface-2); display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.ms-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.ms-title { flex: 1; border: 0; background: none; padding: 0; text-align: left; color: var(--fg); display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-width: 0; border-radius: 6px; }
+.ms-edit { margin: -2px -2px 0 0; }
+.ms-name { font-family: var(--font-display); font-stretch: var(--narrow); font-weight: 600; font-size: 25px; line-height: 1.08; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.ms-title:hover .ms-name { text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 4px; }
+.ms-meta { font-size: 13px; color: var(--muted); }
+.ms-next { font-size: 12px; font-weight: 600; padding: 3px 9px; margin-bottom: 3px; border-radius: 999px; background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); white-space: nowrap; }
+.ms-exos { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.ms-exos li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 14px; }
+.ms-exos li:first-child { border-top: 0; }
+.ms-ex { min-width: 0; overflow-wrap: anywhere; color: var(--fg-2); }
+.ms-kg { flex: none; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ms-exos .ms-plus { color: var(--muted); font-size: 13px; }
+.ms-empty { margin: 0; }
+.ms-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.ms-foot { margin-top: 12px; }
+.plan-nav { display: flex; align-items: center; gap: 4px; }
+.plan-nav .iconbtn { width: 36px; height: 36px; }
+.plan-range { min-width: 9.5em; text-align: center; font-size: 13.5px; font-weight: 600; color: var(--fg-2); }
+.plan-days { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.pd { display: grid; grid-template-columns: 42px minmax(0, 1fr) 36px; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); }
+.pd:first-child { border-top: 0; }
+.pd-date { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1.1; }
+.pd-wd { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: capitalize; }
+.pd-n { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.pd.today .pd-n { background: var(--fg); color: var(--on-fg); }
+.pd.past .pd-n { color: var(--muted); }
+.pd-items { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.pd-w { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; min-height: 36px; padding: 6px 11px; border-radius: 12px; border: 1px dashed var(--line-2); background: var(--surface); color: var(--fg); font-weight: 600; font-size: 14px; }
+.pd-w .ico { width: 15px; height: 15px; stroke-width: 2.4; color: var(--good); flex: none; }
+.pd-w.done { border-style: solid; border-color: transparent; background: var(--surface-2); background: color-mix(in srgb, var(--good) 13%, var(--surface)); }
+.pd-w.missed { color: var(--muted); }
+.pd-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pd-st { flex: none; font-size: 12px; font-weight: 500; color: var(--muted); }
+.pd-add { width: 36px; height: 36px; display: grid; place-items: center; padding: 0; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--muted); }
+.pd-add:hover { background: var(--surface-2); color: var(--fg); }
+.pd-add .ico { width: 18px; height: 18px; }
+.hist-chips { margin: 10px 0 6px; }
+.hist-more { margin-top: 8px; }
+.we-note { margin: 0; font-size: 13.5px; color: var(--fg-2); }
+.exo-now { margin: 0; font-size: 13px; color: var(--fg-2); font-variant-numeric: tabular-nums; }
+.exo-now strong { font-weight: 600; color: var(--fg); }
+.exo-now strong.up { color: var(--good); }
+.set-row.tpl { grid-template-columns: 2em minmax(0, 1fr) minmax(0, 1fr); }
+.plan-other { max-width: 260px; }
 
 /* ---------- Programmes tout prêts ---------- */
 .tp-list { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; }
@@ -867,7 +920,7 @@ dialog::backdrop { background: var(--backdrop); -webkit-backdrop-filter: blur(2p
 .toast:not(.show) { display: none; }
 .toast button { flex: none; border: 0; background: none; padding: 0; color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bottom, 0px)); }
-/* Sur l’onglet Jour (téléphone), le message s’affiche au-dessus du bouton « Ajouter un aliment » */
+/* Sur l’onglet Jour (téléphone), le message s’affiche au-dessus du bouton « Ajouter un aliment » */
 @media (max-width: 919px) { body:not(.has-rest):has(#fab:not([hidden])) .toast { bottom: calc(var(--nav-h) + 76px + env(safe-area-inset-bottom, 0px)); } }
 @media (min-width: 920px) {
   .toast { bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
@@ -1246,6 +1299,18 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
   </div>
 </dialog>
 
+<!-- ===== Fenêtre : planifier une séance, copier une séance ===== -->
+<dialog id="planDlg" aria-labelledby="planTitle">
+  <div class="dlg">
+    <header class="dlg-head">
+      <h2 id="planTitle">Planifier</h2>
+      <button type="button" class="iconbtn" data-action="plan-close" aria-label="Fermer"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
+    </header>
+    <div class="dlg-body" id="planBody"></div>
+    <footer class="dlg-foot" id="planFoot"></footer>
+  </div>
+</dialog>
+
 <!-- ===== Fenêtre : proposer une journée ===== -->
 <dialog id="genDlg" aria-labelledby="genTitle">
   <div class="dlg">
@@ -1615,8 +1680,8 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
   const EX_MEDIA = {"dc-barre":[0],"di-barre":[1],"dd-barre":[2],"dc-halt":[3],"di-halt":[4],"dd-halt":[5],"dc-halt-neutre":[6],"squeeze-press":[7],"ec-halt":[8],"ei-halt":[9],"ed-halt":[10],"pullover-halt":[11],"dc-smith":[12],"di-smith":[13],"dd-smith":[14],"dc-machine":[15],"dc-machine-conv":[15,"Photo du chest press classique : sur la version convergente, les poignées se rapprochent en fin de poussée."],"dc-machine-uni":[15,"Photo à deux bras : pousse avec un seul bras, l’autre au repos."],"pec-deck":[18],"di-disques":[17],"dv-disques":[16],"dd-disques":[19],"ec-poulie-haut":[20],"ec-poulie-milieu":[20,"Photo depuis les poulies hautes : pour cette version, règle les poulies à hauteur de poitrine."],"ec-poulie-bas":[21],"ec-poulie-uni":[22],"ec-poulie-banc":[23],"dc-poulie":[24],"di-poulie":[25],"pompes":[26],"pompes-inclinees":[27],"pompes-declinees":[28],"dips-pecs":[29],"tractions":[30],"chin-up":[31],"tractions-neutre":[32,"Photo avec une poignée en V : sur des poignées parallèles, le mouvement est le même."],"row-inverse":[33],"tv-large":[34],"tv-serre":[35],"tv-supi":[36],"tv-neutre":[37,"Photo en prise serrée : pour cette version, prends les poignées neutres écartées."],"tv-uni":[38],"pullover-poulie":[39],"th-poulie":[40],"th-large":[40,"Photo avec la poignée serrée : pour cette version, prends une barre large."],"th-uni":[41],"row-poulie-debout":[42],"row-disques":[43],"row-barre":[44],"row-barre-supi":[45],"row-pendlay":[44,"Photo du rowing barre classique : au Pendlay, le buste est à l’horizontale et la barre repart du sol à chaque répétition."],"row-t":[46],"row-halt":[47],"row-halt-2":[48],"row-halt-incl":[49],"row-smith":[50],"row-kb":[51],"sdt":[52],"shrug-halt":[53],"shrug-barre":[54],"shrug-smith":[55,"Photo avec la barre derrière le dos : barre devant, le mouvement est le même."],"lombaires-banc":[56],"reverse-hyper":[57],"dm-barre":[58],"dm-barre-assis":[59],"dm-halt":[60],"dm-halt-debout":[61],"arnold":[62],"dm-smith":[63],"dm-machine":[64],"dm-machine-conv":[64,"Photo du shoulder press classique : sur la version convergente, les poignées se rapprochent en haut."],"dm-disques":[65],"dm-kb":[66],"landmine-press":[67],"el-halt":[68],"el-halt-assis":[69],"el-poulie":[70],"ef-halt":[71],"ef-poulie":[72],"ef-disque":[73],"y-raise":[74,"Photo avec une barre : aux haltères, monte les bras en Y, pouces vers le haut."],"oiseau-halt":[75],"oiseau-banc":[76],"oiseau-machine":[77],"oiseau-poulie":[78],"face-pull":[79],"tm-barre":[80],"tm-poulie":[81],"curl-barre":[82],"curl-ez":[83],"curl-pupitre":[84],"curl-halt":[85],"curl-halt-simult":[86],"curl-marteau":[87],"curl-incl":[88],"curl-conc":[89],"curl-pupitre-halt":[90],"curl-zottman":[91],"curl-machine":[92],"curl-poulie":[93],"curl-poulie-uni":[94],"curl-corde":[95],"curl-poulie-haute":[96],"ext-poulie-barre":[97],"ext-poulie-corde":[98],"ext-poulie-uni":[99],"ext-nuque-poulie":[100],"barre-front":[102],"ext-nuque-ez":[103,"Photo debout avec une barre droite : assis avec la barre EZ, le mouvement est le même."],"dc-serre":[104],"dc-serre-smith":[105],"ext-nuque-halt":[106],"barre-front-halt":[107],"kickback":[101],"triceps-machine":[108],"triceps-press":[109],"dips-triceps":[110],"dips-banc":[111],"pompes-serrees":[112],"curl-poignets":[113],"curl-poignets-inverse":[114],"curl-inverse":[115,"Photo avec une barre droite : avec la barre EZ, le mouvement est le même."],"farmer":[116,"Photo avec des poignées de fermier : avec des haltères, le principe est le même."],"suspension":[30,0,1],"squat":[117],"front-squat":[118],"fentes-barre":[119],"squat-smith":[120],"fentes-smith":[121],"goblet":[122],"squat-halt":[123],"fentes-avant":[124],"fentes-marchees":[124,"Photo d’une fente sur place : en fentes marchées, avance d’un pas à chaque répétition."],"fentes-arriere":[125],"bulgares":[126],"step-up":[127],"presse-45":[128],"hack":[129],"leg-ext":[130],"leg-ext-uni":[131],"squat-pdc":[132],"sdt-roumain":[133],"sdt-jt":[134],"good-morning":[135],"sdt-roumain-halt":[136],"sdt-roumain-uni":[137,"Photo avec un kettlebell : avec un haltère, le mouvement est le même."],"sdt-roumain-smith":[138],"leg-curl-allonge":[139],"leg-curl-assis":[140],"leg-curl-debout":[141],"nordic":[142],"hip-thrust":[143],"hip-thrust-halt":[143,"Photo avec une barre : avec un haltère posé sur les hanches, le mouvement est le même."],"hip-thrust-smith":[143,"Photo avec une barre libre : à la Smith machine, la barre suit un rail, le mouvement est le même."],"pont-fessier":[144],"pont-fessier-uni":[145],"kickback-poulie":[146],"abducteurs":[147],"adducteurs":[148],"adduction-poulie":[149],"fentes-laterales":[150,"Photo avec une barre sur le dos : avec des haltères en mains, le mouvement est le même."],"pull-through":[151],"sdt-sumo":[152],"kb-swing":[153,"Photo à un bras : le swing classique se fait à deux mains, avec le même mouvement de hanches."],"mollets-debout":[154],"mollets-assis":[155],"mollets-rotary":[156,"Photo d’une machine à mollets assise voisine : le mouvement de la cheville est le même."],"mollets-presse":[157],"mollets-smith":[158],"mollets-halt":[159,"Photo à deux jambes : sur une jambe, tiens l’haltère du même côté."],"mollets-pdc":[160,"Photo debout sur un haltère : sur une marche, le mouvement est le même, talons dans le vide."],"crunch":[161],"crunch-decline":[162],"crunch-inverse":[163],"v-ups":[164],"dead-bug":[165],"crunch-poulie":[166],"crunch-machine":[167],"total-abdominal":[167,"Photo d’une machine à crunch voisine : le principe est le même, enroule le buste."],"releve-suspendu":[168],"releve-chaise":[169],"releve-sol":[170,"Photo sur un banc : au sol, le mouvement est le même, bas du dos plaqué."],"roue":[171],"russian-twist":[172],"woodchop":[173],"woodchop-bas":[174],"pallof":[175],"planche":[176],"gainage-lateral":[177],"mountain":[178],"squat-saute":[179],"fentes-sautees":[180],"thruster-halt":[181,"Photo avec des kettlebells : avec des haltères, le mouvement est le même."],"kb-clean":[182],"kb-snatch":[183],"kb-thruster":[181],"kb-getup":[184],"kb-goblet-lunge":[124,"Photo avec deux haltères : en goblet, tiens le kettlebell contre la poitrine, le mouvement des jambes est le même."],"box-jump":[185],"slam-ball":[186],"battle-rope":[187],"corde-sauter":[188],"tapis":[189],"tapis-incline":[190],"velo":[191],"velo-allonge":[192],"elliptique":[193],"rameur":[194],"stepper":[195],"escalier":[196],"velo-biking":[191,"Photo d’un vélo droit : sur le vélo de biking, le pédalage est le même, buste plus penché."]};
   /* Vidéos des exercices : une démonstration YouTube choisie et vérifiée pour chaque exercice (titre et chaîne relevés sur YouTube).
      EX_VIDEO : id → [identifiant de la vidéo, titre, chaîne, langue (fr, en, es ; vide si on ne sait pas), précision quand la vidéo montre une variante proche].
-     EX_VQ : id → recherche YouTube précise, pour « Autres vidéos » ou quand aucune vidéo n’a été retenue. */
-  const EX_VIDEO = {"dc-barre":["TbVpM5yd6QM","Exercice du développé couché barre - exercice de musculation des pectoraux - Barbell bench press","AM Nutrition","fr"],"di-barre":["vEbrycBJl0w","Exercice du développé incliné à la barre","AM Nutrition","fr"],"dd-barre":["zaYsiHJNeTI","Comment utiliser le banc développé décliné chez Basic-Fit ? (Tuto & Conseils)","Bodykev Coaching","fr","Présente le banc décliné de Basic-Fit, pas seulement l’exercice à la barre."],"dc-halt":["-TwKa9GzwNM","[TUTO] Développé Couché avec Haltères (Dumbbell Press)","BeComplete","fr"],"di-halt":["AQFvfZO3Rb4","PECTORAUX : Développé incliné avec haltères","TeamSuperPhysique","fr"],"dd-halt":["qr7laNZB318","PECTORAUX : Développé décliné avec haltères","TeamSuperPhysique","fr"],"dc-halt-neutre":["TVsravKHIlw","Développé couché haltère prise neutre (dumbbell neutral bench press)","Papa Muscle","fr"],"squeeze-press":["IHkwivEhpfY","Explosez vos pectoraux avec le Squeeze Press !!!","Enzo TV","fr"],"ec-halt":["1cTdiW6etsc","[TUTO] Écarté Couché avec Haltères (Dumbbell Fly)","BeComplete","fr"],"ei-halt":["Tp1Hi98xGpo","Écarté incliné haltère (incline dumbbell chest fly)","Papa Muscle","fr"],"ed-halt":["mnTqUlfXaV4","Écart­é décliné halt­ère (decline dumbbell chest fly)","Papa Muscle","fr"],"pullover-halt":["GyupjGYnW3Y","PECTORAUX : Pull over avec haltère","TeamSuperPhysique","fr"],"dc-smith":["91N90YfOxJg","DÉVELOPPÉ COUCHÉ À LA SMITH MACHINE - TECHNIQUE","Jon Healthyman","fr"],"di-smith":["QA8CrleEcLI","DÉVELOPPÉ INCLINÉ À LA SMITH MACHINE","POLATO Anthony","fr"],"dd-smith":["AZc_9KMj3P8","Développé décliné à la barre (Smith Machine)","frmusqle","fr"],"dc-machine":["B-cCh7H0CPY","Comment utiliser la Chest Press Verticale pour muscler ses pectoraux | Basic-Fit","Bodykev Coaching","fr","La chest press guidée de Basic-Fit, appelée ici « chest press verticale »."],"dc-machine-conv":["r8CG2MjEwmc","Comment bien utiliser la Chest Press convergente | Réglages + Exécution | Machine Basic-Fit","Bodykev Coaching","fr"],"dc-machine-uni":["byWE-S2tJqs","Unilateral, Machine Defined Chest Press - Cybex Eagle Chest Press","Cybex","en"],"di-machine":["pg8GT_d22dk","How to use  CHEST PRESS / CHEST INCLINE machine by Technogym","pawelmakarewicz.pl","","Montre aussi la chest press à plat, pas seulement la version inclinée."],"pec-deck":["sxPEEESsY5Y","Le Pec Deck ou Butterfly, exercice d'isolation des pectoraux","ProTrainer","fr"],"dc-disques":["kPi1grOKflU","Iso-Lateral Horizontal Bench Press | Hammer Strength Plate Loaded","Life Fitness / Hammer Strength","en"],"di-disques":["xwK8Wd5F0Hk","Hammer Strength Plate-Loaded Incline Press Instructions","Life Fitness / Hammer Strength","en"],"dv-disques":["gswqJnwTaa0","Iso-Lateral Bench Press | Hammer Strength Plate Loaded","Life Fitness / Hammer Strength","en","Version Hammer Strength : la machine de ton club peut avoir une autre forme."],"dd-disques":["1YrEp_Dh7fE","Hammer Strength Plate-Loaded Decline Press Instructions","Life Fitness / Hammer Strength","en"],"ec-poulie-haut":["WlIR9zNLV1s","PECTORAUX : Eccarté à la poulie vis à vis haute","TeamSuperPhysique","fr"],"ec-poulie-milieu":["WZqGJxzWfGk","Explication de l'écarté poulie pectoraux milieux des pecs - MUSCULATION","BmD | Train With Me","fr"],"ec-poulie-bas":["LtiPOcSQQbI","PECTORAUX : Ecarté à la poulie vis à vis basse","TeamSuperPhysique","fr"],"ec-poulie-uni":["Jdg4CbKU1g8","Écartés à la Poulie en Unilatéral #chestfly #chestworkout #pushday #pectoraux #coaching #sport #gym","Jérôme Guitton - Personal Trainer","fr"],"ec-poulie-banc":["-8aurlfuYk4","Cable Crossover Flat Bench Fly","FITASTIC","en"],"dc-poulie":["u74FbPhR8iE","How To Do Standing Cable Chest Press | Exercise Demo","OriGym","en"],"di-poulie":["DbXAj6WBs7w","Développé incliné poulie basse vis-à-vis, partie supérieure des pectoraux","Corse Coaching","fr"],"pompes":["50Yr6Mm78u0","TUTO - Comment bien faire des pompes ? 💪 | Decathlon","Decathlon FR","fr"],"pompes-inclinees":["Oy1AzohemMc","Exercise Tutorial: Incline Push Up","Travis Tarrant","en"],"pompes-declinees":["oDZIAsF0q4k","Pompes pieds surélevés : Execution, technique, conseils et progression","15-Minute Challenge","fr"],"dips-pecs":["6Enl0yC7MXY","Dips buste penché (chest dips)","Papa Muscle","fr"],"dips-assist":["fb9Dpv-3iP4","Life Fitness Pro2 Dip Chin Dip Exercise Instructions","Life Fitness / Hammer Strength","en"],"tractions":["WmbS6ZMyXBQ","Traction pronation","ProTrainer","fr"],"chin-up":["QhEo1afIsDI","Démo du mouvement : Traction Supination","Your House Fitness","fr"],"tractions-neutre":["pruyYPObRpU","Comment faire les Tractions (pull-up) prise neutre","Coach Me App","fr"],"tractions-assist":["FC-Qj4L7pOQ","TUTO MACHINE : LA TRACTION ASSISTÉE","L'Appart Fitness Officiel","fr"],"row-inverse":["I8Q5il_vpC4","Smith Machine Inverted Row","Action Fitness & Nutrition","en"],"tv-large":["0v-z04-IYmw","Tirage vertical à la poulie haute Prise large","Yoann DESGRAND","fr"],"tv-serre":["1btAlXIoJYs","Le tirage vertical prise serrée - Exercice de Musculation Dos","EspaceMusculation","fr"],"tv-supi":["vV93wogZBo0","Tirage vertical supination poulie","Maxime Clergeau - Coach transformations physiques","fr"],"tv-neutre":["ECluUD9qD8M","Tirage vertical poulie (prise large neutre)","Maxime Clergeau - Coach transformations physiques","fr"],"tv-uni":["inolP2mOt84","Tirage vertical unilatéral poulie","Maxime Clergeau - Coach transformations physiques","fr"],"pullover-poulie":["a82yaj_i9XI","TUTORIEL - Pull over à la poulie haute","RBC WORKOUT","fr"],"th-poulie":["92kb9OuHKgc","Comment faire : TIRAGE HORIZONTAL","MaxiPerformance","fr"],"th-large":["sJOufHpvIpQ","TIRAGE HORIZONTAL POULIE BASSE : Prise Large vs Serrée | Technique Parfaite Musculation Dos","Gabriel Augusto","fr","Compare la prise large et la prise serrée."],"th-uni":["M-USJ_VeNYE","Exercice DOS : Tirage horizontal poulie basse un bras - [ Musculation GRAND DORSAL ]","Antoine MH","fr"],"row-poulie-debout":["raO8Q08Wems","How to do Standing Single Arm Cable Rows","Chris and Eric Martinez","en"],"tv-machine":["db_BT6FyTtE","Technogym Vertical Traction - Set Up & Execution","Charlie Cuthbert","en"],"tv-machine-div":["0SyaetRMKwg","1 JOUR 1 MACHINE BASIC FIT - TIRAGE VERTICAL DIVERGENT #musculation #coachsportif #basicfit","And Muscles 4all","fr"],"row-machine":["BLqaENuYR-Q","Rowing horizontal à la machine Technogym 💪 | Dos épais et puissant","BmD | Train With Me","fr"],"row-machine-div":["_FRejxwNHA8","Rowing divergent machine","Coach online - Simon","fr"],"row-machine-uni":["nhcmIbjUdlE","How To: Chest Supported Single Arm Machine Seated Row","Live Lean TV Daily Exercises","en","Machine à appui pectoral : celle de ton club peut être un peu différente."],"upper-back":["yj1f-CyTIWA","Technogym Upper Back Row - Set Up & Execution","Charlie Cuthbert","en"],"row-disques":["BeTZjAneZpk","Hammer Strength Plate-Loaded Row Instructions","Life Fitness / Hammer Strength","en"],"tv-disques":["TRC5LCYi6W0","Hammer Strength Plate-Loaded Front Lat Pulldown Instructions","Life Fitness / Hammer Strength","en"],"row-barre":["tE6YfTP5DzY","Exercice Musculation DOS : Rowing barre buste penché - [ Tirage HORIZONTAL : épaisseur DOS ]","Antoine MH","fr"],"row-barre-supi":["qfiV3eGPyPQ","Musculation du dos : Le rowing buste penché \"YATES\" en supination","Enzo TV","fr"],"row-pendlay":["0PSfteHhUtg","How to Do a Pendlay Row","Phil Daru","en"],"row-t":["hYo72r8Ivso","How To Do T Bar Rows (Landmine Rows)","PureGym","en"],"row-halt":["X97Jxni1ofw","Démonstration du mouvement: Rowing Haltere un Bras (Tirage Bucheron)","Your House Fitness","fr"],"row-halt-2":["JWWNLDAVQNo","Exercice DOS : Rowing buste penché haltères - [ Musculation - Tirage HORIZONTAL ]","Antoine MH","fr"],"row-halt-incl":["HVjdVv6FYD4","ROWING HALTÈRES AU BANC INCLINÉ - TECHNIQUE","Jon Healthyman","fr"],"row-smith":["tGGq2VZIW_M","How To: Smith Machine Bent Over Row | Form Tutorial","Kade Howell","en"],"row-kb":["gA2v71kNAnE","Rowing à un bras avec Kettlebell","SMARTFORM - fitness and more","fr"],"sdt":["qmw2epqYsTM","Soulevé de terre - avec barre","GooFiit","fr"],"shrug-halt":["nwSmkoHM-Jw","TRAPEZES : Shrug avec haltères","TeamSuperPhysique","fr"],"shrug-barre":["w9Li8JTpqFE","Musculation des trapèzes - Shrug barre","Toute la musculation !","fr"],"shrug-smith":["8ppOGwvaFko","Exercise Tutorial: Smith Machine Shrugs","Travis Tarrant","en"],"lombaires-banc":["7bDZtdQUj5A","ISCHIOS-JAMBIERS : Extension au banc à lombaires à 45 degrés","TeamSuperPhysique","fr"],"lombaires-machine":["RApRXjQR8KA","Extensión lumbar en máquina | Machine Back Extension","Trainer Alex León","es","Machine d’extension lombaire assise : celle de ton club peut être un peu différente."],"reverse-hyper":["cZSxxPkCDy0","How to Use the Reverse Hyper Correctly (Most People Do It Wrong)","Mark Bell - Super Training Gym","en"],"dm-barre":["X-j6-gI9Kc8","DÉVELOPPÉ MILITAIRE À LA BARRE || #ÉPAULES || COMMENT FAIRE ?! 💪🏽","Tristan","fr"],"dm-barre-assis":["gQWoWFYnw1I","Développé Militaire Assis à la Barre : Épaules de Titan ! 💪","Drey.coaching","fr"],"dm-halt":["Ap7texwO3Nk","[TUTO] Epaules : Développé Haltères Assis","BeComplete","fr"],"dm-halt-debout":["yyBf3iaoVRU","Exercice du développé militaire debout avec haltères","AM Nutrition","fr"],"arnold":["eU7Dc2FnaDY","Musculation des épaules - Développé Arnold","Toute la musculation !","fr"],"dm-smith":["meFt5-ymB28","Explication du DÉVELOPPE MILITAIRE à la SMITH MACHINE - MUSCULATION","BmD | Train With Me","fr"],"dm-machine":["1iX7i-1pIf0","Comment utiliser la machine Shoulder Press – Tuto épaules | Le Club by Moov'in Lyon","Le Club By Moov'in Lyon","fr"],"dm-machine-conv":["qrCPnVYJEo0","Comment bien utiliser la Shoulder Press Convergente | Spécial Épaules | Machine Basic-Fit","Bodykev Coaching","fr"],"dm-disques":["X0SteQbRbCo","Hammer Strength Plate-Loaded Shoulder Press Instructions","Life Fitness / Hammer Strength","en"],"dm-kb":["WBpWRVlYwSI","Kettlebell: développé 1 bras","Dominic Paris","fr"],"landmine-press":["HGjFrEYyDAE","Travailler les épaules avec le landmine press","Seb Hémond","fr"],"el-halt":["q_DYeb_daeY","Élévations Latérales : Technique et astuces (musculation des épaules avec haltères)","Olymp'Fit","fr"],"el-halt-assis":["YnbYeT4gNeU","Seated DB Lateral Raise","Joshua Gaskins","en"],"el-poulie":["71imsm4xsG4","EPAULES : Élévation latérale à la poulie","TeamSuperPhysique","fr"],"el-machine":["tvZUZ_Hyji4","Élévations latérales à la machine","Fit'distance","fr"],"ef-halt":["dCvPFIxG5Oc","EPAULES : Elévation frontale avec haltères","TeamSuperPhysique","fr"],"ef-poulie":["fFIOEjlzsvQ","EPAULES : Élévation frontale à la poulie","TeamSuperPhysique","fr"],"ef-disque":["-TlT6aXNok4","Plate Front Raise | Shoulder | Strength and Conditioning Exercises","Rehab My Patient","en"],"y-raise":["juecmo5kSuk","Élévation Y sur banc incliné (incline prone Y raise)","Papa Muscle","fr"],"oiseau-halt":["dDDVBy_ybzg","Oiseau buste penché","Magic Form Bordeaux","fr"],"oiseau-banc":["lp5ZXmxJ8OI","EPAULES : Oiseau sur banc incliné","TeamSuperPhysique","fr"],"oiseau-machine":["y43md1-v2jI","Tuto : Pec Deck Inversé","L'Orange bleue Arras","fr"],"oiseau-poulie":["bkejPHrPkmA","Cross Cable Rear Delt Fly - Under 60s How-to - Schaum Fitness","Chris Schaum","en"],"face-pull":["4FAiPDzKRUw","[TUTO] Face Pulls","BeComplete","fr"],"tm-barre":["__TkS4JlFFk","Rowing menton barre - tirage menton barre (barbell upright row)","Papa Muscle","fr"],"tm-poulie":["Z1CI4tjM_28","Tirage menton à la poulie basse (trapèzes)","Corse Coaching","fr"],"curl-barre":["VSbqYTWkRGo","CURL BICEPS À LA BARRE DROITE EN PRISE SUPINATION - TECHNIQUE","Jon Healthyman","fr"],"curl-ez":["I7OxID4jfa4","CURL À LA BARRE EZ EN PRISE SUPINATION - TECHNIQUE","Jon Healthyman","fr"],"curl-pupitre":["X6xyVa0z_lk","Curl au Larry Scott barre EZ en Supination - Exercice de Musculation Biceps","EspaceMusculation","fr"],"curl-halt":["3gj4MjAjfSo","Curl Alterné en Supination - Exercice de Musculation Biceps","EspaceMusculation","fr"],"curl-halt-simult":["6sGcS3frZV8","Biceps assis simultanés mains en supination avec haltères","Corse Coaching","fr","Version assise : debout, le mouvement est le même."],"curl-marteau":["9fSck6P-PXk","Curl marteau haltères","frmusqle","fr"],"curl-incl":["A3QJ3dwG21E","Curl incliné haltères","frmusqle","fr"],"curl-conc":["JKRM2z_c2V0","Curl concentré haltère","Maxime Clergeau - Coach transformations physiques","fr"],"curl-pupitre-halt":["5gpVncUfPFc","Curl pupitre haltère unilatéral","Maxime Clergeau - Coach transformations physiques","fr"],"curl-zottman":["tlcpynrDSBc","Explosez vos biceps et vos avant-bras avec le curl Zottman","Enzo TV","fr"],"curl-machine":["9kayFWtkjCk","BICEPS ARM CURL : Bien utiliser la machine Basic-Fit 💪","BmD | Train With Me","fr"],"curl-poulie":["e0InO0lVHlM","BICEPS : Curl à la poulie basse","TeamSuperPhysique","fr"],"curl-poulie-uni":["zXbi46DljrM","Musculation des biceps - Curl un bras poulie basse","Toute la musculation !","fr"],"curl-corde":["Pc5J9-Y518w","Biceps : curl prise marteau à la poulie basse avec corde","Heracles Gym XXL Musculation & Coaching","fr"],"curl-poulie-haute":["Okl64XegSu0","How To: High Cable Biceps Curl","Physique Development","en"],"curl-bayesian":["-1eZgI_tnaQ","Le Bayesian curl 💪🏼 #fitness #shorts","Bourr_","fr"],"ext-poulie-barre":["NDQFv0p31TA","Extension poulie haute barre en pronation","EspaceMusculation","fr"],"ext-poulie-corde":["5Yv-2CCMqxM","TRICEPS : Extension des triceps à la poulie avec la corde","TeamSuperPhysique","fr"],"ext-poulie-uni":["LW24Vl35TV0","Extensions triceps en unilatéral à la poulie","Maxime Clergeau - Coach transformations physiques","fr"],"ext-nuque-poulie":["3Hxs9xZQm7A","Extension des triceps au-dessus de la tête à la poulie","frmusqle","fr"],"kickback-tri-poulie":["dj1GnzN4eQ0","TRICEPS : Kickback à la poulie","TeamSuperPhysique","fr"],"barre-front":["z4LdaWjMKQk","Extensions barre au front à la barre EZ","AM Nutrition","fr"],"ext-nuque-ez":["_pnkxxTBGP0","Extensions des triceps debout à la barre EZ au-dessus de la tête","Fit'distance","fr","Version debout : assis, le mouvement est le même."],"dc-serre":["K1b6UUUlVrA","Développé couché prise serrée à la barre","frmusqle","fr"],"dc-serre-smith":["5RkKedFwuSY","Smith Machine Bench Press - Close Grip","Karlo Pavic","en"],"ext-nuque-halt":["AuPK_zAXjtw","Extensions triceps avec haltère debout  - Deux bras","GooFiit","fr"],"barre-front-halt":["gO3zElwL8oE","Barre au front avec haltères : Execution, technique, conseils et progression","15-Minute Challenge","fr"],"kickback":["16MfFMRp_xE","Kickback haltère  - En appui sur banc","GooFiit","fr"],"triceps-machine":["ZLZ2ar3FBs4","How to use ARM EXTENSION machine by Technogym","pawelmakarewicz.pl","en"],"triceps-press":["DTD-iQN7lKg","Comment utiliser la machine DIPS chez Basic-Fit | Triceps en béton 💪","Bodykev Coaching","fr"],"dips-triceps":["VKF5GmbAvVk","Comment faire ses dips pour les pecs ou les triceps ?","Evan Coach","fr","Compare les dips pour les pectoraux et pour les triceps : pour les triceps, buste droit."],"dips-banc":["Jx00BIi-E28","Dips entre deux bancs - Exercice de Musculation Triceps","EspaceMusculation","fr"],"pompes-serrees":["vJbHBCbYX4U","Réussir la Pompe Diamant 💎 (Tutoriel Rapide)","Simbody","fr"],"curl-poignets":["LB4jfelkYqI","Exercice AVANT-BRAS (flexion) : Curl supination barre - [ Musculation fléchisseurs AVANT-BRAS ]","Antoine MH","fr"],"curl-poignets-inverse":["G9APc7ip_Tc","Exercice AVANT-BRAS (extension) : Curl pronation - [ Musculation extenseurs AVANT-BRAS ]","Antoine MH","fr","Le titre ne précise pas le matériel : ici, avec une barre."],"curl-inverse":["ueaU_FS-IRs","Curl pronation barre EZ","Mickazo Personal Trainer","fr"],"farmer":["C-WP-tsb01c","Farmer Walk avec Haltères : Execution, technique, conseils et progression","15-Minute Challenge","fr"],"suspension":["hDi6k3gPFlM","Renforcer sa poigne avec les suspensions à la barre (Dead hang)","Morgan Nutrition","fr"],"squat":["ZyDTYe9iL6I","TUTO - Le Back Squat pour muscler le bas du corps ! 💪🏋️ I Decathlon","Decathlon FR","fr"],"front-squat":["LFcb60i3U6w","SQUAT : Exercice du Squat AVANT (front squat) - [ Musculation QUADRICEPS ]","Antoine MH","fr"],"fentes-barre":["A67wpBRKI2Y","Fentes avec barre - Guide Musculation","GuideMusculation","fr"],"squat-smith":["P8pLAmgDoLY","Explication du squat Smith machine - MUSCULATION","BmD | Train With Me","fr"],"fentes-smith":["RoRrNEO3byI","FESSIERS : Fente à la Smith machine","TeamSuperPhysique","fr"],"goblet":["QNPVhVsJS2A","Goblet Squat: Execution, technique, conseils et progression","15-Minute Challenge","fr"],"squat-halt":["ZXwvmRSRRxY","Exercise Tutorial: Dumbbell Squat","Travis Tarrant","en"],"fentes-avant":["_cmLQGP8WF4","Fentes Avant Alternées avec Haltères | Démonstration du Mouvement","Adrien Raffault","fr"],"fentes-marchees":["XrpketRi624","Fentes marchées avec haltères","CaliforniaGym","fr"],"fentes-arriere":["STuw-siR6U0","Fentes Arrière Alternées avec Haltères | Démonstration du Mouvement","Adrien Raffault","fr"],"bulgares":["r_-HNEXkW00","Fentes Bulgares avec Haltères : Execution, technique, conseils et progression","15-Minute Challenge","fr"],"step-up":["yoquxWRdJO0","Step-up avec haltères","Fit'distance","fr"],"presse":["8ZrJ8Q9SNbY","Exercise Tutorial: Technogym Horizontal Leg Press","Travis Tarrant","en"],"presse-uni":["S6i3fG4Trs0","Unilateral Leg Press - Cybex Eagle Leg Press","Cybex","en"],"presse-45":["-4WH5PWaJtA","PRESSE INCLINÉE À 45 DEGRÉS - TECHNIQUE","Jon Healthyman","fr"],"hack":["63tboDKQksc","Machine Hack Squat","Muscle & Strength","en"],"hack-inverse":["up_Ah2Cs9l4","HOW TO REVERSE HACK SQUAT","BEN MIGHTY","en"],"squat-disques":["fazW1BV9RI8","NEW Planet Fitness Ground Base Squat Lunge Machine Tutorial (HOW TO USE!)","KevTheTrainer","en"],"leg-ext":["xNPZM0vkTS8","LEG EXTENSION : Technique Parfaite Machine Quadriceps | Guide Complet Musculation Cuisses","Gabriel Augusto","fr"],"leg-ext-uni":["R9r7dlwIvy4","Leg extension, 1 jambe à la fois","Femme Fitness","fr"],"squat-pdc":["0PboqagHAjs","Prisoner Squat","Muscle & Strength","en","Squat au poids du corps, mains derrière la tête."],"chaise":["-NuqBMIgrcc","La chaise murale : endurance et cuisses d'acier sans matériel 💪 (Tuto rapide)","Gabriel Augusto","fr"],"sdt-roumain":["ttyy_orHqaI","Soulevé de terre roumain barre (barbell romanian deadlift)","Papa Muscle","fr"],"sdt-jt":["YYFktNF45RM","Le soulevé de terre jambes tendues","ProTrainer","fr","Le titre ne précise pas le matériel : ici, avec une barre."],"good-morning":["KpW-oRu7Tas","Good Morning avec Barre | Démonstration du Mouvement","Adrien Raffault","fr"],"sdt-roumain-halt":["Iy3J5_qzUdo","Soulevé de terre roumain avec haltères","Maxime Clergeau - Coach transformations physiques","fr"],"sdt-roumain-uni":["S8wkyvxNvac","Soulevé de terre jambe tendue unilatérale aux haltères","Cyril-Coach","fr","Appelé « jambe tendue » dans la vidéo : au roumain, garde le genou d’appui légèrement fléchi."],"sdt-roumain-smith":["-YVRXgoNESA","Soulevé de terre jambes tendues à la Smith Machine","Fit'distance","fr","Appelé « jambes tendues » dans la vidéo : au roumain, garde les genoux légèrement fléchis."],"sdt-kb":["OoMTnmgAkS0","Soulevé de terre kettlebell (kettlebell deadlift)","Papa Muscle","fr"],"leg-curl-allonge":["RGVl-EhqFN8","Comment utiliser le LEG CURL ALLONGÉ Matrix de chez Basic-Fit ?","Bodykev Coaching","fr"],"leg-curl-assis":["ku8CpHoHe6E","Comment utiliser le LEG CURL ASSIS Matrix de chez Basic-Fit ?","Bodykev Coaching","fr"],"leg-curl-debout":["CZVTv9T_Ml8","STANDING LEG CURL MACHINE / TUTORIAL FOR BEGINNERS","AMOFitnessTraining","en"],"leg-curl-poulie":["BjwwEv51HEo","ISCHIOS-JAMBIERS : Leg curl debout à une jambe à la poulie","TeamSuperPhysique","fr"],"nordic":["kNfR1jycNmA","Renforcement Ischio-Jambier Nordic Hamstring","KOSS Sport","fr"],"hip-thrust":["lAnqN0J_p5A","Barbell Hip Thrust","Muscle & Strength","en"],"hip-thrust-halt":["-GEF_TLBoC0","Hip thrust avec haltère","Maxime Clergeau - Coach transformations physiques","fr"],"hip-thrust-smith":["qWhloAdOIBc","Exercise How To:  Smith Machine Hip Thrust","RoughToBeBuffTV","en"],"hip-thrust-machine":["bNH7rFqyV9I","La machine HIP THRUST de Basic-Fit : Démonstration rapide","BmD | Train With Me","fr"],"pont-fessier":["mm4wbmtDrUc","Bodyweight Glute Bridge","Muscle & Strength","en"],"pont-fessier-uni":["XFPV1B7vH-I","Single Leg Glute Bridge","Muscle & Strength","en"],"kickback-poulie":["VSgMyiOu0uE","How to Do Cable Glute Kickbacks","Your House Fitness",""],"kickback-machine":["AbQ7DbR9i3c","Technogym selection Glute Kickback.","Fitness Equipment Empire Brand",""],"multi-hip":["50NfKALgi1c","How to Use a MULTI-HIP Machine","Simple Speed Coach","en"],"abducteurs":["7pbZA7ncuq8","Machine Abductor","Muscle & Strength","en"],"adducteurs":["Oj7IN952fSg","Machine Adductor","Muscle & Strength","en"],"abduction-poulie":["a7lTeWciymc","Comment faire une abduction de hanche à la poulie","Zoé Coaching","fr"],"adduction-poulie":["SIQrpq6YnT8","How To Do A STANDING CABLE HIP ADDUCTION | Exercise Demonstration Video and Guide","Live Lean TV Daily Exercises","en"],"fentes-laterales":["FIPgEJOw2s4","Fentes latérales avec haltères","Fit'distance","fr"],"pull-through":["VRDxdi2d-2c","How To Do A LOW CABLE PULL THROUGH | Exercise Demonstration Video and Guide","Live Lean TV Daily Exercises","en"],"sdt-sumo":["o4gIucBC4ls","Sumo Deadlift","Muscle & Strength","en"],"kb-swing":["wMBWFIn4ddg","Kettlebell Swing","Muscle & Strength","en"],"mollets-debout":["RBslMmWqzzE","Standing Machine Calf Raise","Muscle & Strength","en"],"mollets-assis":["Yh5TXz99xwY","Seated Calf Raise (Toes Neutral)","Muscle & Strength","en"],"mollets-rotary":["6B1rH5rFXsA","How to use ROTARY CALF machine by Technogym","pawelmakarewicz.pl",""],"mollets-presse":["RcKQbiL-ZOc","Leg Press Calf Raise","Muscle & Strength","en"],"mollets-smith":["k1jFhdfI4rU","#12/1000 Élévation mollets debout à la smith machine / Smith machine calf raise","Fitness Mag","fr"],"mollets-halt":["vucf2Xk5bp8","Standing One-Legged Calf Raise (stairs and dumbbells) Male","TruestarHealth","en"],"mollets-pdc":["rbvyXV1uHhY","Exercise Tutorial: Calf Raises On Exercise Step","Travis Tarrant","en"],"crunch":["LEb7Juw9tMo","Comment bien faire les crunchs pour les abdos","XL-S Medical Academy","fr"],"crunch-decline":["HOsCIuvLczU","Crunch décliné","frmusqle","fr"],"crunch-inverse":["0bq05pA3bkA","Musculation des abdominaux - Crunch-inverse","Toute la musculation !","fr"],"v-ups":["D51oisjL-aE","Comment faire les V-ups","Coach Me App","fr"],"dead-bug":["gZtAwS79jJw","Dead Bug : 1 min pour renforcer tes abdos profonds et prendre soin de ton dos 🐛💪","AT.Prévention: TMS, RPS, Addictions","fr"],"crunch-poulie":["VFINAHIeDUQ","Crunch à la poulie haute : la bonne technique pour des abdos puissants","Bodykev Coaching","fr"],"crunch-machine":["rpOIwgAbSEo","Comment utiliser l’appareil à abdos (crunch machine)","Coach Smaïl","fr"],"total-abdominal":["GYC04FFti4I","Technogym Total Abdominal - Set Up & Execution","Charlie Cuthbert","en"],"rotary-torso":["pM5kij2bvTw","Techno Gym Rotary Torso Demonstration","Illinois Campus Rec","en"],"releve-suspendu":["aAwWq4wHEoQ","Relevé de jambes suspendu","Antoine MH","fr"],"releve-chaise":["6BwqrX8Z4gU","Relevé de genoux sur chaise romaine","GooFiit","fr"],"releve-sol":["r24ntO4IvKc","Supine Leg Raise","Muscle & Strength","en"],"roue":["kFv2rLtgc8w","La Technique PARFAITE à la ROUE ABDOMINALE ! (#shorts)","Bodyssime Fitness","fr"],"russian-twist":["8ohhG1Y4tzU","How To Do A SEATED PLATE RUSSIAN TWIST | Exercise Demonstration Video and Guide","Live Lean TV Daily Exercises","en"],"woodchop":["0VWnOjUO7ks","Standing Cable Chop","Muscle & Strength","en"],"woodchop-bas":["Xkvs3UeYnoU","Split Stance Cable Lift","Muscle & Strength","en","En fente, jusqu’au-dessus de la tête : le mouvement du bas vers le haut est le même."],"pallof":["SFJprbDnaS0","Pallof Press (Standing)","Muscle & Strength","en"],"planche":["hoPwUu8vvvw","Gainage Planche : Démonstration, explication et conseils","15-Minute Challenge","fr"],"gainage-lateral":["vUBiKWBnjq0","Planche latérale en appui sur le coude","P4P Français","fr"],"hollow":["lmkw48_CGm0","Hollow Body Hold","Muscle & Strength","en"],"mountain":["PJ7JiAjQBw4","[Nul en Fitness ?] Comment bien faire vos MOUNTAIN CLIMBERS","Juliana & Julian","fr"],"burpees":["rHnwnymQ4Eo","COMMENT FAIRE | DES BURPEES | Éconofitness","Gyms Éconofitness","fr"],"squat-saute":["K_a0DHvVfaE","Squat jump (Squat sauté)","Femme Fitness","fr"],"fentes-sautees":["XJAGPxkEMR4","Fentes sautées alternées: Execution, technique, conseils et progression","15-Minute Challenge","fr"],"jumping-jacks":["lV64BwO_zsg","COMMENT FAIRE | JUMPING JACK | Éconofitness","Gyms Éconofitness","fr"],"thruster-halt":["MwE6XA8X_w0","Thrusters haltères","Maxime Clergeau - Coach transformations physiques","fr"],"devil-press":["-C1iixGN9M8","Devil's Press","OPEX Fitness","en"],"kb-clean":["KFyNUEeJe-E","Le Clean ( Epaulé Kettlebell)","Powerkettlebell Dan","fr"],"kb-snatch":["dXSeUNBXVcM","Le Snatch  Kettlebell (L'arracheé Kettlebell)","Powerkettlebell Dan","fr"],"kb-thruster":["KYmAsdjO0XI","Thruster Tutorial with Kettlebell","Amanda Bond Fitness","en"],"kb-getup":["ZutpEZ2B7Uc","How to do a Kettlebell Turkish Get Up - Nuffield Health","Nuffield Health","en"],"kb-goblet-lunge":["vXKe0ipi1_4","How to KETTLEBELL Goblet LUNGE (In 30 Seconds)","Roxy Vivien Coaching","en"],"box-jump":["MX-NHcqEqQk","Bilateral Box Jump","Muscle & Strength","en"],"wall-ball":["TS-YN2GkPZw","Medicine Ball Squat to Push Press (Wall Ball)","Muscle & Strength","en"],"slam-ball":["N7t9BX-DExI","Standing Overhead Medicine Ball Slam","Muscle & Strength","en"],"battle-rope":["MSA9q2o2WQQ","Battling Ropes: Ondulation simultanée et alternée","Howtobefit","fr"],"corde-sauter":["XSqj0O6ARMs","Jump Rope (Bilateral)","Muscle & Strength","en"],"tapis":["98ifjOTrZKI","Fitness - Musculation : Comment bien utiliser un tapis roulant","Pratiks Sports","fr"],"tapis-incline":["NAsObfFJXvE","How To: Incline Treadmill Walk (12-3-30 Workout)","Live Lean TV Daily Exercises","en"],"velo":["IBLOutvjiNs","Exercices : Comment bien utiliser un vélo d'appartement","Pratiks Sports","fr"],"velo-allonge":["ElYkuaIYfUY","Comment régler correctement ton vélo semi-allongé (Basic-Fit / Matrix)","Bodykev Coaching","fr"],"elliptique":["lVB0JbGb7qc","Fitness Basics : comment utiliser l’elliptique ?","Doctissimo","fr"],"rameur":["xUPQme4Mbiw","COMMENT RAMER: Technique sur RAMEUR - CONCEPT 2","william laine","fr"],"stepper":["y0zGTCPk3mA","Exercise Machines : How to Use a Stair Stepper Properly","eHowFitness","en","Le stepper de la vidéo peut être un peu différent de celui de ton club."],"escalier":["gNeyNOs-p4Q","StairMaster Stepmills Getting Started","Core Health & Fitness","en"],"velo-biking":["L0-6OFLL2BE","How To Set Up Your Spin Bike - Quick, Easy and Safe!","Jessica Valant","en"]};
+     EX_VQ : id → recherche YouTube précise, pour « Autres vidéos » ou quand aucune vidéo n’a été retenue. */
+  const EX_VIDEO = {"dc-barre":["TbVpM5yd6QM","Exercice du développé couché barre - exercice de musculation des pectoraux - Barbell bench press","AM Nutrition","fr"],"di-barre":["vEbrycBJl0w","Exercice du développé incliné à la barre","AM Nutrition","fr"],"dd-barre":["zaYsiHJNeTI","Comment utiliser le banc développé décliné chez Basic-Fit ? (Tuto & Conseils)","Bodykev Coaching","fr","Présente le banc décliné de Basic-Fit, pas seulement l’exercice à la barre."],"dc-halt":["-TwKa9GzwNM","[TUTO] Développé Couché avec Haltères (Dumbbell Press)","BeComplete","fr"],"di-halt":["AQFvfZO3Rb4","PECTORAUX : Développé incliné avec haltères","TeamSuperPhysique","fr"],"dd-halt":["qr7laNZB318","PECTORAUX : Développé décliné avec haltères","TeamSuperPhysique","fr"],"dc-halt-neutre":["TVsravKHIlw","Développé couché haltère prise neutre (dumbbell neutral bench press)","Papa Muscle","fr"],"squeeze-press":["IHkwivEhpfY","Explosez vos pectoraux avec le Squeeze Press !!!","Enzo TV","fr"],"ec-halt":["1cTdiW6etsc","[TUTO] Écarté Couché avec Haltères (Dumbbell Fly)","BeComplete","fr"],"ei-halt":["Tp1Hi98xGpo","Écarté incliné haltère (incline dumbbell chest fly)","Papa Muscle","fr"],"ed-halt":["mnTqUlfXaV4","Écart­é décliné halt­ère (decline dumbbell chest fly)","Papa Muscle","fr"],"pullover-halt":["GyupjGYnW3Y","PECTORAUX : Pull over avec haltère","TeamSuperPhysique","fr"],"dc-smith":["91N90YfOxJg","DÉVELOPPÉ COUCHÉ À LA SMITH MACHINE - TECHNIQUE","Jon Healthyman","fr"],"di-smith":["QA8CrleEcLI","DÉVELOPPÉ INCLINÉ À LA SMITH MACHINE","POLATO Anthony","fr"],"dd-smith":["AZc_9KMj3P8","Développé décliné à la barre (Smith Machine)","frmusqle","fr"],"dc-machine":["B-cCh7H0CPY","Comment utiliser la Chest Press Verticale pour muscler ses pectoraux | Basic-Fit","Bodykev Coaching","fr","La chest press guidée de Basic-Fit, appelée ici « chest press verticale »."],"dc-machine-conv":["r8CG2MjEwmc","Comment bien utiliser la Chest Press convergente | Réglages + Exécution | Machine Basic-Fit","Bodykev Coaching","fr"],"dc-machine-uni":["byWE-S2tJqs","Unilateral, Machine Defined Chest Press - Cybex Eagle Chest Press","Cybex","en"],"di-machine":["pg8GT_d22dk","How to use  CHEST PRESS / CHEST INCLINE machine by Technogym","pawelmakarewicz.pl","","Montre aussi la chest press à plat, pas seulement la version inclinée."],"pec-deck":["sxPEEESsY5Y","Le Pec Deck ou Butterfly, exercice d'isolation des pectoraux","ProTrainer","fr"],"dc-disques":["kPi1grOKflU","Iso-Lateral Horizontal Bench Press | Hammer Strength Plate Loaded","Life Fitness / Hammer Strength","en"],"di-disques":["xwK8Wd5F0Hk","Hammer Strength Plate-Loaded Incline Press Instructions","Life Fitness / Hammer Strength","en"],"dv-disques":["gswqJnwTaa0","Iso-Lateral Bench Press | Hammer Strength Plate Loaded","Life Fitness / Hammer Strength","en","Version Hammer Strength : la machine de ton club peut avoir une autre forme."],"dd-disques":["1YrEp_Dh7fE","Hammer Strength Plate-Loaded Decline Press Instructions","Life Fitness / Hammer Strength","en"],"ec-poulie-haut":["WlIR9zNLV1s","PECTORAUX : Eccarté à la poulie vis à vis haute","TeamSuperPhysique","fr"],"ec-poulie-milieu":["WZqGJxzWfGk","Explication de l'écarté poulie pectoraux milieux des pecs - MUSCULATION","BmD | Train With Me","fr"],"ec-poulie-bas":["LtiPOcSQQbI","PECTORAUX : Ecarté à la poulie vis à vis basse","TeamSuperPhysique","fr"],"ec-poulie-uni":["Jdg4CbKU1g8","Écartés à la Poulie en Unilatéral #chestfly #chestworkout #pushday #pectoraux #coaching #sport #gym","Jérôme Guitton - Personal Trainer","fr"],"ec-poulie-banc":["-8aurlfuYk4","Cable Crossover Flat Bench Fly","FITASTIC","en"],"dc-poulie":["u74FbPhR8iE","How To Do Standing Cable Chest Press | Exercise Demo","OriGym","en"],"di-poulie":["DbXAj6WBs7w","Développé incliné poulie basse vis-à-vis, partie supérieure des pectoraux","Corse Coaching","fr"],"pompes":["50Yr6Mm78u0","TUTO - Comment bien faire des pompes ? 💪 | Decathlon","Decathlon FR","fr"],"pompes-inclinees":["Oy1AzohemMc","Exercise Tutorial: Incline Push Up","Travis Tarrant","en"],"pompes-declinees":["oDZIAsF0q4k","Pompes pieds surélevés : Execution, technique, conseils et progression","15-Minute Challenge","fr"],"dips-pecs":["6Enl0yC7MXY","Dips buste penché (chest dips)","Papa Muscle","fr"],"dips-assist":["fb9Dpv-3iP4","Life Fitness Pro2 Dip Chin Dip Exercise Instructions","Life Fitness / Hammer Strength","en"],"tractions":["WmbS6ZMyXBQ","Traction pronation","ProTrainer","fr"],"chin-up":["QhEo1afIsDI","Démo du mouvement : Traction Supination","Your House Fitness","fr"],"tractions-neutre":["pruyYPObRpU","Comment faire les Tractions (pull-up) prise neutre","Coach Me App","fr"],"tractions-assist":["FC-Qj4L7pOQ","TUTO MACHINE : LA TRACTION ASSISTÉE","L'Appart Fitness Officiel","fr"],"row-inverse":["I8Q5il_vpC4","Smith Machine Inverted Row","Action Fitness & Nutrition","en"],"tv-large":["0v-z04-IYmw","Tirage vertical à la poulie haute Prise large","Yoann DESGRAND","fr"],"tv-serre":["1btAlXIoJYs","Le tirage vertical prise serrée - Exercice de Musculation Dos","EspaceMusculation","fr"],"tv-supi":["vV93wogZBo0","Tirage vertical supination poulie","Maxime Clergeau - Coach transformations physiques","fr"],"tv-neutre":["ECluUD9qD8M","Tirage vertical poulie (prise large neutre)","Maxime Clergeau - Coach transformations physiques","fr"],"tv-uni":["inolP2mOt84","Tirage vertical unilatéral poulie","Maxime Clergeau - Coach transformations physiques","fr"],"pullover-poulie":["a82yaj_i9XI","TUTORIEL - Pull over à la poulie haute","RBC WORKOUT","fr"],"th-poulie":["92kb9OuHKgc","Comment faire : TIRAGE HORIZONTAL","MaxiPerformance","fr"],"th-large":["sJOufHpvIpQ","TIRAGE HORIZONTAL POULIE BASSE : Prise Large vs Serrée | Technique Parfaite Musculation Dos","Gabriel Augusto","fr","Compare la prise large et la prise serrée."],"th-uni":["M-USJ_VeNYE","Exercice DOS : Tirage horizontal poulie basse un bras - [ Musculation GRAND DORSAL ]","Antoine MH","fr"],"row-poulie-debout":["raO8Q08Wems","How to do Standing Single Arm Cable Rows","Chris and Eric Martinez","en"],"tv-machine":["db_BT6FyTtE","Technogym Vertical Traction - Set Up & Execution","Charlie Cuthbert","en"],"tv-machine-div":["0SyaetRMKwg","1 JOUR 1 MACHINE BASIC FIT - TIRAGE VERTICAL DIVERGENT #musculation #coachsportif #basicfit","And Muscles 4all","fr"],"row-machine":["BLqaENuYR-Q","Rowing horizontal à la machine Technogym 💪 | Dos épais et puissant","BmD | Train With Me","fr"],"row-machine-div":["_FRejxwNHA8","Rowing divergent machine","Coach online - Simon","fr"],"row-machine-uni":["nhcmIbjUdlE","How To: Chest Supported Single Arm Machine Seated Row","Live Lean TV Daily Exercises","en","Machine à appui pectoral : celle de ton club peut être un peu différente."],"upper-back":["yj1f-CyTIWA","Technogym Upper Back Row - Set Up & Execution","Charlie Cuthbert","en"],"row-disques":["BeTZjAneZpk","Hammer Strength Plate-Loaded Row Instructions","Life Fitness / Hammer Strength","en"],"tv-disques":["TRC5LCYi6W0","Hammer Strength Plate-Loaded Front Lat Pulldown Instructions","Life Fitness / Hammer Strength","en"],"row-barre":["tE6YfTP5DzY","Exercice Musculation DOS : Rowing barre buste penché - [ Tirage HORIZONTAL : épaisseur DOS ]","Antoine MH","fr"],"row-barre-supi":["qfiV3eGPyPQ","Musculation du dos : Le rowing buste penché \"YATES\" en supination","Enzo TV","fr"],"row-pendlay":["0PSfteHhUtg","How to Do a Pendlay Row","Phil Daru","en"],"row-t":["hYo72r8Ivso","How To Do T Bar Rows (Landmine Rows)","PureGym","en"],"row-halt":["X97Jxni1ofw","Démonstration du mouvement: Rowing Haltere un Bras (Tirage Bucheron)","Your House Fitness","fr"],"row-halt-2":["JWWNLDAVQNo","Exercice DOS : Rowing buste penché haltères - [ Musculation - Tirage HORIZONTAL ]","Antoine MH","fr"],"row-halt-incl":["HVjdVv6FYD4","ROWING HALTÈRES AU BANC INCLINÉ - TECHNIQUE","Jon Healthyman","fr"],"row-smith":["tGGq2VZIW_M","How To: Smith Machine Bent Over Row | Form Tutorial","Kade Howell","en"],"row-kb":["gA2v71kNAnE","Rowing à un bras avec Kettlebell","SMARTFORM - fitness and more","fr"],"sdt":["qmw2epqYsTM","Soulevé de terre - avec barre","GooFiit","fr"],"shrug-halt":["nwSmkoHM-Jw","TRAPEZES : Shrug avec haltères","TeamSuperPhysique","fr"],"shrug-barre":["w9Li8JTpqFE","Musculation des trapèzes - Shrug barre","Toute la musculation !","fr"],"shrug-smith":["8ppOGwvaFko","Exercise Tutorial: Smith Machine Shrugs","Travis Tarrant","en"],"lombaires-banc":["7bDZtdQUj5A","ISCHIOS-JAMBIERS : Extension au banc à lombaires à 45 degrés","TeamSuperPhysique","fr"],"lombaires-machine":["RApRXjQR8KA","Extensión lumbar en máquina | Machine Back Extension","Trainer Alex León","es","Machine d’extension lombaire assise : celle de ton club peut être un peu différente."],"reverse-hyper":["cZSxxPkCDy0","How to Use the Reverse Hyper Correctly (Most People Do It Wrong)","Mark Bell - Super Training Gym","en"],"dm-barre":["X-j6-gI9Kc8","DÉVELOPPÉ MILITAIRE À LA BARRE || #ÉPAULES || COMMENT FAIRE ?! 💪🏽","Tristan","fr"],"dm-barre-assis":["gQWoWFYnw1I","Développé Militaire Assis à la Barre : Épaules de Titan ! 💪","Drey.coaching","fr"],"dm-halt":["Ap7texwO3Nk","[TUTO] Epaules : Développé Haltères Assis","BeComplete","fr"],"dm-halt-debout":["yyBf3iaoVRU","Exercice du développé militaire debout avec haltères","AM Nutrition","fr"],"arnold":["eU7Dc2FnaDY","Musculation des épaules - Développé Arnold","Toute la musculation !","fr"],"dm-smith":["meFt5-ymB28","Explication du DÉVELOPPE MILITAIRE à la SMITH MACHINE - MUSCULATION","BmD | Train With Me","fr"],"dm-machine":["1iX7i-1pIf0","Comment utiliser la machine Shoulder Press – Tuto épaules | Le Club by Moov'in Lyon","Le Club By Moov'in Lyon","fr"],"dm-machine-conv":["qrCPnVYJEo0","Comment bien utiliser la Shoulder Press Convergente | Spécial Épaules | Machine Basic-Fit","Bodykev Coaching","fr"],"dm-disques":["X0SteQbRbCo","Hammer Strength Plate-Loaded Shoulder Press Instructions","Life Fitness / Hammer Strength","en"],"dm-kb":["WBpWRVlYwSI","Kettlebell: développé 1 bras","Dominic Paris","fr"],"landmine-press":["HGjFrEYyDAE","Travailler les épaules avec le landmine press","Seb Hémond","fr"],"el-halt":["q_DYeb_daeY","Élévations Latérales : Technique et astuces (musculation des épaules avec haltères)","Olymp'Fit","fr"],"el-halt-assis":["YnbYeT4gNeU","Seated DB Lateral Raise","Joshua Gaskins","en"],"el-poulie":["71imsm4xsG4","EPAULES : Élévation latérale à la poulie","TeamSuperPhysique","fr"],"el-machine":["tvZUZ_Hyji4","Élévations latérales à la machine","Fit'distance","fr"],"ef-halt":["dCvPFIxG5Oc","EPAULES : Elévation frontale avec haltères","TeamSuperPhysique","fr"],"ef-poulie":["fFIOEjlzsvQ","EPAULES : Élévation frontale à la poulie","TeamSuperPhysique","fr"],"ef-disque":["-TlT6aXNok4","Plate Front Raise | Shoulder | Strength and Conditioning Exercises","Rehab My Patient","en"],"y-raise":["juecmo5kSuk","Élévation Y sur banc incliné (incline prone Y raise)","Papa Muscle","fr"],"oiseau-halt":["dDDVBy_ybzg","Oiseau buste penché","Magic Form Bordeaux","fr"],"oiseau-banc":["lp5ZXmxJ8OI","EPAULES : Oiseau sur banc incliné","TeamSuperPhysique","fr"],"oiseau-machine":["y43md1-v2jI","Tuto : Pec Deck Inversé","L'Orange bleue Arras","fr"],"oiseau-poulie":["bkejPHrPkmA","Cross Cable Rear Delt Fly - Under 60s How-to - Schaum Fitness","Chris Schaum","en"],"face-pull":["4FAiPDzKRUw","[TUTO] Face Pulls","BeComplete","fr"],"tm-barre":["__TkS4JlFFk","Rowing menton barre - tirage menton barre (barbell upright row)","Papa Muscle","fr"],"tm-poulie":["Z1CI4tjM_28","Tirage menton à la poulie basse (trapèzes)","Corse Coaching","fr"],"curl-barre":["VSbqYTWkRGo","CURL BICEPS À LA BARRE DROITE EN PRISE SUPINATION - TECHNIQUE","Jon Healthyman","fr"],"curl-ez":["I7OxID4jfa4","CURL À LA BARRE EZ EN PRISE SUPINATION - TECHNIQUE","Jon Healthyman","fr"],"curl-pupitre":["X6xyVa0z_lk","Curl au Larry Scott barre EZ en Supination - Exercice de Musculation Biceps","EspaceMusculation","fr"],"curl-halt":["3gj4MjAjfSo","Curl Alterné en Supination - Exercice de Musculation Biceps","EspaceMusculation","fr"],"curl-halt-simult":["6sGcS3frZV8","Biceps assis simultanés mains en supination avec haltères","Corse Coaching","fr","Version assise : debout, le mouvement est le même."],"curl-marteau":["9fSck6P-PXk","Curl marteau haltères","frmusqle","fr"],"curl-incl":["A3QJ3dwG21E","Curl incliné haltères","frmusqle","fr"],"curl-conc":["JKRM2z_c2V0","Curl concentré haltère","Maxime Clergeau - Coach transformations physiques","fr"],"curl-pupitre-halt":["5gpVncUfPFc","Curl pupitre haltère unilatéral","Maxime Clergeau - Coach transformations physiques","fr"],"curl-zottman":["tlcpynrDSBc","Explosez vos biceps et vos avant-bras avec le curl Zottman","Enzo TV","fr"],"curl-machine":["9kayFWtkjCk","BICEPS ARM CURL : Bien utiliser la machine Basic-Fit 💪","BmD | Train With Me","fr"],"curl-poulie":["e0InO0lVHlM","BICEPS : Curl à la poulie basse","TeamSuperPhysique","fr"],"curl-poulie-uni":["zXbi46DljrM","Musculation des biceps - Curl un bras poulie basse","Toute la musculation !","fr"],"curl-corde":["Pc5J9-Y518w","Biceps : curl prise marteau à la poulie basse avec corde","Heracles Gym XXL Musculation & Coaching","fr"],"curl-poulie-haute":["Okl64XegSu0","How To: High Cable Biceps Curl","Physique Development","en"],"curl-bayesian":["-1eZgI_tnaQ","Le Bayesian curl 💪🏼 #fitness #shorts","Bourr_","fr"],"ext-poulie-barre":["NDQFv0p31TA","Extension poulie haute barre en pronation","EspaceMusculation","fr"],"ext-poulie-corde":["5Yv-2CCMqxM","TRICEPS : Extension des triceps à la poulie avec la corde","TeamSuperPhysique","fr"],"ext-poulie-uni":["LW24Vl35TV0","Extensions triceps en unilatéral à la poulie","Maxime Clergeau - Coach transformations physiques","fr"],"ext-nuque-poulie":["3Hxs9xZQm7A","Extension des triceps au-dessus de la tête à la poulie","frmusqle","fr"],"kickback-tri-poulie":["dj1GnzN4eQ0","TRICEPS : Kickback à la poulie","TeamSuperPhysique","fr"],"barre-front":["z4LdaWjMKQk","Extensions barre au front à la barre EZ","AM Nutrition","fr"],"ext-nuque-ez":["_pnkxxTBGP0","Extensions des triceps debout à la barre EZ au-dessus de la tête","Fit'distance","fr","Version debout : assis, le mouvement est le même."],"dc-serre":["K1b6UUUlVrA","Développé couché prise serrée à la barre","frmusqle","fr"],"dc-serre-smith":["5RkKedFwuSY","Smith Machine Bench Press - Close Grip","Karlo Pavic","en"],"ext-nuque-halt":["AuPK_zAXjtw","Extensions triceps avec haltère debout  - Deux bras","GooFiit","fr"],"barre-front-halt":["gO3zElwL8oE","Barre au front avec haltères : Execution, technique, conseils et progression","15-Minute Challenge","fr"],"kickback":["16MfFMRp_xE","Kickback haltère  - En appui sur banc","GooFiit","fr"],"triceps-machine":["ZLZ2ar3FBs4","How to use ARM EXTENSION machine by Technogym","pawelmakarewicz.pl","en"],"triceps-press":["DTD-iQN7lKg","Comment utiliser la machine DIPS chez Basic-Fit | Triceps en béton 💪","Bodykev Coaching","fr"],"dips-triceps":["VKF5GmbAvVk","Comment faire ses dips pour les pecs ou les triceps ?","Evan Coach","fr","Compare les dips pour les pectoraux et pour les triceps : pour les triceps, buste droit."],"dips-banc":["Jx00BIi-E28","Dips entre deux bancs - Exercice de Musculation Triceps","EspaceMusculation","fr"],"pompes-serrees":["vJbHBCbYX4U","Réussir la Pompe Diamant 💎 (Tutoriel Rapide)","Simbody","fr"],"curl-poignets":["LB4jfelkYqI","Exercice AVANT-BRAS (flexion) : Curl supination barre - [ Musculation fléchisseurs AVANT-BRAS ]","Antoine MH","fr"],"curl-poignets-inverse":["G9APc7ip_Tc","Exercice AVANT-BRAS (extension) : Curl pronation - [ Musculation extenseurs AVANT-BRAS ]","Antoine MH","fr","Le titre ne précise pas le matériel : ici, avec une barre."],"curl-inverse":["ueaU_FS-IRs","Curl pronation barre EZ","Mickazo Personal Trainer","fr"],"farmer":["C-WP-tsb01c","Farmer Walk avec Haltères : Execution, technique, conseils et progression","15-Minute Challenge","fr"],"suspension":["hDi6k3gPFlM","Renforcer sa poigne avec les suspensions à la barre (Dead hang)","Morgan Nutrition","fr"],"squat":["ZyDTYe9iL6I","TUTO - Le Back Squat pour muscler le bas du corps ! 💪🏋️ I Decathlon","Decathlon FR","fr"],"front-squat":["LFcb60i3U6w","SQUAT : Exercice du Squat AVANT (front squat) - [ Musculation QUADRICEPS ]","Antoine MH","fr"],"fentes-barre":["A67wpBRKI2Y","Fentes avec barre - Guide Musculation","GuideMusculation","fr"],"squat-smith":["P8pLAmgDoLY","Explication du squat Smith machine - MUSCULATION","BmD | Train With Me","fr"],"fentes-smith":["RoRrNEO3byI","FESSIERS : Fente à la Smith machine","TeamSuperPhysique","fr"],"goblet":["QNPVhVsJS2A","Goblet Squat: Execution, technique, conseils et progression","15-Minute Challenge","fr"],"squat-halt":["ZXwvmRSRRxY","Exercise Tutorial: Dumbbell Squat","Travis Tarrant","en"],"fentes-avant":["_cmLQGP8WF4","Fentes Avant Alternées avec Haltères | Démonstration du Mouvement","Adrien Raffault","fr"],"fentes-marchees":["XrpketRi624","Fentes marchées avec haltères","CaliforniaGym","fr"],"fentes-arriere":["STuw-siR6U0","Fentes Arrière Alternées avec Haltères | Démonstration du Mouvement","Adrien Raffault","fr"],"bulgares":["r_-HNEXkW00","Fentes Bulgares avec Haltères : Execution, technique, conseils et progression","15-Minute Challenge","fr"],"step-up":["yoquxWRdJO0","Step-up avec haltères","Fit'distance","fr"],"presse":["8ZrJ8Q9SNbY","Exercise Tutorial: Technogym Horizontal Leg Press","Travis Tarrant","en"],"presse-uni":["S6i3fG4Trs0","Unilateral Leg Press - Cybex Eagle Leg Press","Cybex","en"],"presse-45":["-4WH5PWaJtA","PRESSE INCLINÉE À 45 DEGRÉS - TECHNIQUE","Jon Healthyman","fr"],"hack":["63tboDKQksc","Machine Hack Squat","Muscle & Strength","en"],"hack-inverse":["up_Ah2Cs9l4","HOW TO REVERSE HACK SQUAT","BEN MIGHTY","en"],"squat-disques":["fazW1BV9RI8","NEW Planet Fitness Ground Base Squat Lunge Machine Tutorial (HOW TO USE!)","KevTheTrainer","en"],"leg-ext":["xNPZM0vkTS8","LEG EXTENSION : Technique Parfaite Machine Quadriceps | Guide Complet Musculation Cuisses","Gabriel Augusto","fr"],"leg-ext-uni":["R9r7dlwIvy4","Leg extension, 1 jambe à la fois","Femme Fitness","fr"],"squat-pdc":["0PboqagHAjs","Prisoner Squat","Muscle & Strength","en","Squat au poids du corps, mains derrière la tête."],"chaise":["-NuqBMIgrcc","La chaise murale : endurance et cuisses d'acier sans matériel 💪 (Tuto rapide)","Gabriel Augusto","fr"],"sdt-roumain":["ttyy_orHqaI","Soulevé de terre roumain barre (barbell romanian deadlift)","Papa Muscle","fr"],"sdt-jt":["YYFktNF45RM","Le soulevé de terre jambes tendues","ProTrainer","fr","Le titre ne précise pas le matériel : ici, avec une barre."],"good-morning":["KpW-oRu7Tas","Good Morning avec Barre | Démonstration du Mouvement","Adrien Raffault","fr"],"sdt-roumain-halt":["Iy3J5_qzUdo","Soulevé de terre roumain avec haltères","Maxime Clergeau - Coach transformations physiques","fr"],"sdt-roumain-uni":["S8wkyvxNvac","Soulevé de terre jambe tendue unilatérale aux haltères","Cyril-Coach","fr","Appelé « jambe tendue » dans la vidéo : au roumain, garde le genou d’appui légèrement fléchi."],"sdt-roumain-smith":["-YVRXgoNESA","Soulevé de terre jambes tendues à la Smith Machine","Fit'distance","fr","Appelé « jambes tendues » dans la vidéo : au roumain, garde les genoux légèrement fléchis."],"sdt-kb":["OoMTnmgAkS0","Soulevé de terre kettlebell (kettlebell deadlift)","Papa Muscle","fr"],"leg-curl-allonge":["RGVl-EhqFN8","Comment utiliser le LEG CURL ALLONGÉ Matrix de chez Basic-Fit ?","Bodykev Coaching","fr"],"leg-curl-assis":["ku8CpHoHe6E","Comment utiliser le LEG CURL ASSIS Matrix de chez Basic-Fit ?","Bodykev Coaching","fr"],"leg-curl-debout":["CZVTv9T_Ml8","STANDING LEG CURL MACHINE / TUTORIAL FOR BEGINNERS","AMOFitnessTraining","en"],"leg-curl-poulie":["BjwwEv51HEo","ISCHIOS-JAMBIERS : Leg curl debout à une jambe à la poulie","TeamSuperPhysique","fr"],"nordic":["kNfR1jycNmA","Renforcement Ischio-Jambier Nordic Hamstring","KOSS Sport","fr"],"hip-thrust":["lAnqN0J_p5A","Barbell Hip Thrust","Muscle & Strength","en"],"hip-thrust-halt":["-GEF_TLBoC0","Hip thrust avec haltère","Maxime Clergeau - Coach transformations physiques","fr"],"hip-thrust-smith":["qWhloAdOIBc","Exercise How To:  Smith Machine Hip Thrust","RoughToBeBuffTV","en"],"hip-thrust-machine":["bNH7rFqyV9I","La machine HIP THRUST de Basic-Fit : Démonstration rapide","BmD | Train With Me","fr"],"pont-fessier":["mm4wbmtDrUc","Bodyweight Glute Bridge","Muscle & Strength","en"],"pont-fessier-uni":["XFPV1B7vH-I","Single Leg Glute Bridge","Muscle & Strength","en"],"kickback-poulie":["VSgMyiOu0uE","How to Do Cable Glute Kickbacks","Your House Fitness",""],"kickback-machine":["AbQ7DbR9i3c","Technogym selection Glute Kickback.","Fitness Equipment Empire Brand",""],"multi-hip":["50NfKALgi1c","How to Use a MULTI-HIP Machine","Simple Speed Coach","en"],"abducteurs":["7pbZA7ncuq8","Machine Abductor","Muscle & Strength","en"],"adducteurs":["Oj7IN952fSg","Machine Adductor","Muscle & Strength","en"],"abduction-poulie":["a7lTeWciymc","Comment faire une abduction de hanche à la poulie","Zoé Coaching","fr"],"adduction-poulie":["SIQrpq6YnT8","How To Do A STANDING CABLE HIP ADDUCTION | Exercise Demonstration Video and Guide","Live Lean TV Daily Exercises","en"],"fentes-laterales":["FIPgEJOw2s4","Fentes latérales avec haltères","Fit'distance","fr"],"pull-through":["VRDxdi2d-2c","How To Do A LOW CABLE PULL THROUGH | Exercise Demonstration Video and Guide","Live Lean TV Daily Exercises","en"],"sdt-sumo":["o4gIucBC4ls","Sumo Deadlift","Muscle & Strength","en"],"kb-swing":["wMBWFIn4ddg","Kettlebell Swing","Muscle & Strength","en"],"mollets-debout":["RBslMmWqzzE","Standing Machine Calf Raise","Muscle & Strength","en"],"mollets-assis":["Yh5TXz99xwY","Seated Calf Raise (Toes Neutral)","Muscle & Strength","en"],"mollets-rotary":["6B1rH5rFXsA","How to use ROTARY CALF machine by Technogym","pawelmakarewicz.pl",""],"mollets-presse":["RcKQbiL-ZOc","Leg Press Calf Raise","Muscle & Strength","en"],"mollets-smith":["k1jFhdfI4rU","#12/1000 Élévation mollets debout à la smith machine / Smith machine calf raise","Fitness Mag","fr"],"mollets-halt":["vucf2Xk5bp8","Standing One-Legged Calf Raise (stairs and dumbbells) Male","TruestarHealth","en"],"mollets-pdc":["rbvyXV1uHhY","Exercise Tutorial: Calf Raises On Exercise Step","Travis Tarrant","en"],"crunch":["LEb7Juw9tMo","Comment bien faire les crunchs pour les abdos","XL-S Medical Academy","fr"],"crunch-decline":["HOsCIuvLczU","Crunch décliné","frmusqle","fr"],"crunch-inverse":["0bq05pA3bkA","Musculation des abdominaux - Crunch-inverse","Toute la musculation !","fr"],"v-ups":["D51oisjL-aE","Comment faire les V-ups","Coach Me App","fr"],"dead-bug":["gZtAwS79jJw","Dead Bug : 1 min pour renforcer tes abdos profonds et prendre soin de ton dos 🐛💪","AT.Prévention: TMS, RPS, Addictions","fr"],"crunch-poulie":["VFINAHIeDUQ","Crunch à la poulie haute : la bonne technique pour des abdos puissants","Bodykev Coaching","fr"],"crunch-machine":["rpOIwgAbSEo","Comment utiliser l’appareil à abdos (crunch machine)","Coach Smaïl","fr"],"total-abdominal":["GYC04FFti4I","Technogym Total Abdominal - Set Up & Execution","Charlie Cuthbert","en"],"rotary-torso":["pM5kij2bvTw","Techno Gym Rotary Torso Demonstration","Illinois Campus Rec","en"],"releve-suspendu":["aAwWq4wHEoQ","Relevé de jambes suspendu","Antoine MH","fr"],"releve-chaise":["6BwqrX8Z4gU","Relevé de genoux sur chaise romaine","GooFiit","fr"],"releve-sol":["r24ntO4IvKc","Supine Leg Raise","Muscle & Strength","en"],"roue":["kFv2rLtgc8w","La Technique PARFAITE à la ROUE ABDOMINALE ! (#shorts)","Bodyssime Fitness","fr"],"russian-twist":["8ohhG1Y4tzU","How To Do A SEATED PLATE RUSSIAN TWIST | Exercise Demonstration Video and Guide","Live Lean TV Daily Exercises","en"],"woodchop":["0VWnOjUO7ks","Standing Cable Chop","Muscle & Strength","en"],"woodchop-bas":["Xkvs3UeYnoU","Split Stance Cable Lift","Muscle & Strength","en","En fente, jusqu’au-dessus de la tête : le mouvement du bas vers le haut est le même."],"pallof":["SFJprbDnaS0","Pallof Press (Standing)","Muscle & Strength","en"],"planche":["hoPwUu8vvvw","Gainage Planche : Démonstration, explication et conseils","15-Minute Challenge","fr"],"gainage-lateral":["vUBiKWBnjq0","Planche latérale en appui sur le coude","P4P Français","fr"],"hollow":["lmkw48_CGm0","Hollow Body Hold","Muscle & Strength","en"],"mountain":["PJ7JiAjQBw4","[Nul en Fitness ?] Comment bien faire vos MOUNTAIN CLIMBERS","Juliana & Julian","fr"],"burpees":["rHnwnymQ4Eo","COMMENT FAIRE | DES BURPEES | Éconofitness","Gyms Éconofitness","fr"],"squat-saute":["K_a0DHvVfaE","Squat jump (Squat sauté)","Femme Fitness","fr"],"fentes-sautees":["XJAGPxkEMR4","Fentes sautées alternées: Execution, technique, conseils et progression","15-Minute Challenge","fr"],"jumping-jacks":["lV64BwO_zsg","COMMENT FAIRE | JUMPING JACK | Éconofitness","Gyms Éconofitness","fr"],"thruster-halt":["MwE6XA8X_w0","Thrusters haltères","Maxime Clergeau - Coach transformations physiques","fr"],"devil-press":["-C1iixGN9M8","Devil's Press","OPEX Fitness","en"],"kb-clean":["KFyNUEeJe-E","Le Clean ( Epaulé Kettlebell)","Powerkettlebell Dan","fr"],"kb-snatch":["dXSeUNBXVcM","Le Snatch  Kettlebell (L'arracheé Kettlebell)","Powerkettlebell Dan","fr"],"kb-thruster":["KYmAsdjO0XI","Thruster Tutorial with Kettlebell","Amanda Bond Fitness","en"],"kb-getup":["ZutpEZ2B7Uc","How to do a Kettlebell Turkish Get Up - Nuffield Health","Nuffield Health","en"],"kb-goblet-lunge":["vXKe0ipi1_4","How to KETTLEBELL Goblet LUNGE (In 30 Seconds)","Roxy Vivien Coaching","en"],"box-jump":["MX-NHcqEqQk","Bilateral Box Jump","Muscle & Strength","en"],"wall-ball":["TS-YN2GkPZw","Medicine Ball Squat to Push Press (Wall Ball)","Muscle & Strength","en"],"slam-ball":["N7t9BX-DExI","Standing Overhead Medicine Ball Slam","Muscle & Strength","en"],"battle-rope":["MSA9q2o2WQQ","Battling Ropes: Ondulation simultanée et alternée","Howtobefit","fr"],"corde-sauter":["XSqj0O6ARMs","Jump Rope (Bilateral)","Muscle & Strength","en"],"tapis":["98ifjOTrZKI","Fitness - Musculation : Comment bien utiliser un tapis roulant","Pratiks Sports","fr"],"tapis-incline":["NAsObfFJXvE","How To: Incline Treadmill Walk (12-3-30 Workout)","Live Lean TV Daily Exercises","en"],"velo":["IBLOutvjiNs","Exercices : Comment bien utiliser un vélo d'appartement","Pratiks Sports","fr"],"velo-allonge":["ElYkuaIYfUY","Comment régler correctement ton vélo semi-allongé (Basic-Fit / Matrix)","Bodykev Coaching","fr"],"elliptique":["lVB0JbGb7qc","Fitness Basics : comment utiliser l’elliptique ?","Doctissimo","fr"],"rameur":["xUPQme4Mbiw","COMMENT RAMER: Technique sur RAMEUR - CONCEPT 2","william laine","fr"],"stepper":["y0zGTCPk3mA","Exercise Machines : How to Use a Stair Stepper Properly","eHowFitness","en","Le stepper de la vidéo peut être un peu différent de celui de ton club."],"escalier":["gNeyNOs-p4Q","StairMaster Stepmills Getting Started","Core Health & Fitness","en"],"velo-biking":["L0-6OFLL2BE","How To Set Up Your Spin Bike - Quick, Easy and Safe!","Jessica Valant","en"]};
   const EX_VQ = {"dc-barre":"développé couché barre technique tutoriel","di-barre":"développé incliné barre technique tutoriel","dd-barre":"développé décliné barre libre technique tutoriel","dc-halt":"développé couché haltères technique tutoriel","di-halt":"développé incliné haltères technique tutoriel","dd-halt":"développé décliné haltères technique tutoriel","dc-halt-neutre":"développé couché haltères prise neutre tutoriel","squeeze-press":"squeeze press haltères collés tutoriel","ec-halt":"écarté couché haltères technique tutoriel","ei-halt":"écarté incliné haltères technique tutoriel","ed-halt":"écarté décliné haltères technique tutoriel","pullover-halt":"pull-over haltère technique tutoriel","dc-smith":"développé couché smith machine technique tutoriel","di-smith":"développé incliné smith machine technique tutoriel","dd-smith":"développé décliné smith machine tutoriel","dc-machine":"chest press machine guidée Basic-Fit tutoriel","dc-machine-conv":"chest press convergente machine Basic-Fit tutoriel","dc-machine-uni":"chest press unilatéral machine un bras tutoriel","di-machine":"chest incline machine Technogym tutoriel","pec-deck":"pec deck butterfly machine écarté pectoraux tuto","dc-disques":"développé couché allongé machine à disques horizontal bench press","di-disques":"développé incliné machine à disques Hammer Strength","dv-disques":"développé vertical machine à disques Hammer Strength","dd-disques":"développé décliné machine à disques Hammer Strength","ec-poulie-haut":"écarté poulie vis-à-vis haute pectoraux tuto","ec-poulie-milieu":"écarté poulie vis-à-vis hauteur de poitrine milieu des pecs tuto","ec-poulie-bas":"écarté poulie basse vis-à-vis du bas vers le haut haut des pecs tuto","ec-poulie-uni":"écarté unilatéral poulie un bras pectoraux tuto","ec-poulie-banc":"écarté poulie allongé sur banc tutoriel","dc-poulie":"développé debout à la poulie pectoraux tutoriel","di-poulie":"développé incliné poulies basses vis-à-vis banc incliné pectoraux","pompes":"comment bien faire des pompes tuto technique","pompes-inclinees":"pompes mains surélevées sur banc pompes inclinées tuto","pompes-declinees":"pompes pieds surélevés decline push-up tuto","dips-pecs":"dips buste penché pectoraux chest dips tuto","dips-assist":"dips assistés machine tutoriel","tractions":"tractions pronation barre fixe technique","chin-up":"tractions supination chin up technique","tractions-neutre":"tractions prise neutre technique","tractions-assist":"traction assistée machine contrepoids tuto","row-inverse":"rowing inversé smith machine tutoriel","tv-large":"tirage vertical prise large poulie haute tutoriel","tv-serre":"tirage vertical prise serrée triangle poulie tutoriel","tv-supi":"tirage vertical supination poulie tutoriel","tv-neutre":"tirage vertical prise neutre large poulie tutoriel","tv-uni":"tirage vertical unilatéral un bras poulie tutoriel","pullover-poulie":"pull-over poulie haute bras tendus tutoriel","th-poulie":"tirage horizontal poulie basse rowing assis tutoriel","th-large":"tirage horizontal prise large poulie basse tutoriel","th-uni":"tirage horizontal unilatéral un bras poulie basse tutoriel","row-poulie-debout":"rowing un bras poulie debout tutoriel","tv-machine":"tirage vertical machine Technogym vertical traction tutoriel","tv-machine-div":"tirage vertical divergent machine Basic-Fit tutoriel","row-machine":"rowing assis machine Technogym low row tutoriel","row-machine-div":"rowing divergent machine Basic-Fit tutoriel","row-machine-uni":"rowing unilatéral machine assis un bras tutoriel","upper-back":"technogym upper back machine row","row-disques":"hammer strength plate loaded seated row how to","tv-disques":"hammer strength plate loaded lat pulldown how to","row-barre":"rowing barre buste penché tutoriel","row-barre-supi":"rowing barre prise supination Yates tutoriel","row-pendlay":"Pendlay row tutoriel","row-t":"rowing T-bar landmine tutoriel","row-halt":"rowing haltère un bras tutoriel","row-halt-2":"rowing deux haltères buste penché tutoriel","row-halt-incl":"rowing haltères banc incliné appui poitrine tutoriel","row-smith":"rowing barre smith machine tutoriel","row-kb":"rowing kettlebell un bras tutoriel","sdt":"soulevé de terre barre tutoriel","shrug-halt":"haussements d'épaules haltères tutoriel","shrug-barre":"haussements d'épaules barre tutoriel","shrug-smith":"smith machine shrug how to","lombaires-banc":"extensions lombaires banc à lombaires 45° tutoriel","lombaires-machine":"extension lombaire machine assise tutoriel","reverse-hyper":"reverse hyper machine tutoriel","dm-barre":"développé militaire barre debout tutoriel","dm-barre-assis":"développé militaire assis à la barre tutoriel","dm-halt":"développé épaules haltères assis tutoriel","dm-halt-debout":"développé militaire debout haltères tutoriel","arnold":"développé Arnold haltères tutoriel","dm-smith":"développé militaire Smith machine tutoriel","dm-machine":"shoulder press machine guidée Basic-Fit tutoriel","dm-machine-conv":"shoulder press convergente Basic-Fit tutoriel","dm-disques":"Hammer Strength plate loaded shoulder press instructions","dm-kb":"développé épaule kettlebell un bras tutoriel","landmine-press":"développé landmine épaules tutoriel","el-halt":"élévations latérales haltères tutoriel","el-halt-assis":"élévations latérales assis haltères tutoriel","el-poulie":"élévations latérales poulie basse un bras tutoriel","el-machine":"élévations latérales machine delts Basic-Fit tutoriel","ef-halt":"élévations frontales haltères tutoriel","ef-poulie":"élévations frontales poulie basse tutoriel","ef-disque":"élévation frontale avec un disque tutoriel","y-raise":"élévation en Y banc incliné haltères tutoriel","oiseau-halt":"oiseau haltères buste penché tutoriel","oiseau-banc":"oiseau haltères allongé banc incliné tutoriel","oiseau-machine":"pec deck inversé oiseau machine tutoriel","oiseau-poulie":"oiseau poulie vis-à-vis arrière d’épaule tutoriel","face-pull":"face pull poulie corde tutoriel","tm-barre":"tirage menton barre tutoriel","tm-poulie":"tirage menton poulie basse tutoriel","curl-barre":"curl biceps barre droite supination technique","curl-ez":"curl barre EZ biceps technique","curl-pupitre":"curl pupitre Larry Scott barre EZ technique","curl-halt":"curl alterné haltères supination biceps","curl-halt-simult":"curl haltères simultané deux bras biceps","curl-marteau":"curl marteau haltères technique","curl-incl":"curl incliné haltères banc incliné biceps","curl-conc":"curl concentré haltère technique","curl-pupitre-halt":"curl pupitre haltère un bras technique","curl-zottman":"curl Zottman haltères technique","curl-machine":"arm curl machine biceps Basic-Fit","curl-poulie":"curl poulie basse biceps technique","curl-poulie-uni":"curl un bras poulie basse biceps","curl-corde":"curl marteau poulie basse corde","curl-poulie-haute":"curl poulie haute vis-à-vis biceps bras écartés","curl-bayesian":"curl bayesian poulie dos à la poulie","ext-poulie-barre":"extension triceps poulie haute barre droite tutoriel","ext-poulie-corde":"extension triceps poulie haute corde tutoriel","ext-poulie-uni":"extension triceps unilatérale poulie un bras tutoriel","ext-nuque-poulie":"extension triceps au-dessus de la tête poulie corde tutoriel","kickback-tri-poulie":"kickback triceps poulie basse tutoriel","barre-front":"barre au front barre EZ triceps tutoriel","ext-nuque-ez":"extension nuque barre EZ assis triceps tutoriel","dc-serre":"développé couché prise serrée barre triceps tutoriel","dc-serre-smith":"développé couché prise serrée Smith machine triceps","ext-nuque-halt":"extension nuque haltère deux mains triceps tutoriel","barre-front-halt":"extension triceps allongé haltères tutoriel","kickback":"kickback haltère triceps tutoriel","triceps-machine":"technogym arm extension machine triceps how to","triceps-press":"dips machine assis triceps Basic-Fit tutoriel","dips-triceps":"dips triceps buste droit barres parallèles tutoriel","dips-banc":"dips entre deux bancs triceps tutoriel","pompes-serrees":"pompes diamant tutoriel triceps","curl-poignets":"curl poignets barre fléchisseurs avant-bras","curl-poignets-inverse":"curl poignets inversé pronation barre extenseurs avant-bras","curl-inverse":"curl inversé barre EZ pronation","farmer":"marche du fermier haltères farmer walk","suspension":"suspension barre de traction dead hang","squat":"squat barre tutoriel technique","front-squat":"front squat barre tutoriel squat avant","fentes-barre":"fentes barre sur les épaules tutoriel","squat-smith":"squat smith machine tutoriel","fentes-smith":"fentes smith machine tutoriel","goblet":"goblet squat haltère kettlebell tutoriel","squat-halt":"squat avec haltères tutoriel","fentes-avant":"fentes avant haltères tutoriel","fentes-marchees":"fentes marchées haltères tutoriel","fentes-arriere":"fentes arrière haltères tutoriel","bulgares":"fentes bulgares haltères tutoriel","step-up":"step-up montée sur banc haltères tutoriel","presse":"presse à cuisses horizontale machine guidée tutoriel","presse-uni":"presse à cuisses unilatérale une jambe tutoriel","presse-45":"presse à cuisses 45 degrés technique","hack":"hack squat machine à disques tutoriel","hack-inverse":"reverse hack squat face à la machine tutoriel","squat-disques":"Hammer Strength squat lunge machine","leg-ext":"leg extension machine tutoriel","leg-ext-uni":"leg extension unilatéral une jambe tutoriel","squat-pdc":"squat poids du corps tutoriel technique","chaise":"chaise contre le mur wall sit tutoriel","sdt-roumain":"soulevé de terre roumain barre technique","sdt-jt":"soulevé de terre jambes tendues barre","good-morning":"good morning barre exercice","sdt-roumain-halt":"soulevé de terre roumain haltères technique","sdt-roumain-uni":"soulevé de terre roumain unilatéral une jambe haltère tutoriel","sdt-roumain-smith":"soulevé de terre roumain smith machine tutoriel","sdt-kb":"soulevé de terre kettlebell","leg-curl-allonge":"leg curl allongé machine tutoriel","leg-curl-assis":"leg curl assis machine tutoriel","leg-curl-debout":"leg curl debout unilatéral machine tutoriel","leg-curl-poulie":"leg curl poulie sangle de cheville ischios tutoriel","nordic":"nordic curl ischio-jambiers tutoriel","hip-thrust":"hip thrust barre tutoriel technique","hip-thrust-halt":"hip thrust haltère tutoriel banc","hip-thrust-smith":"hip thrust smith machine tutoriel","hip-thrust-machine":"hip thrust machine tutoriel","pont-fessier":"pont fessier au sol tutoriel glute bridge","pont-fessier-uni":"pont fessier unilatéral tutoriel single leg glute bridge","kickback-poulie":"kickback fessier poulie basse tutoriel","kickback-machine":"glute machine Technogym kickback tutoriel","multi-hip":"multi hip machine Technogym tutoriel","abducteurs":"abducteurs machine assis tutoriel hip abduction","adducteurs":"adducteurs machine tutoriel hip adduction","abduction-poulie":"abduction de hanche à la poulie tutoriel","adduction-poulie":"adduction de hanche à la poulie tutoriel","fentes-laterales":"fentes latérales haltères tutoriel","pull-through":"pull through poulie corde tutoriel","sdt-sumo":"soulevé de terre sumo barre technique tutoriel","kb-swing":"kettlebell swing technique tutoriel","mollets-debout":"mollets debout machine tutoriel standing calf raise","mollets-assis":"mollets assis machine tutoriel seated calf raise","mollets-rotary":"rotary calf Technogym mollets","mollets-presse":"mollets à la presse à cuisses tutoriel leg press calf raise","mollets-smith":"mollets smith machine tutoriel calf raise","mollets-halt":"mollets debout unilatéral haltère tutoriel","mollets-pdc":"mollets debout sur une marche poids du corps tutoriel","crunch":"crunch au sol abdominaux tutoriel","crunch-decline":"crunch banc décliné tutoriel","crunch-inverse":"crunch inversé abdos tutoriel","v-ups":"V-ups abdominaux tutoriel","dead-bug":"dead bug exercice abdos tutoriel","crunch-poulie":"crunch poulie haute à genoux tutoriel","crunch-machine":"crunch machine abdominal crunch technogym","total-abdominal":"technogym total abdominal machine","rotary-torso":"technogym rotary torso machine","releve-suspendu":"relevés de jambes suspendu à la barre tutoriel","releve-chaise":"relevés de genoux chaise romaine tutoriel","releve-sol":"relevés de jambes au sol abdos tutoriel","roue":"roue abdominale ab wheel rollout technique tutoriel","russian-twist":"russian twist avec un disque tutoriel technique","woodchop":"woodchop poulie haute tutoriel","woodchop-bas":"woodchop poulie basse tutoriel","pallof":"pallof press poulie anti-rotation tutoriel","planche":"gainage planche technique tutoriel","gainage-lateral":"gainage latéral planche latérale technique tutoriel","hollow":"hollow hold gainage creux tutoriel","mountain":"mountain climbers technique tutoriel","burpees":"burpees tutoriel technique","squat-saute":"squat sauté tutoriel jump squat","fentes-sautees":"fentes sautées tutoriel","jumping-jacks":"jumping jacks comment faire","thruster-halt":"thruster haltères tutoriel","devil-press":"devil press haltères tutoriel","kb-clean":"épaulé kettlebell clean tutoriel","kb-snatch":"arraché kettlebell snatch tutoriel","kb-thruster":"kettlebell thruster tutoriel","kb-getup":"turkish get up kettlebell tutoriel","kb-goblet-lunge":"goblet lunge kettlebell fentes tutoriel","box-jump":"box jump sauts sur box technique tutoriel","wall-ball":"wall ball médecine-ball tutoriel technique","slam-ball":"slam ball tutoriel technique","battle-rope":"battle rope cordes ondulatoires tutoriel exercices","corde-sauter":"corde à sauter technique tutoriel débutant","tapis":"tapis de course comment bien courir tutoriel salle de sport","tapis-incline":"marche inclinée tapis de course tutoriel","velo":"vélo droit salle de sport réglage selle tutoriel","velo-allonge":"vélo semi-allongé réglage tutoriel salle de sport","elliptique":"vélo elliptique comment bien l'utiliser tutoriel","rameur":"rameur technique tutoriel comment ramer","stepper":"stepper salle de sport tutoriel utilisation","escalier":"escalier stairmaster StepMill tutoriel utilisation","velo-biking":"vélo de biking réglage position tutoriel"};
   /* Points clés d’exécution : 3 conseils par famille de mouvement ; EX_CUE_FAM relie un exercice à sa famille quand elle porte un autre nom */
   const EX_CUES = {
@@ -1942,6 +2007,7 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
     plus: svgIco('<path d="M12 5v14M5 12h14"/>'),
     x: svgIco('<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>'),
     check: svgIco('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
+    edit: svgIco('<path d="M4.5 19.5h4l10-10a2.83 2.83 0 0 0-4-4l-10 10v4z"/><path d="M13 7l4 4"/>'),
     share: svgIco('<path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M8 10.5H7a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1"/>'),
     dots: svgIco('<circle cx="12" cy="5.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="18.5" r="1.4" fill="currentColor" stroke="none"/>')
   };
@@ -2354,10 +2420,26 @@ function buildProposal(products, opts) {
     if (max < min) max = min;
     return { sets, min, max };
   }
+  /* Une série : ce qui a été fait (kg, reps, done) et, pour une séance prévue, ce qui est prévu (pk, pr) */
   function normSet(s) {
     s = s || {};
+    const kg = parseNum(s.kg), reps = parseNum(s.reps), pk = parseNum(s.pk), pr = parseNum(s.pr);
+    const o = { kg: kg != null && kg >= 0 && kg <= 1000 ? kg : null, reps: reps != null && reps > 0 && reps <= 999 ? Math.round(reps) : null, done: !!s.done };
+    if (pk != null && pk >= 0 && pk <= 1000) o.pk = pk;
+    if (pr != null && pr > 0 && pr <= 999) o.pr = Math.round(pr);
+    return o;
+  }
+  function setBody(s) {
+    const o = { kg: s.kg, reps: s.reps, done: s.done };
+    if (s.pk != null) o.pk = s.pk;
+    if (s.pr != null) o.pr = s.pr;
+    return o;
+  }
+  /* Charge prévue dans une séance type */
+  function normPlanSet(s) {
+    s = s || {};
     const kg = parseNum(s.kg), reps = parseNum(s.reps);
-    return { kg: kg != null && kg >= 0 && kg <= 1000 ? kg : null, reps: reps != null && reps > 0 && reps <= 999 ? Math.round(reps) : null, done: !!s.done };
+    return { kg: kg != null && kg >= 0 && kg <= 1000 ? kg : null, reps: reps != null && reps > 0 && reps <= 999 ? Math.round(reps) : null };
   }
   const KEY_RE = /^[A-Za-z0-9_-]{1,40}$/;
   function normWEx(e) {
@@ -2373,29 +2455,36 @@ function buildProposal(products, opts) {
     return {
       id, date: isISO(d.date) ? d.date : todayISO(), programId: d.programId ? String(d.programId) : null, name: String(d.name || 'Séance').slice(0, 40),
       exercises: Array.isArray(d.exercises) ? d.exercises.map(normWEx).filter(Boolean) : [], notes: String(d.notes || '').slice(0, 2000),
-      createdAt: Number(d.createdAt) || 0, updatedAt: Number(d.updatedAt) || 0, _new: false, _dirty: false
+      createdAt: Number(d.createdAt) || 0, updatedAt: Number(d.updatedAt) || 0,
+      /* Séance prévue depuis une séance type : version de la séance type reprise, et modifiée à la main ou non.
+         Une séance enregistrée par une version précédente (sans ce champ) n’est jamais remplacée par sa séance type. */
+      syncedAt: Number(d.syncedAt) || 0, edited: d.edited == null ? true : !!d.edited, _new: false, _dirty: false
     };
   }
   function workoutBody(w) {
     return {
-      date: w.date, programId: w.programId, name: w.name, notes: w.notes, createdAt: w.createdAt, updatedAt: w.updatedAt,
-      exercises: w.exercises.map(ex => ({ key: ex.key, exId: ex.exId, name: ex.name, kind: ex.kind, eq: ex.eq, target: Object.assign({}, ex.target), sets: ex.sets.map(s => ({ kg: s.kg, reps: s.reps, done: s.done })) }))
+      date: w.date, programId: w.programId, name: w.name, notes: w.notes, createdAt: w.createdAt, updatedAt: w.updatedAt, syncedAt: w.syncedAt || 0, edited: !!w.edited,
+      exercises: w.exercises.map(ex => ({ key: ex.key, exId: ex.exId, name: ex.name, kind: ex.kind, eq: ex.eq, target: Object.assign({}, ex.target), sets: ex.sets.map(setBody) }))
     };
   }
   function normProgram(id, d) {
     d = d || {};
     const order = Number(d.order);
     return {
-      id, name: String(d.name || 'Programme').slice(0, 40), order: Number.isFinite(order) ? order : 99, createdAt: Number(d.createdAt) || 0,
+      id, name: String(d.name || 'Programme').slice(0, 40), order: Number.isFinite(order) ? order : 99, createdAt: Number(d.createdAt) || 0, updatedAt: Number(d.updatedAt) || 0,
       items: Array.isArray(d.items) ? d.items.map(it => {
         if (!it || !it.exId) return null;
         const kind = KINDS.includes(it.kind) ? it.kind : 'w';
-        return { exId: String(it.exId), name: String(it.name || 'Exercice').slice(0, 80), kind, eq: EQUIP[it.eq] ? it.eq : 'autre', target: normTarget(it.target, kind) };
+        /* sets : les charges retenues pour cet exercice (série par série) */
+        return { exId: String(it.exId), name: String(it.name || 'Exercice').slice(0, 80), kind, eq: EQUIP[it.eq] ? it.eq : 'autre', target: normTarget(it.target, kind), sets: Array.isArray(it.sets) ? it.sets.slice(0, 12).map(normPlanSet) : [] };
       }).filter(Boolean) : []
     };
   }
   function programBody(p) {
-    return { name: p.name, order: p.order, createdAt: p.createdAt || Date.now(), items: p.items.map(it => ({ exId: it.exId, name: it.name, kind: it.kind, eq: it.eq, target: Object.assign({}, it.target) })) };
+    return {
+      name: p.name, order: p.order, createdAt: p.createdAt || Date.now(), updatedAt: p.updatedAt || 0,
+      items: p.items.map(it => ({ exId: it.exId, name: it.name, kind: it.kind, eq: it.eq, target: Object.assign({}, it.target), sets: (it.sets || []).map(s => ({ kg: s.kg, reps: s.reps })) }))
+    };
   }
   function normCustomEx(id, d) {
     d = d || {};
@@ -2442,6 +2531,7 @@ function buildProposal(products, opts) {
     customEx: [],
     profile: normProfile(null),
     wOpen: null, wMenu: null, wNaming: false, progEx: null,
+    tDraft: null, planWeek: null, histFilter: 'all', histN: 10,
     genSettings: null,
     goalsSet: false, goalsLoaded: false,
     ui: { welcomeHidden: false }, uiLoaded: false,
@@ -2828,7 +2918,7 @@ function buildProposal(products, opts) {
     renderHabits();
     renderSuivi();
     renderBackupNudge();
-    if (state.tab === 'seances' && !state.wOpen) renderSeances();
+    if (state.tab === 'seances' && !state.wOpen && !state.tDraft) renderSeances();
     if (isOpen('#addDlg') && addState.pane === 'products') renderPickList();
   }
   function onDay(date, data) {
@@ -2861,7 +2951,7 @@ function buildProposal(products, opts) {
     state.workouts = sortWorkouts(merged);
     state.workoutsLoaded = true;
     state.wVer++;
-    if (state.tab === 'seances') {
+    if (state.tab === 'seances' && !state.tDraft) {
       if (!state.wOpen) renderSeances();
       else {
         const now = state.workouts.find(w => w.id === state.wOpen);
@@ -2878,7 +2968,7 @@ function buildProposal(products, opts) {
     const fresh = state.programs.filter(p => !ids.has(p.id) && Date.now() - p.createdAt < 15000);
     state.programs = list.filter(d => !wasDeleted('programs/' + d.id)).map(d => normProgram(d.id, d.data)).concat(fresh);
     state.programsLoaded = true;
-    if (state.tab === 'seances' && !state.wOpen) renderSeances();
+    if (state.tab === 'seances' && !state.wOpen && !state.tDraft) renderSeances();
     renderWelcome();
     warmMedia();
   }
@@ -3089,8 +3179,8 @@ function buildProposal(products, opts) {
         act: 'data-action="tab" data-tab="objectifs"', label: 'Calculer' },
       { done: nP > 0, title: 'Ajoute tes produits', text: 'Pars d’une liste de produits courants, puis ajuste-les avec tes emballages.', ok: nP + (nP > 1 ? ' produits' : ' produit') + ' dans ta liste.',
         act: 'data-action="starter-products"', label: 'Ajouter les produits courants' },
-      { done: nS > 0, title: 'Choisis un programme', text: 'Full body, haut et bas du corps ou Push, Pull, Legs, selon tes séances par semaine.', ok: nS + (nS > 1 ? ' séances prêtes.' : ' séance prête.'),
-        act: 'data-action="tab" data-tab="seances"', label: 'Voir les programmes' }
+      { done: nS > 0, title: 'Crée tes séances', text: 'Pull, Push, Jambes… avec tes exercices et tes charges, ou pars d’un programme tout prêt.', ok: nS + (nS > 1 ? ' séances prêtes.' : ' séance prête.'),
+        act: 'data-action="tab" data-tab="seances"', label: 'Créer mes séances' }
     ];
     const n = steps.filter(x => x.done).length;
     if (n === steps.length) { el.innerHTML = ''; return; }
@@ -3753,21 +3843,26 @@ function buildProposal(products, opts) {
   const allExercises = () => EX_LIB.concat(state.customEx);
   const validSets = ex => ex.sets.filter(s => s.reps != null && s.reps > 0);
   function sortWorkouts(list) { return list.sort((a, b) => (a.date === b.date ? b.createdAt - a.createdAt : (a.date < b.date ? 1 : -1))); }
+  /* Une séance faite : au moins une série notée, et datée d’aujourd’hui ou avant (une séance à venir est seulement prévue) */
+  const isDone = w => !w._new && w.date <= todayISO() && workoutStats(w).sets > 0;
   function workoutStats(w) {
     let sets = 0, vol = 0;
     for (const ex of w.exercises) for (const s of validSets(ex)) { sets++; if (ex.kind === 'w' && s.kg > 0) vol += s.kg * s.reps; }
     return { sets, vol };
   }
   const hasData = w => !!w.notes || w.exercises.some(ex => ex.sets.some(s => s.reps != null || s.kg != null));
-  const curWorkout = () => state.workouts.find(w => w.id === state.wOpen) || null;
+  /* La séance ouverte : séance type en cours de modification, sinon séance d’un jour */
+  const curWorkout = () => state.tDraft || state.workouts.find(w => w.id === state.wOpen) || null;
   const findEx = (w, key) => w.exercises.find(e => e.key === key) || null;
   const sortedPrograms = () => state.programs.slice().sort((a, b) => a.order - b.order || byName(a, b));
 
-  let histVer = -1, histMap = new Map();
+  let histVer = -1, histDay = '', histMap = new Map();
   function exHistory() {
-    if (histVer === state.wVer) return histMap;
+    const today = todayISO();
+    if (histVer === state.wVer && histDay === today) return histMap;
     histMap = new Map();
     for (const w of state.workouts) {
+      if (w.date > today) continue;
       for (const ex of w.exercises) {
         const vs = validSets(ex);
         if (!vs.length) continue;
@@ -3777,6 +3872,7 @@ function buildProposal(products, opts) {
       }
     }
     histVer = state.wVer;
+    histDay = today;
     return histMap;
   }
   function lastPerf(exId, w) {
@@ -3802,6 +3898,9 @@ function buildProposal(products, opts) {
     return 'ajoute du lest ou une série';
   }
   function setPlaceholder(ex, i, last) {
+    /* Séance prévue : les charges prévues pour cette série */
+    const own = ex.sets[i];
+    if (own && (own.pk != null || own.pr != null)) return { kg: own.pk != null ? own.pk : null, reps: own.pr != null ? own.pr : null };
     const src = last ? (last.sets[i] || last.sets[last.sets.length - 1]) : null;
     const prev = i > 0 ? ex.sets[i - 1] : null;
     const kg = prev && prev.kg != null ? prev.kg : (src && src.kg != null ? src.kg : null);
@@ -3824,14 +3923,14 @@ function buildProposal(products, opts) {
     return best;
   }
   function lastDone(pid) {
-    const w = state.workouts.find(x => x.programId === pid && workoutStats(x).sets > 0);
+    const w = state.workouts.find(x => x.programId === pid && isDone(x));
     return w ? w.date : null;
   }
   function nextProgram() {
     const progs = sortedPrograms();
     if (!progs.length) return null;
     const ids = new Set(progs.map(p => p.id));
-    const last = state.workouts.find(w => w.programId && ids.has(w.programId) && workoutStats(w).sets > 0);
+    const last = state.workouts.find(w => w.programId && ids.has(w.programId) && isDone(w));
     if (!last) return progs[0];
     const i = progs.findIndex(p => p.id === last.programId);
     return progs[(i + 1) % progs.length];
@@ -3842,9 +3941,114 @@ function buildProposal(products, opts) {
     return { key: uid('x'), exId: def.exId || def.id, name: def.name, kind, eq: EQUIP[def.eq] ? def.eq : 'autre', target: t, sets: Array.from({ length: t.sets }, () => ({ kg: null, reps: null, done: false })) };
   }
 
+  /* ================= Mes séances : séances types, séances prévues, charges retenues =================
+     Une séance type (programs/<id>) garde ses exercices et les dernières charges de chaque exercice.
+     Une séance d’un jour (workouts/<id>) est une copie : ce qu’on y change reste sur ce jour-là.
+     Tant qu’une séance prévue n’est ni commencée ni modifiée, elle suit sa séance type. */
+  const hasActual = w => !!w.notes || w.exercises.some(ex => ex.sets.some(s => s.done || s.reps != null || s.kg != null));
+  const lastPerfAny = exId => (exHistory().get(exId) || [])[0] || null;
+  const programVersion = p => p.updatedAt || p.createdAt || 0;
+  const followsProgram = (w, p) => !!p && w.programId === p.id && !w.edited && !hasActual(w);
+  const markEdited = w => { if (w && !w.isTpl) w.edited = true; };
+  /* Charges prévues pour n séries : celles retenues dans la séance type, sinon la dernière fois sur cet exercice */
+  function planFor(it, n) {
+    let src = (it.sets || []).filter(s => s.kg != null || s.reps != null);
+    if (!src.length) { const lp = lastPerfAny(it.exId); src = lp ? lp.sets : []; }
+    return Array.from({ length: n }, (_, i) => {
+      const s = src[i] || src[src.length - 1];
+      return s ? { kg: s.kg != null ? s.kg : null, reps: s.reps != null ? s.reps : null } : { kg: null, reps: null };
+    });
+  }
+  function exFromItem(it) {
+    const ex = makeWEx(it, it.target);
+    const plan = planFor(it, ex.sets.length);
+    ex.sets.forEach((s, i) => { if (plan[i].kg != null) s.pk = plan[i].kg; if (plan[i].reps != null) s.pr = plan[i].reps; });
+    return ex;
+  }
+  function refreshFromProgram(w, p) {
+    w.exercises = p.items.map(exFromItem);
+    w.name = p.name;
+    w.syncedAt = programVersion(p);
+  }
+  function syncPlannedFrom(p) {
+    let n = 0;
+    for (const w of state.workouts) {
+      if (w._new || w.id === state.wOpen || !followsProgram(w, p) || (w.syncedAt || 0) >= programVersion(p)) continue;
+      refreshFromProgram(w, p);
+      w.updatedAt = Date.now();
+      save('workouts/' + w.id, workoutBody(w));
+      n++;
+    }
+    if (n) state.wVer++;
+    return n;
+  }
+  /* Après une séance faite depuis une séance type, si c’est la plus récente : la séance type retient ses charges */
+  function rememberCharges(w) {
+    const p = w && !w.isTpl && w.programId ? state.programs.find(x => x.id === w.programId) : null;
+    if (!p || state.readOnly || !isDone(w)) return null;
+    /* Séance juste rouverte sans changement, ou séance type modifiée depuis : on ne touche à rien */
+    if ((w.updatedAt || 0) <= programVersion(p)) return null;
+    const later = state.workouts.some(x => x !== w && x.programId === p.id && isDone(x) && (x.date > w.date || (x.date === w.date && x.createdAt > w.createdAt)));
+    if (later) return null;
+    const before = p.items.map(it => (it.sets || []).map(s => Object.assign({}, s)));
+    let changed = false;
+    p.items.forEach(it => {
+      const ex = w.exercises.find(e => e.exId === it.exId);
+      const vs = ex ? validSets(ex) : [];
+      if (!vs.length) return;
+      const next = Array.from({ length: Math.max(1, it.target.sets) }, (_, i) => { const s = vs[i] || vs[vs.length - 1]; return { kg: s.kg != null ? s.kg : (s.pk != null ? s.pk : null), reps: s.reps }; });
+      if (JSON.stringify(next) !== JSON.stringify(it.sets || [])) { it.sets = next; changed = true; }
+    });
+    if (!changed) return null;
+    p.updatedAt = Date.now();
+    save('programs/' + p.id, programBody(p));
+    syncPlannedFrom(p);
+    return () => {
+      p.items.forEach((it, i) => { it.sets = before[i] || []; });
+      p.updatedAt = Date.now();
+      save('programs/' + p.id, programBody(p));
+      syncPlannedFrom(p);
+      renderSeances();
+    };
+  }
+  /* Résumé des charges d’un exercice de séance type : « 4 × 10 · 60 kg » */
+  function chargeText(it) {
+    const n = Math.max(1, it.target.sets);
+    const plan = planFor(it, n).filter(s => s.kg != null || s.reps != null);
+    const range = it.target.min + (it.target.max !== it.target.min ? '–' + it.target.max : '');
+    if (!plan.length) return n + ' × ' + range + (it.kind === 't' ? ' s' : it.kind === 'c' ? ' min' : '');
+    const reps = plan[0].reps != null ? plan[0].reps : it.target.min;
+    if (it.kind === 'w') {
+      const kg = Math.max.apply(null, plan.map(s => s.kg || 0));
+      return n + ' × ' + reps + (kg > 0 ? ' · ' + fmt(kg, 2) + ' kg' : '');
+    }
+    return n + ' × ' + fmtSet({ kg: plan[0].kg, reps }, it.kind);
+  }
+  const doneIn = (from, to) => state.workouts.filter(w => w.date >= from && w.date <= to && isDone(w));
+  const dfMonth = new Intl.DateTimeFormat('fr-FR', { month: 'long' });
+  const dfWd = new Intl.DateTimeFormat('fr-FR', { weekday: 'short' });
+  function monthBounds(iso) {
+    const [y, m] = iso.split('-').map(Number);
+    return [iso.slice(0, 8) + '01', isoOf(new Date(y, m, 0, 12))];
+  }
+  function dayLabel(iso) {
+    const t = todayISO();
+    if (iso === t) return 'aujourd’hui';
+    if (iso === addDays(t, 1)) return 'demain';
+    if (iso === addDays(t, -1)) return 'hier';
+    return 'le ' + dfLong.format(dateOf(iso));
+  }
+
   /* ================= Séances : actions ================= */
   const wTimers = {};
+  let tplTimer = null;
   function touchWorkout(w, immediate) {
+    if (w.isTpl) {
+      w._dirty = true;
+      clearTimeout(tplTimer);
+      if (immediate) flushTemplate(); else tplTimer = setTimeout(flushTemplate, 700);
+      return;
+    }
     w.updatedAt = Date.now();
     w._new = false;
     w._dirty = true;
@@ -3853,6 +4057,7 @@ function buildProposal(products, opts) {
     if (immediate) flushWorkout(w.id); else wTimers[w.id] = setTimeout(() => flushWorkout(w.id), 800);
   }
   function flushWorkout(id) {
+    if (id === 'tpl') { flushTemplate(); return; }
     clearTimeout(wTimers[id]);
     delete wTimers[id];
     const w = state.workouts.find(x => x.id === id);
@@ -3860,29 +4065,147 @@ function buildProposal(products, opts) {
     w._dirty = false;
     save('workouts/' + id, workoutBody(w));
   }
-  function flushAllWorkouts() { Object.keys(wTimers).forEach(flushWorkout); }
-  function startWorkout(pid) {
+  function flushAllWorkouts() { Object.keys(wTimers).forEach(flushWorkout); flushTemplate(); }
+  /* « Faire aujourd’hui » : reprend la séance de ce jour-là si elle existe déjà, sinon la prépare avec les charges retenues */
+  function startWorkout(pid, date) {
+    date = isISO(date) ? date : todayISO();
     const p = pid ? state.programs.find(x => x.id === pid) : null;
+    if (p) {
+      const same = state.workouts.find(w => w.programId === p.id && w.date === date);
+      if (same) { openWorkout(same.id); return; }
+    }
     const now = Date.now();
-    const w = { id: uid('w'), date: todayISO(), programId: p ? p.id : null, name: p ? p.name : 'Séance libre', exercises: p ? p.items.map(it => makeWEx(it, it.target)) : [], notes: '', createdAt: now, updatedAt: now, _new: true, _dirty: false };
+    const w = { id: uid('w'), date, programId: p ? p.id : null, name: p ? p.name : 'Séance libre', exercises: p ? p.items.map(exFromItem) : [], notes: '', createdAt: now, updatedAt: now, syncedAt: p ? programVersion(p) : 0, edited: false, _new: true, _dirty: false };
     state.workouts.unshift(w);
     sortWorkouts(state.workouts);
     state.wVer++;
     openWorkout(w.id);
   }
+  /* Placer une séance type sur un jour (prévue, enregistrée tout de suite) */
+  function planWorkout(pid, date) {
+    if (!isISO(date)) return;
+    const p = pid ? state.programs.find(x => x.id === pid) : null;
+    const now = Date.now();
+    const w = { id: uid('w'), date, programId: p ? p.id : null, name: p ? p.name : 'Séance libre', exercises: p ? p.items.map(exFromItem) : [], notes: '', createdAt: now, updatedAt: now, syncedAt: p ? programVersion(p) : 0, edited: false, _new: false, _dirty: true };
+    state.workouts.push(w);
+    sortWorkouts(state.workouts);
+    state.wVer++;
+    flushWorkout(w.id);
+    state.planWeek = mondayOf(date);
+    renderSeances();
+    renderSuivi();
+    toast(w.name + ' prévue ' + dayLabel(date), 'Ouvrir', () => openWorkout(w.id));
+  }
+  /* Copier une séance vers un autre jour : mêmes exercices, ses charges deviennent celles prévues */
+  function copyWorkout(src, date) {
+    if (!src || !isISO(date)) return;
+    const now = Date.now();
+    const w = {
+      id: uid('w'), date, programId: src.programId, name: src.name, notes: '', createdAt: now, updatedAt: now, syncedAt: 0, edited: true, _new: false, _dirty: true,
+      exercises: src.exercises.map(ex => ({
+        key: uid('x'), exId: ex.exId, name: ex.name, kind: ex.kind, eq: ex.eq, target: Object.assign({}, ex.target),
+        sets: ex.sets.map(s => {
+          const o = { kg: null, reps: null, done: false };
+          const did = s.reps != null;
+          const k = did ? s.kg : (s.pk != null ? s.pk : s.kg), r = did ? s.reps : s.pr;
+          if (k != null) o.pk = k;
+          if (r != null) o.pr = r;
+          return o;
+        })
+      }))
+    };
+    state.workouts.push(w);
+    sortWorkouts(state.workouts);
+    state.wVer++;
+    flushWorkout(w.id);
+    state.planWeek = mondayOf(date);
+    renderSeances();
+    toast('Séance copiée ' + dayLabel(date), 'Ouvrir', () => openWorkout(w.id));
+  }
   function openWorkout(id) {
+    if (state.tDraft) { flushTemplate(); state.tDraft = null; }
+    const w = state.workouts.find(x => x.id === id);
+    const p = w && w.programId ? state.programs.find(x => x.id === w.programId) : null;
+    /* Séance prévue pas encore commencée : elle reprend la dernière version de sa séance type */
+    if (w && !w._new && followsProgram(w, p) && (w.syncedAt || 0) < programVersion(p)) {
+      refreshFromProgram(w, p);
+      w.updatedAt = Date.now();
+      save('workouts/' + w.id, workoutBody(w));
+      state.wVer++;
+    }
     state.wOpen = id;
     state.wMenu = null;
     state.wNaming = false;
     renderSeances();
     window.scrollTo(0, 0);
   }
+  /* ----- Séance type : création et modification (même éditeur qu’une séance, sans validation des séries) ----- */
+  function openTemplate(pid) {
+    const p = pid ? state.programs.find(x => x.id === pid) : null;
+    if (pid && !p) return;
+    if (state.wOpen) { flushWorkout(state.wOpen); stopRest(); }
+    state.tDraft = {
+      id: 'tpl', isTpl: true, pid: p ? p.id : null, name: p ? p.name : '', date: '9999-12-31', createdAt: Number.MAX_SAFE_INTEGER, notes: '', _dirty: false,
+      exercises: p ? p.items.map(it => {
+        const ex = makeWEx(it, it.target);
+        (it.sets || []).forEach((s, i) => { if (ex.sets[i]) { ex.sets[i].kg = s.kg; ex.sets[i].reps = s.reps; } });
+        return ex;
+      }) : []
+    };
+    state.wOpen = null;
+    state.wMenu = null;
+    state.wNaming = false;
+    renderSeances();
+    window.scrollTo(0, 0);
+    if (!p && !coarse) { const i = $('#weName'); if (i) i.focus(); }
+  }
+  function flushTemplate() {
+    clearTimeout(tplTimer);
+    const d = state.tDraft;
+    if (!d || !d._dirty || !state.store || state.readOnly) return;
+    if (!d.pid && !d.exercises.length) return;
+    d._dirty = false;
+    const now = Date.now();
+    let p = d.pid ? state.programs.find(x => x.id === d.pid) : null;
+    if (!p) {
+      p = { id: d.pid || uid('pg'), name: '', order: state.programs.reduce((m, x) => Math.max(m, x.order), -1) + 1, createdAt: now, updatedAt: now, items: [] };
+      recentlyDeleted.delete('programs/' + p.id);
+      state.programs.push(p);
+      d.pid = p.id;
+    }
+    p.name = (d.name || '').trim().slice(0, 40) || 'Ma séance';
+    p.items = d.exercises.map(ex => ({
+      exId: ex.exId, name: ex.name, kind: ex.kind, eq: ex.eq,
+      target: normTarget({ sets: Math.max(1, ex.sets.length), min: ex.target.min, max: ex.target.max }, ex.kind),
+      sets: ex.sets.map(s => ({ kg: s.kg, reps: s.reps }))
+    }));
+    p.updatedAt = now;
+    save('programs/' + p.id, programBody(p));
+    syncPlannedFrom(p);
+  }
+  function closeTemplate() {
+    const d = state.tDraft;
+    flushTemplate();
+    state.tDraft = null;
+    state.wMenu = null;
+    renderSeances();
+    renderWelcome();
+    window.scrollTo(0, 0);
+    if (d && d.pid) toast('Séance « ' + ((d.name || '').trim() || 'Ma séance') + ' » enregistrée');
+    else if (d && d.name.trim()) toast('Ajoute au moins un exercice pour créer la séance');
+  }
   function closeWorkout() {
+    if (state.tDraft) { closeTemplate(); return; }
     const w = curWorkout();
     if (w) {
       flushWorkout(w.id);
       if (w._new && !hasData(w)) { state.workouts = state.workouts.filter(x => x !== w); state.wVer++; }
-      else { const n = workoutStats(w).sets; if (n) toast('Séance enregistrée : ' + n + (n > 1 ? ' séries' : ' série')); }
+      else {
+        const n = workoutStats(w).sets;
+        const undo = rememberCharges(w);
+        const p = undo ? state.programs.find(x => x.id === w.programId) : null;
+        if (n) toast('Séance enregistrée : ' + n + (n > 1 ? ' séries' : ' série') + (p ? '. Charges retenues pour « ' + p.name + ' ».' : ''), p ? 'Annuler' : null, undo);
+      }
     }
     state.wOpen = null;
     stopRest();
@@ -3913,42 +4236,57 @@ function buildProposal(products, opts) {
       renderSuivi();
     });
   }
+  /* Exercices d’une séance du jour pour une séance type : avec les charges faites (ou prévues) */
   function programItemsFrom(w) {
-    return w.exercises.map(ex => ({ exId: ex.exId, name: ex.name, kind: ex.kind, eq: ex.eq, target: { sets: Math.max(1, ex.sets.length), min: ex.target.min, max: ex.target.max } }));
+    return w.exercises.map(ex => {
+      const vs = validSets(ex);
+      const sets = vs.length ? vs.map(s => ({ kg: s.kg, reps: s.reps }))
+        : ex.sets.filter(s => s.pk != null || s.pr != null).map(s => ({ kg: s.pk != null ? s.pk : null, reps: s.pr != null ? s.pr : null }));
+      return { exId: ex.exId, name: ex.name, kind: ex.kind, eq: ex.eq, target: { sets: Math.max(1, ex.sets.length), min: ex.target.min, max: ex.target.max }, sets };
+    });
   }
   function updateProgram(w) {
     const p = w && state.programs.find(x => x.id === w.programId);
     if (!p) return;
     const prev = p.items;
     p.items = programItemsFrom(w);
+    p.updatedAt = Date.now();
+    w.syncedAt = p.updatedAt;
     save('programs/' + p.id, programBody(p));
+    syncPlannedFrom(p);
     renderEditor();
-    toast('Programme « ' + p.name + ' » mis à jour', 'Annuler', () => { p.items = prev; save('programs/' + p.id, programBody(p)); renderSeances(); });
+    toast('« ' + p.name + ' » mise à jour avec cette séance', 'Annuler', () => { p.items = prev; p.updatedAt = Date.now(); save('programs/' + p.id, programBody(p)); syncPlannedFrom(p); renderSeances(); });
   }
   function saveAsProgram(w, name) {
     if (!w) return;
     const order = state.programs.reduce((m, p) => Math.max(m, p.order), -1) + 1;
-    const p = { id: uid('pg'), name: (name || '').trim().slice(0, 40) || 'Mon programme', order, createdAt: Date.now(), items: programItemsFrom(w) };
+    const now = Date.now();
+    const p = { id: uid('pg'), name: (name || '').trim().slice(0, 40) || 'Ma séance', order, createdAt: now, updatedAt: now, items: programItemsFrom(w) };
     state.programs.push(p);
     save('programs/' + p.id, programBody(p));
     w.programId = p.id;
     w.name = p.name;
+    w.syncedAt = now;
     touchWorkout(w, true);
     state.wNaming = false;
     renderEditor();
-    toast('Programme « ' + p.name + ' » créé');
+    renderWelcome();
+    toast('« ' + p.name + ' » ajoutée à Mes séances');
   }
   function deleteProgram(id) {
     const p = state.programs.find(x => x.id === id);
     if (!p) return;
+    if (state.tDraft && state.tDraft.pid === id) { clearTimeout(tplTimer); state.tDraft = null; }
     state.programs = state.programs.filter(x => x.id !== id);
     remove('programs/' + id);
     renderSeances();
-    toast('Programme « ' + p.name + ' » supprimé. Tes séances passées restent.', 'Annuler', () => {
+    renderWelcome();
+    toast('Séance « ' + p.name + ' » supprimée. Les séances déjà faites restent.', 'Annuler', () => {
       recentlyDeleted.delete('programs/' + id);
       state.programs.push(p);
       save('programs/' + id, programBody(p));
       renderSeances();
+      renderWelcome();
     });
   }
   function addExerciseDef(def) {
@@ -3956,6 +4294,7 @@ function buildProposal(products, opts) {
     if (!w) return;
     const ex = makeWEx({ id: def.id, name: def.name, kind: def.kind, eq: def.eq });
     w.exercises.push(ex);
+    markEdited(w);
     touchWorkout(w, true);
     renderEditor();
     const card = document.querySelector('[data-exo="' + ex.key + '"]');
@@ -3973,6 +4312,7 @@ function buildProposal(products, opts) {
     if (!sameKind) ex.target = normTarget(Object.assign({}, DEFAULT_TARGET[def.kind], { sets: ex.target.sets }), def.kind);
     ex.sets = ex.sets.map(() => ({ kg: null, reps: null, done: false }));
     state.wMenu = null;
+    markEdited(w);
     touchWorkout(w, true);
     renderEditor();
   }
@@ -3983,10 +4323,11 @@ function buildProposal(products, opts) {
     if (i < 0) return;
     const [ex] = w.exercises.splice(i, 1);
     state.wMenu = null;
+    markEdited(w);
     touchWorkout(w, true);
     renderEditor();
     toast(ex.name + ' retiré', 'Annuler', () => {
-      if (state.wOpen !== w.id) return;
+      if (curWorkout() !== w) return;
       w.exercises.splice(Math.min(i, w.exercises.length), 0, ex);
       touchWorkout(w, true);
       renderEditor();
@@ -4000,6 +4341,7 @@ function buildProposal(products, opts) {
     const tmp = w.exercises[i];
     w.exercises[i] = w.exercises[j];
     w.exercises[j] = tmp;
+    markEdited(w);
     touchWorkout(w, true);
     renderEditor();
     const btn = document.querySelector('[data-exo="' + key + '"] .exo-target');
@@ -4010,6 +4352,7 @@ function buildProposal(products, opts) {
     const ex = w && findEx(w, key);
     if (!ex || !ex.sets[i]) return;
     const s = ex.sets[i];
+    markEdited(w);
     if (s.done) { s.done = false; touchWorkout(w); renderExo(w, ex); updateEditorStats(); return; }
     const ph = setPlaceholder(ex, i, lastPerf(ex.exId, w));
     if (s.kg == null && ph.kg != null) s.kg = ph.kg;
@@ -4031,8 +4374,8 @@ function buildProposal(products, opts) {
   /* ================= Séances : rendu ================= */
   function renderSeances() {
     if (state.tab !== 'seances') return;
-    const w = state.wOpen ? curWorkout() : null;
-    if (state.wOpen && !w) state.wOpen = null;
+    const w = state.tDraft || (state.wOpen ? curWorkout() : null);
+    if (!state.tDraft && state.wOpen && !w) state.wOpen = null;
     $('#wHome').hidden = !!w;
     $('#wEditor').hidden = !w;
     if (w) renderEditor(); else renderWorkoutHome();
@@ -4063,9 +4406,9 @@ function buildProposal(products, opts) {
     t.programs.forEach(pr => {
       if (state.programs.some(x => x.id === pr.id)) return;
       recentlyDeleted.delete('programs/' + pr.id);
-      const prog = { id: pr.id, name: pr.name, order: order++, createdAt: now, items: pr.items.filter(([exId]) => EX_MAP[exId]).map(([exId, sets, min, max]) => {
+      const prog = { id: pr.id, name: pr.name, order: order++, createdAt: now, updatedAt: now, items: pr.items.filter(([exId]) => EX_MAP[exId]).map(([exId, sets, min, max]) => {
         const d = EX_MAP[exId];
-        return { exId, name: d.name, kind: d.kind, eq: d.eq, target: normTarget({ sets, min, max }, d.kind) };
+        return { exId, name: d.name, kind: d.kind, eq: d.eq, target: normTarget({ sets, min, max }, d.kind), sets: [] };
       }) };
       state.programs.push(prog);
       save('programs/' + prog.id, programBody(prog));
@@ -4082,62 +4425,111 @@ function buildProposal(products, opts) {
       box.innerHTML = '<div class="w-grid"><div class="card"><p class="muted">Chargement de tes séances…</p></div></div>';
       return;
     }
-    const progs = sortedPrograms();
     const today = todayISO();
-    const todayW = state.workouts.find(w => w.date === today && !w._new);
-    const next = nextProgram();
-    let main = '';
-    if (todayW) {
-      const st = workoutStats(todayW);
-      main += '<div class="banner"><span><strong>Séance du jour : ' + esc(todayW.name) + '</strong> · ' + st.sets + (st.sets > 1 ? ' séries' : ' série') + '</span><button type="button" class="btn small" data-action="w-open" data-id="' + esc(todayW.id) + '">Reprendre</button></div>';
-    }
-    if (next) {
-      const ld = lastDone(next.id);
-      main += '<article class="card w-next"><p class="eyebrow">Prochaine séance</p><h2 class="w-next-name">' + esc(next.name) + '</h2>' +
-        '<p class="w-next-meta">' + next.items.length + ' exercices · ' + (ld ? 'dernière fois ' + esc(dfShort.format(dateOf(ld))) : 'pas encore faite') + '</p>' +
-        '<ul class="w-next-items">' + next.items.map(it => '<li>' + esc(it.name) + '</li>').join('') + '</ul>' +
-        '<div class="row"><button type="button" class="btn primary" data-action="w-start" data-pid="' + esc(next.id) + '">Commencer ' + esc(next.name) + '</button><button type="button" class="btn" data-action="w-start" data-pid="">Séance libre</button></div></article>';
-    } else {
-      main += '<article class="card"><h2>Choisis ton programme</h2><p class="sub">Des séances toutes prêtes, avec le matériel des salles de sport. Tu pourras remplacer chaque exercice et régler les séries.</p>' +
-        templateList() + '<div class="row tp-free"><button type="button" class="btn" data-action="w-start" data-pid="">Faire une séance libre</button></div></article>';
-    }
-    if (progs.length) {
-      main += '<article class="card"><h2>Tes programmes</h2><p class="sub">Ils s’enchaînent dans cet ordre. Touche « Commencer » pour en choisir un autre.</p><ul class="rowlist">' +
-        progs.map(p => {
-          const ld = lastDone(p.id);
-          return '<li><div class="rl-main"><span class="rl-title">' + esc(p.name) + '</span><span class="muted">' + p.items.length + ' exercices · ' + (ld ? esc(dfShort.format(dateOf(ld))) : 'pas encore faite') + '</span></div>' +
-            '<button type="button" class="btn small" data-action="w-start" data-pid="' + esc(p.id) + '">Commencer</button>' +
-            '<button type="button" class="e-del" data-action="wp-delete" data-id="' + esc(p.id) + '" aria-label="Supprimer le programme ' + esc(p.name) + '">' + ICON.x + '</button></li>';
-        }).join('') + '</ul><details class="paste tp-more"><summary>Ajouter un programme tout prêt</summary>' + templateList() + '</details></article>';
-    }
-    const recent = state.workouts.filter(w => !w._new).slice(0, 10);
-    main += '<article class="card"><h2>Dernières séances</h2>' + (recent.length
-      ? '<ul class="rowlist">' + recent.map(w => {
-        const st = workoutStats(w);
-        return '<li><button type="button" class="rowbtn" data-action="w-open" data-id="' + esc(w.id) + '"><span class="rl-main"><span class="rl-title">' + esc(w.name) + '</span><span class="muted">' + esc(cap1(dfShort.format(dateOf(w.date)))) + '</span></span>' +
-          '<span class="rl-side">' + st.sets + (st.sets > 1 ? ' séries' : ' série') + (st.vol ? '<br>' + fmt(st.vol, 0) + ' kg' : '') + '</span>' + svgIco('<path d="M9.5 6l6 6-6 6"/>') + '</button></li>';
-      }).join('') + '</ul>'
-      : '<p class="muted">Tes séances apparaîtront ici.</p>') + '</article>';
-    box.innerHTML = '<div class="w-grid"><div class="w-main">' + main + '</div><div class="w-side">' + weekCard() + '<div id="pCardWrap">' + progressCard() + '</div></div></div>';
+    let main = statsCard();
+    state.workouts.filter(w => w.date === today && !w._new).sort((x, y) => x.createdAt - y.createdAt).forEach(w => {
+      const st = workoutStats(w);
+      main += '<div class="banner"><span><strong>Aujourd’hui : ' + esc(w.name) + '</strong> · ' + (st.sets ? st.sets + (st.sets > 1 ? ' séries' : ' série') : 'prévue') + '</span>' +
+        '<button type="button" class="btn small" data-action="w-open" data-id="' + esc(w.id) + '">' + (st.sets ? 'Reprendre' : 'Commencer') + '</button></div>';
+    });
+    main += mySessionsCard() + planningCard() + historyCard();
+    box.innerHTML = '<div class="w-grid"><div class="w-main">' + main + '</div><div class="w-side"><div id="pCardWrap">' + progressCard() + '</div></div></div>';
     renderProgressChart();
   }
-  function weekCard() {
-    const mon = mondayOf(todayISO()), sun = addDays(mon, 6);
-    const ws = state.workouts.filter(w => !w._new && w.date >= mon && w.date <= sun && workoutStats(w).sets > 0);
+  /* Séances faites : semaine en cours (du lundi au dimanche) et mois en cours */
+  function statsCard() {
+    const today = todayISO(), mon = mondayOf(today), sun = addDays(mon, 6);
+    const [m1, m2] = monthBounds(today);
+    const wk = doneIn(mon, sun), mo = doneIn(m1, m2);
     let sets = 0, vol = 0;
-    ws.forEach(w => { const st = workoutStats(w); sets += st.sets; vol += st.vol; });
+    wk.forEach(w => { const st = workoutStats(w); sets += st.sets; vol += st.vol; });
     const goal = state.profile.sessions || null;
     const crea = allDays().filter(d => d.date >= mon && d.date <= sun && d.creatine).length;
-    return '<article class="card"><h2>Cette semaine</h2><p class="sub">Depuis le lundi ' + esc(dfDM.format(dateOf(mon))) + '</p><div class="stats">' +
-      '<div class="stat"><span class="stat-lbl">Séances</span><span class="stat-val">' + ws.length + (goal ? '<small> / ' + goal + '</small>' : '') + '</span></div>' +
-      '<div class="stat"><span class="stat-lbl">Séries</span><span class="stat-val">' + sets + '</span></div>' +
-      '<div class="stat"><span class="stat-lbl">Volume</span><span class="stat-val">' + fmt(vol, 0) + '</span><span class="stat-sub">kg soulevés</span></div>' +
-      '<div class="stat"><span class="stat-lbl">Créatine</span><span class="stat-val">' + crea + '<small> / 7</small></span><span class="stat-sub">jours</span></div>' +
-      '</div></article>';
+    const lbl = n => (n > 1 ? 'séances faites' : 'séance faite');
+    return '<article class="card w-stats" aria-label="Tes séances faites">' +
+      '<div class="stats"><div class="stat"><span class="stat-lbl">Cette semaine</span><span class="stat-val">' + wk.length + (goal ? '<small> / ' + goal + '</small>' : '') + '</span><span class="stat-sub">' + lbl(wk.length) + '</span></div>' +
+      '<div class="stat"><span class="stat-lbl">En ' + esc(dfMonth.format(dateOf(today))) + '</span><span class="stat-val">' + mo.length + '</span><span class="stat-sub">' + lbl(mo.length) + '</span></div></div>' +
+      '<p class="w-stats-more">Depuis lundi : ' + sets + (sets > 1 ? ' séries' : ' série') + (vol ? ' · ' + fmt(vol, 0) + ' kg soulevés' : '') + ' · créatine ' + crea + '/7 jours</p></article>';
+  }
+  /* Mes séances : les séances types créées, avec leurs exercices et les charges retenues */
+  function mySessionsCard() {
+    const progs = sortedPrograms();
+    if (!progs.length) {
+      return '<article class="card ms"><h2>Mes séances</h2>' +
+        '<p class="sub">Crée tes séances (Pull, Push, Jambes…) avec tes exercices et tes charges. L’appli s’en souvient : tu les places sur tes jours d’entraînement et tu vois ce que tu soulevais avant.</p>' +
+        '<div class="row"><button type="button" class="btn primary" data-action="t-new">' + ICON.plus + 'Créer une séance</button><button type="button" class="btn" data-action="w-start" data-pid="">Séance libre</button></div>' +
+        '<details class="paste tp-more"><summary>Ou pars d’un programme tout prêt</summary>' + templateList() + '</details></article>';
+    }
+    const next = progs.length > 1 ? nextProgram() : null, today = todayISO();
+    return '<article class="card ms"><div class="card-head"><h2>Mes séances</h2><button type="button" class="btn small" data-action="t-new">' + ICON.plus + 'Créer</button></div>' +
+      '<ul class="ms-list">' + progs.map(p => {
+        const ld = lastDone(p.id), shown = p.items.slice(0, 6), pid = esc(p.id);
+        const tw = state.workouts.find(w => !w._new && w.date === today && w.programId === p.id);
+        return '<li class="ms-item">' +
+          '<div class="ms-head"><button type="button" class="ms-title" data-action="t-edit" data-id="' + pid + '" aria-label="' + esc('Modifier la séance ' + p.name) + '">' +
+            (next && next.id === p.id ? '<span class="ms-next">À faire ensuite</span>' : '') +
+            '<span class="ms-name">' + esc(p.name) + '</span><span class="ms-meta">' + p.items.length + (p.items.length > 1 ? ' exercices' : ' exercice') + ' · ' + (ld ? 'faite ' + esc(dfShort.format(dateOf(ld))) : 'pas encore faite') + '</span></button>' +
+            '<button type="button" class="iconbtn ms-edit" data-action="t-edit" data-id="' + pid + '" aria-label="' + esc('Modifier ' + p.name) + '">' + ICON.edit + '</button></div>' +
+          (shown.length ? '<ul class="ms-exos">' + shown.map(it => '<li><span class="ms-ex">' + esc(it.name) + '</span><span class="ms-kg">' + esc(chargeText(it)) + '</span></li>').join('') +
+            (p.items.length > shown.length ? '<li class="ms-plus">+ ' + (p.items.length - shown.length) + (p.items.length - shown.length > 1 ? ' autres exercices' : ' autre exercice') + '</li>' : '') + '</ul>'
+            : '<p class="muted ms-empty">Aucun exercice pour l’instant.</p>') +
+          '<div class="ms-actions"><button type="button" class="btn small primary" data-action="w-start" data-pid="' + pid + '">' + (tw ? (hasActual(tw) ? 'Reprendre' : 'Commencer') : 'Faire aujourd’hui') + '</button>' +
+            '<button type="button" class="btn small" data-action="plan-open" data-pid="' + pid + '">Planifier</button></div></li>';
+      }).join('') + '</ul>' +
+      '<div class="ms-foot"><button type="button" class="btn small ghost" data-action="w-start" data-pid="">Séance libre</button></div>' +
+      '<details class="paste tp-more"><summary>Ajouter un programme tout prêt</summary>' + templateList() + '</details></article>';
+  }
+  /* Planning : une semaine, jour par jour, avec les séances faites et prévues */
+  function planningCard() {
+    const today = todayISO(), cur = mondayOf(today);
+    const mon = state.planWeek || cur;
+    const days = Array.from({ length: 7 }, (_, i) => addDays(mon, i));
+    const byDate = new Map();
+    for (const w of state.workouts) {
+      if (w._new || w.date < mon || w.date > days[6]) continue;
+      if (!byDate.has(w.date)) byDate.set(w.date, []);
+      byDate.get(w.date).push(w);
+    }
+    const label = mon === cur ? 'Cette semaine' : mon === addDays(cur, 7) ? 'Semaine prochaine' : mon === addDays(cur, -7) ? 'Semaine dernière' : 'Du ' + dfDM.format(dateOf(mon)) + ' au ' + dfDM.format(dateOf(days[6]));
+    return '<article class="card plan" aria-labelledby="planH"><div class="card-head"><h2 id="planH">Planning</h2>' +
+      '<div class="plan-nav"><button type="button" class="iconbtn" data-action="plan-week" data-d="-7" aria-label="Semaine précédente">' + svgIco('<path d="M14.5 6l-6 6 6 6"/>') + '</button>' +
+      '<span class="plan-range" aria-live="polite">' + esc(label) + '</span>' +
+      '<button type="button" class="iconbtn" data-action="plan-week" data-d="7" aria-label="Semaine suivante">' + svgIco('<path d="M9.5 6l6 6-6 6"/>') + '</button></div></div>' +
+      '<ul class="plan-days">' + days.map(d => {
+        const ws = (byDate.get(d) || []).slice().sort((x, y) => x.createdAt - y.createdAt), dt = dateOf(d);
+        return '<li class="pd' + (d === today ? ' today' : '') + (d < today ? ' past' : '') + '">' +
+          '<span class="pd-date"' + (d === today ? ' aria-label="Aujourd’hui"' : '') + '><span class="pd-wd">' + esc(dfWd.format(dt).replace('.', '')) + '</span><span class="pd-n">' + dt.getDate() + '</span></span>' +
+          '<div class="pd-items">' + ws.map(w => {
+            const st = workoutStats(w), done = isDone(w);
+            return '<button type="button" class="pd-w' + (done ? ' done' : d < today ? ' missed' : '') + '" data-action="w-open" data-id="' + esc(w.id) + '">' + (done ? ICON.check : '') +
+              '<span class="pd-name">' + esc(w.name) + '</span><span class="pd-st">' + (done ? st.sets + (st.sets > 1 ? ' séries' : ' série') : d < today ? 'pas faite' : 'prévue') + '</span></button>';
+          }).join('') + '</div>' +
+          '<button type="button" class="pd-add" data-action="plan-day" data-date="' + d + '" aria-label="' + esc('Ajouter une séance ' + dayLabel(d)) + '">' + ICON.plus + '</button></li>';
+      }).join('') + '</ul></article>';
+  }
+  /* Historique des séances faites, filtrable par séance type */
+  function historyCard() {
+    const done = state.workouts.filter(isDone);
+    let html = '<article class="card" aria-labelledby="histH"><h2 id="histH">Historique</h2>';
+    if (!done.length) return html + '<p class="muted">Tes séances faites apparaîtront ici, avec les charges de chaque exercice.</p></article>';
+    const progs = sortedPrograms().filter(p => done.some(w => w.programId === p.id));
+    const f = state.histFilter !== 'all' && progs.some(p => p.id === state.histFilter) ? state.histFilter : 'all';
+    const list = done.filter(w => f === 'all' || w.programId === f);
+    const n = state.histN || 10;
+    if (progs.length) html += '<div class="chips scroll hist-chips" role="group" aria-label="Filtrer l’historique">' +
+      [['all', 'Toutes']].concat(progs.map(p => [p.id, p.name])).map(([v, l]) => '<button type="button" class="chip" data-action="hist-filter" data-v="' + esc(v) + '" aria-pressed="' + (f === v) + '">' + esc(l) + '</button>').join('') + '</div>';
+    html += '<ul class="rowlist">' + list.slice(0, n).map(w => {
+      const st = workoutStats(w);
+      return '<li><button type="button" class="rowbtn" data-action="w-open" data-id="' + esc(w.id) + '"><span class="rl-main"><span class="rl-title">' + esc(w.name) + '</span><span class="muted">' + esc(cap1(dfShort.format(dateOf(w.date)))) + '</span></span>' +
+        '<span class="rl-side">' + st.sets + (st.sets > 1 ? ' séries' : ' série') + (st.vol ? '<br>' + fmt(st.vol, 0) + ' kg' : '') + '</span>' + svgIco('<path d="M9.5 6l6 6-6 6"/>') + '</button></li>';
+    }).join('') + '</ul>';
+    if (list.length > n) html += '<button type="button" class="btn small ghost hist-more" data-action="hist-more">Voir les séances plus anciennes</button>';
+    return html + '</article>';
   }
   function progressOptions() {
     const ids = [], names = {};
-    for (const w of state.workouts) for (const ex of w.exercises) if (validSets(ex).length && !ids.includes(ex.exId)) { ids.push(ex.exId); names[ex.exId] = ex.name; }
+    const today = todayISO();
+    for (const w of state.workouts) if (w.date <= today) for (const ex of w.exercises) if (validSets(ex).length && !ids.includes(ex.exId)) { ids.push(ex.exId); names[ex.exId] = ex.name; }
     return ids.map(id => ({ id, name: names[id] }));
   }
   function progressCard() {
@@ -4244,33 +4636,62 @@ function buildProposal(products, opts) {
   function renderEditor() {
     const w = curWorkout(), box = $('#wEditor');
     if (!w) { state.wOpen = null; renderSeances(); return; }
+    const back = '<button type="button" class="btn small" data-action="w-close">' + svgIco('<path d="M14.5 6l-6 6 6 6"/>') + 'Séances</button>';
+    if (w.isTpl) {
+      box.innerHTML = '<div class="we tpl-ed">' +
+        '<div class="card we-head">' +
+          '<div class="we-top">' + back + '<span class="we-stats" id="weStats"></span></div>' +
+          '<p class="eyebrow">' + (w.pid ? 'Ta séance' : 'Nouvelle séance') + '</p>' +
+          '<label class="field" for="weName"><span>Nom de la séance</span><input type="text" id="weName" class="we-name" maxlength="40" autocomplete="off" placeholder="Ex. Pull, Push, Jambes…" value="' + esc(w.name) + '"></label>' +
+          '<p class="we-note">Note tes exercices et les charges que tu fais. Après chaque séance, l’appli retient tes dernières charges ici. Les séances déjà faites gardent les leurs.</p>' +
+        '</div>' +
+        '<div class="exos" id="weExos">' + (w.exercises.length ? w.exercises.map(ex => exoCard(w, ex)).join('') : '<p class="card muted">Ajoute les exercices de cette séance.</p>') + '</div>' +
+        '<button type="button" class="btn add-exo" data-action="ex-picker" data-mode="add">' + ICON.plus + 'Ajouter un exercice</button>' +
+        '<div class="we-actions">' + (w.pid && w.exercises.length ? '<button type="button" class="btn" data-action="plan-open" data-pid="' + esc(w.pid) + '">Planifier</button>' : '') + '<span class="spacer"></span>' +
+          '<span class="we-end">' + (w.pid ? '<button type="button" class="btn ghost danger" data-action="t-delete">Supprimer la séance</button>' : '') +
+          '<button type="button" class="btn primary" data-action="w-close">Terminer</button></span></div>' +
+      '</div>';
+      updateEditorStats();
+      return;
+    }
     const p = w.programId ? state.programs.find(x => x.id === w.programId) : null;
     let prog = '';
     if (state.wNaming) {
-      prog = '<form class="naming" data-wnaming="1"><label class="sr" for="wpName">Nom du programme</label><input type="text" id="wpName" maxlength="40" autocomplete="off" value="' + esc(w.name !== 'Séance libre' ? w.name : 'Mon programme') + '"><button type="submit" class="btn small primary">Créer le programme</button><button type="button" class="btn small ghost" data-action="wp-cancel">Annuler</button></form>';
+      prog = '<form class="naming" data-wnaming="1"><label class="sr" for="wpName">Nom de la séance</label><input type="text" id="wpName" maxlength="40" autocomplete="off" value="' + esc(w.name !== 'Séance libre' ? w.name : 'Ma séance') + '"><button type="submit" class="btn small primary">Ajouter à Mes séances</button><button type="button" class="btn small ghost" data-action="wp-cancel">Annuler</button></form>';
     } else if (p) {
       prog = '<button type="button" class="btn" data-action="wp-update">Mettre à jour « ' + esc(p.name) + ' » avec cette séance</button>';
     } else if (w.exercises.length) {
-      prog = '<button type="button" class="btn" data-action="wp-new">Enregistrer comme programme</button>';
+      prog = '<button type="button" class="btn" data-action="wp-new">Ajouter à Mes séances</button>';
+    }
+    const today = todayISO();
+    let note = '';
+    if (!hasActual(w) && w.exercises.length) {
+      note = (w.date > today ? 'Séance prévue ' + dayLabel(w.date) + '. ' : '') +
+        (followsProgram(w, p) ? 'Elle suit « ' + p.name + ' » tant que tu ne l’as pas commencée. ' : '') +
+        'Les charges en gris sont celles prévues : touche ✓ pour valider chaque série, ou écris ce que tu as fait.';
+    } else if (w.date < today && workoutStats(w).sets) {
+      note = 'Séance du ' + dfLong.format(dateOf(w.date)) + ' : ce que tu changes ici reste sur ce jour.';
     }
     box.innerHTML = '<div class="we">' +
       '<div class="card we-head">' +
-        '<div class="we-top"><button type="button" class="btn small" data-action="w-close">' + svgIco('<path d="M14.5 6l-6 6 6 6"/>') + 'Séances</button><span class="we-stats" id="weStats"></span></div>' +
+        '<div class="we-top">' + back + '<span class="we-stats" id="weStats"></span></div>' +
         '<div class="we-fields"><label class="field" for="weName"><span>Séance</span><input type="text" id="weName" class="we-name" maxlength="40" autocomplete="off" value="' + esc(w.name) + '"></label>' +
         '<label class="field" for="weDate"><span>Date</span><input type="date" id="weDate" value="' + w.date + '"></label></div>' +
+        (note ? '<p class="we-note">' + esc(note) + '</p>' : '') +
       '</div>' +
       '<div class="exos" id="weExos">' + (w.exercises.length ? w.exercises.map(ex => exoCard(w, ex)).join('') : '<p class="card muted">Aucun exercice pour l’instant. Ajoute ton premier exercice ci-dessous.</p>') + '</div>' +
       '<button type="button" class="btn add-exo" data-action="ex-picker" data-mode="add">' + ICON.plus + 'Ajouter un exercice</button>' +
       '<label class="field" for="weNotes"><span>Notes</span><textarea id="weNotes" rows="2" maxlength="2000" placeholder="Sensations, réglages de machine…">' + esc(w.notes) + '</textarea></label>' +
-      '<div class="we-actions">' + prog + '<span class="spacer"></span>' +
-        '<button type="button" class="btn ghost danger" data-action="w-delete" data-id="' + esc(w.id) + '">Supprimer la séance</button>' +
-        '<button type="button" class="btn primary" data-action="w-close">Terminer</button></div>' +
+      '<div class="we-actions">' + prog + (w.exercises.length ? '<button type="button" class="btn" data-action="plan-copy">Copier vers un autre jour</button>' : '') + '<span class="spacer"></span>' +
+        '<span class="we-end"><button type="button" class="btn ghost danger" data-action="w-delete" data-id="' + esc(w.id) + '">Supprimer la séance</button>' +
+        '<button type="button" class="btn primary" data-action="w-close">Terminer</button></span></div>' +
     '</div>';
     updateEditorStats();
   }
   function updateEditorStats() {
     const w = curWorkout(), el = $('#weStats');
     if (!w || !el) return;
+    if (w.isTpl) { const n = w.exercises.length; el.innerHTML = '<strong>' + n + '</strong> ' + (n > 1 ? 'exercices' : 'exercice'); return; }
     const st = workoutStats(w);
     el.innerHTML = '<strong>' + st.sets + '</strong> ' + (st.sets > 1 ? 'séries' : 'série') + (st.vol ? ' · <strong>' + fmt(st.vol, 0) + '</strong> kg soulevés' : '');
   }
@@ -4300,20 +4721,33 @@ function buildProposal(products, opts) {
         (i < w.exercises.length - 1 ? '<button type="button" class="btn small" data-action="exo-move" data-dir="1" data-key="' + k + '">Descendre</button>' : '') +
         '<button type="button" class="btn small ghost danger" data-action="exo-remove" data-key="' + k + '">Retirer</button></div></div>';
     }
-    html += '<p class="exo-last">' + (last ? 'Dernière fois (' + esc(dfShort.format(dateOf(last.date))) + ') : ' + esc(last.sets.map(s => fmtSet(s, last.kind)).join(' · ')) : 'Première fois sur cet exercice.') + '</p>';
+    const tpl = !!w.isTpl;
+    html += '<p class="exo-last">' + (last ? 'Dernière fois (' + esc(dfShort.format(dateOf(last.date))) + ') : ' + esc(last.sets.map(s => fmtSet(s, last.kind)).join(' · ')) : (tpl ? 'Pas encore fait : note la charge que tu prévois.' : 'Première fois sur cet exercice.')) + '</p>';
+    if (!tpl) {
+      /* Séance passée : ce que tu fais maintenant sur cet exercice */
+      const mine = validSets(ex), latest = mine.length ? lastPerfAny(ex.exId) : null;
+      if (latest && latest.wid !== w.id && (latest.date > w.date || (latest.date === w.date && latest.created > w.createdAt))) {
+        let delta = '';
+        if (ex.kind === 'w') {
+          const a = Math.max.apply(null, mine.map(s => s.kg || 0)), b = Math.max.apply(null, latest.sets.map(s => s.kg || 0));
+          if (a > 0 && b > 0) delta = b === a ? 'même charge' : fmtSigned(b - a, 2) + ' kg';
+        }
+        html += '<p class="exo-now">Maintenant (' + esc(dfShort.format(dateOf(latest.date))) + ') : ' + esc(latest.sets.map(s => fmtSet(s, latest.kind)).join(' · ')) + (delta ? ' <strong class="' + (delta.startsWith('+') ? 'up' : delta.startsWith('−') ? 'down' : '') + '">' + esc(delta) + '</strong>' : '') + '</p>';
+      }
+    }
     if (hint) html += '<p class="hint-up">' + stateChip({ cls: 'ok', icon: '↑', text: 'Toutes tes séries au max la dernière fois : ' + hint }) + '</p>';
-    html += '<div class="sets"><div class="set-row head" aria-hidden="true"><span>Série</span><span>' + esc(kgLbl) + '</span><span>' + esc(repLbl) + '</span><span></span></div>' +
-      ex.sets.map((s, i) => setRow(ex, s, i, setPlaceholder(ex, i, last), kgLbl, repLbl)).join('') + '</div>';
+    html += '<div class="sets"><div class="set-row head' + (tpl ? ' tpl' : '') + '" aria-hidden="true"><span>Série</span><span>' + esc(kgLbl) + '</span><span>' + esc(repLbl) + '</span>' + (tpl ? '' : '<span></span>') + '</div>' +
+      ex.sets.map((s, i) => setRow(ex, s, i, setPlaceholder(ex, i, last), kgLbl, repLbl, tpl)).join('') + '</div>';
     html += '<div class="exo-foot"><button type="button" class="btn small" data-action="set-add" data-key="' + k + '">+ Série</button>' +
       (ex.sets.length ? '<button type="button" class="btn small ghost" data-action="set-remove" data-key="' + k + '">− Série</button>' : '') + '</div></section>';
     return html;
   }
-  function setRow(ex, s, i, ph, kgLbl, repLbl) {
+  function setRow(ex, s, i, ph, kgLbl, repLbl, tpl) {
     const k = esc(ex.key), n = i + 1;
-    return '<div class="set-row' + (s.done ? ' done' : '') + '"><span class="set-n">' + n + '</span>' +
+    return '<div class="set-row' + (s.done ? ' done' : '') + (tpl ? ' tpl' : '') + '"><span class="set-n">' + n + '</span>' +
       '<input type="text" inputmode="decimal" autocomplete="off" data-sk="' + k + '" data-si="' + i + '" data-sf="kg" value="' + (s.kg != null ? esc(fmtInput(s.kg)) : '') + '" placeholder="' + esc(ph.kg != null ? fmtInput(ph.kg) : (ex.kind === 'w' ? 'kg' : ex.kind === 'c' ? 'niv.' : '0')) + '" aria-label="' + esc(kgLbl) + ', série ' + n + '">' +
       '<input type="text" inputmode="numeric" autocomplete="off" data-sk="' + k + '" data-si="' + i + '" data-sf="reps" value="' + (s.reps != null ? s.reps : '') + '" placeholder="' + (ph.reps != null ? ph.reps : '—') + '" aria-label="' + esc(repLbl) + ', série ' + n + '">' +
-      '<button type="button" class="set-check" data-action="set-done" data-key="' + k + '" data-i="' + i + '" aria-pressed="' + !!s.done + '" aria-label="Valider la série ' + n + '">' + ICON.check + '</button></div>';
+      (tpl ? '' : '<button type="button" class="set-check" data-action="set-done" data-key="' + k + '" data-i="' + i + '" aria-pressed="' + !!s.done + '" aria-label="Valider la série ' + n + '">' + ICON.check + '</button>') + '</div>';
   }
   function renderExo(w, ex) {
     const card = document.querySelector('[data-exo="' + ex.key + '"]');
@@ -4337,12 +4771,19 @@ function buildProposal(products, opts) {
     if (!s) return;
     const raw = inp.value.trim();
     const f = inp.dataset.sf;
-    if (!raw) { inp.removeAttribute('aria-invalid'); s[f] = null; touchWorkout(w); updateEditorStats(); return; }
+    if (!raw) { inp.removeAttribute('aria-invalid'); s[f] = null; markEdited(w); touchWorkout(w); updateEditorStats(); return; }
     let v = parseNum(raw);
     if (f === 'reps') { if (v == null || v <= 0 || v > 999) { inp.setAttribute('aria-invalid', 'true'); return; } v = Math.round(v); }
     else if (v == null || v < 0 || v > 1000) { inp.setAttribute('aria-invalid', 'true'); return; }
     inp.removeAttribute('aria-invalid');
     s[f] = v;
+    /* Reps notées sur une série prévue : la charge prévue devient la charge faite si elle n’est pas écrite */
+    if (f === 'reps' && s.kg == null && s.pk != null) {
+      s.kg = s.pk;
+      const kgInp = document.querySelector('[data-sk="' + inp.dataset.sk + '"][data-si="' + inp.dataset.si + '"][data-sf="kg"]');
+      if (kgInp) kgInp.value = fmtInput(s.kg);
+    }
+    markEdited(w);
     touchWorkout(w);
     updateEditorStats();
   }
@@ -4352,7 +4793,13 @@ function buildProposal(products, opts) {
     if (!ex) return;
     const t = Object.assign({}, ex.target, { [inp.dataset.tf]: parseNum(inp.value) });
     ex.target = normTarget(t, ex.kind);
-    while (ex.sets.length < ex.target.sets) ex.sets.push({ kg: null, reps: null, done: false });
+    while (ex.sets.length < ex.target.sets) {
+      const prevSet = ex.sets[ex.sets.length - 1], ns = { kg: null, reps: null, done: false };
+      if (prevSet && prevSet.pk != null) ns.pk = prevSet.pk;
+      if (prevSet && prevSet.pr != null) ns.pr = prevSet.pr;
+      ex.sets.push(ns);
+    }
+    markEdited(w);
     touchWorkout(w, true);
     renderExo(w, ex);
   }
@@ -4429,7 +4876,7 @@ function buildProposal(products, opts) {
     const q = (!def.custom && EX_VQ[def.id]) || base + (def.group === 'cardio' ? ' technique' : ' exécution musculation');
     return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q);
   }
-  /* Bloc « En vidéo » : la vidéo choisie pour l’exercice (ouverte sur YouTube), sinon une recherche précise */
+  /* Bloc « En vidéo » : la vidéo choisie pour l’exercice (ouverte sur YouTube), sinon une recherche précise */
   function videoHTML(def, v, top) {
     let h = '<section class="exi-video' + (top ? ' top' : '') + '" aria-labelledby="exiVidT"><h3 id="exiVidT">En vidéo</h3>';
     if (v) {
@@ -4526,6 +4973,61 @@ function buildProposal(products, opts) {
     const st = $('#exiStage');
     if (st) st.dataset.mode = v;
     document.querySelectorAll('#exiModes [data-action="exi-mode"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+  }
+
+  /* ================= Planifier une séance type, copier une séance, choisir la séance d’un jour ================= */
+  const plan = { mode: 'tpl', pid: null, wid: null, date: null };
+  function openPlan(mode, o) {
+    flushAllWorkouts();
+    plan.mode = mode;
+    plan.pid = o.pid || null;
+    plan.wid = o.wid || null;
+    plan.date = o.date || todayISO();
+    if (mode !== 'day') {
+      /* Par défaut : le prochain jour sans séance, à partir de demain */
+      let d = addDays(todayISO(), 1);
+      for (let i = 0; i < 13 && state.workouts.some(w => !w._new && w.date === d); i++) d = addDays(d, 1);
+      plan.date = d;
+    }
+    renderPlan();
+    openDlg('#planDlg');
+  }
+  function planDayChips() {
+    const today = todayISO();
+    const days = Array.from({ length: 7 }, (_, i) => addDays(today, i));
+    const lbl = d => (d === today ? 'Aujourd’hui' : d === addDays(today, 1) ? 'Demain' : cap1(dfShort.format(dateOf(d))));
+    return '<div class="chips plan-chips" role="group" aria-label="Jour">' + days.map(d => '<button type="button" class="chip" data-action="plan-date" data-date="' + d + '" aria-pressed="' + (plan.date === d) + '">' + esc(lbl(d)) + '</button>').join('') + '</div>' +
+      '<label class="field plan-other" for="planDate"><span>Ou une autre date</span><input type="date" id="planDate" value="' + plan.date + '"></label>';
+  }
+  function planAlready(date) {
+    const ws = state.workouts.filter(w => !w._new && w.date === date);
+    return ws.length ? '<p class="hint">Déjà ce jour-là : ' + esc(ws.map(w => w.name).join(', ')) + '.</p>' : '';
+  }
+  function renderPlan() {
+    const body = $('#planBody'), foot = $('#planFoot'), title = $('#planTitle');
+    if (plan.mode === 'day') {
+      const progs = sortedPrograms();
+      const done = state.workouts.filter(w => isDone(w) && w.date !== plan.date).slice(0, 5);
+      title.textContent = 'Ajouter une séance ' + dayLabel(plan.date);
+      body.innerHTML = planAlready(plan.date) +
+        (progs.length ? '<p class="sub">Choisis une de tes séances : elle arrive avec tes dernières charges.</p><ul class="rowlist plan-list">' + progs.map(p => '<li><button type="button" class="rowbtn" data-action="plan-pick" data-pid="' + esc(p.id) + '"><span class="rl-main"><span class="rl-title">' + esc(p.name) + '</span><span class="muted">' + p.items.length + (p.items.length > 1 ? ' exercices' : ' exercice') + '</span></span>' + svgIco('<path d="M9.5 6l6 6-6 6"/>') + '</button></li>').join('') + '</ul>'
+          : '<p class="sub">Tu n’as pas encore de séance. Crée-en une avec tes exercices et tes charges.</p><div class="row"><button type="button" class="btn primary" data-action="plan-new">' + ICON.plus + 'Créer une séance</button></div>') +
+        (done.length ? '<details class="paste"><summary>Ou copie une séance déjà faite</summary><ul class="rowlist plan-list">' + done.map(w => '<li><button type="button" class="rowbtn" data-action="plan-pick-copy" data-id="' + esc(w.id) + '"><span class="rl-main"><span class="rl-title">' + esc(w.name) + '</span><span class="muted">' + esc(cap1(dfShort.format(dateOf(w.date)))) + '</span></span>' + svgIco('<path d="M9.5 6l6 6-6 6"/>') + '</button></li>').join('') + '</ul></details>' : '');
+      foot.innerHTML = '<button type="button" class="btn ghost" data-action="plan-free">Séance libre</button><div class="foot-btns"><button type="button" class="btn" data-action="plan-close">Annuler</button></div>';
+      return;
+    }
+    const src = plan.mode === 'copy' ? state.workouts.find(w => w.id === plan.wid) : state.programs.find(p => p.id === plan.pid);
+    if (!src) { closeDlg('#planDlg'); return; }
+    title.textContent = plan.mode === 'copy' ? 'Copier « ' + src.name + ' »' : 'Planifier « ' + src.name + ' »';
+    body.innerHTML = '<p class="sub">' + (plan.mode === 'copy' ? 'Les mêmes exercices, avec les charges de cette séance comme charges prévues.' : 'Pour quel jour ? La séance arrive avec tes dernières charges, et elle suit tes modifications de « ' + esc(src.name) + ' » tant que tu ne l’as pas commencée.') + '</p>' +
+      planDayChips() + planAlready(plan.date);
+    foot.innerHTML = '<div class="foot-btns"><button type="button" class="btn" data-action="plan-close">Annuler</button><button type="button" class="btn primary" data-action="plan-confirm">' + (plan.mode === 'copy' ? 'Copier ' : 'Planifier ') + esc(dayLabel(plan.date)) + '</button></div>';
+  }
+  function confirmPlan() {
+    if (!isISO(plan.date)) return;
+    closeDlg('#planDlg');
+    if (plan.mode === 'copy') copyWorkout(state.workouts.find(w => w.id === plan.wid), plan.date);
+    else planWorkout(plan.pid, plan.date);
   }
 
   /* ================= Minuteur de repos ================= */
@@ -4811,7 +5313,7 @@ function buildProposal(products, opts) {
       if (d.entries.length) { const t = dayTotals(d); w.kcal.push(t.kcal); w.protein.push(t.protein); }
       if (d.creatine) w.crea++;
     }
-    for (const x of state.workouts) if (!x._new && workoutStats(x).sets > 0) get(mondayOf(x.date)).sessions++;
+    for (const x of state.workouts) if (isDone(x)) get(mondayOf(x.date)).sessions++;
     const rows = [...weeks.values()].filter(w => w.weights.length || w.kcal.length || w.sessions || w.crea).sort((a, b) => (a.week < b.week ? 1 : -1)).slice(0, 8);
     rows.forEach(r => { r.avgW = mean(r.weights); r.avgK = mean(r.kcal); r.avgP = mean(r.protein); r.logged = r.kcal.length; });
     rows.forEach((r, i) => { const prev = rows[i + 1]; r.delta = r.avgW != null && prev && prev.avgW != null ? r.avgW - prev.avgW : null; });
@@ -5207,7 +5709,7 @@ function buildProposal(products, opts) {
     return { name: cleanName(d.name), photo, updatedAt: Number(d.updatedAt) || 0 };
   }
   const slugName = n => String(n || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 20);
-  /* « Nutrisport de Julios », « Nutrisport d’Emma » */
+  /* « Nutrisport de Lucas », « Nutrisport d’Emma » */
   const deName = n => (/^[aeiouyhàâäéèêëîïôöùûüœæ]/i.test(n) ? 'd’' : 'de ') + n;
   const AV_COLORS = ['var(--p)', 'var(--c)', 'var(--f)'];
   function avatarColor(name) { let h = 7; for (const ch of name) h = (h * 31 + ch.codePointAt(0)) >>> 0; return AV_COLORS[h % AV_COLORS.length]; }
@@ -5427,6 +5929,8 @@ function buildProposal(products, opts) {
     Object.keys(wTimers).forEach(id => { clearTimeout(wTimers[id]); delete wTimers[id]; });
     state.workouts = [];
     state.wOpen = null;
+    clearTimeout(tplTimer);
+    state.tDraft = null;
     state.wVer++;
     state.programs = [];
     clearTimeout(profileTimer);
@@ -5579,6 +6083,35 @@ function buildProposal(products, opts) {
         }
         /* Séances */
         case 'w-start': startWorkout(b.dataset.pid || null); break;
+        case 't-new': openTemplate(null); break;
+        case 't-edit': openTemplate(b.dataset.id); break;
+        case 't-delete': { const d = state.tDraft; if (d && d.pid) deleteProgram(d.pid); else { clearTimeout(tplTimer); state.tDraft = null; renderSeances(); } break; }
+        case 'plan-open': { if (state.tDraft) flushTemplate(); const pid = b.dataset.pid || (state.tDraft && state.tDraft.pid); if (pid) openPlan('tpl', { pid }); break; }
+        case 'plan-day': openPlan('day', { date: b.dataset.date }); break;
+        case 'plan-copy': { const w = curWorkout(); if (w && !w.isTpl) openPlan('copy', { wid: w.id }); break; }
+        case 'plan-date': plan.date = b.dataset.date; renderPlan(); { const f = document.querySelector('#planBody [data-date="' + plan.date + '"]'); if (f) f.focus(); } break;
+        case 'plan-confirm': confirmPlan(); break;
+        case 'plan-pick': closeDlg('#planDlg'); planWorkout(b.dataset.pid, plan.date); break;
+        case 'plan-pick-copy': closeDlg('#planDlg'); copyWorkout(state.workouts.find(w => w.id === b.dataset.id), plan.date); break;
+        case 'plan-free': closeDlg('#planDlg'); startWorkout(null, plan.date); break;
+        case 'plan-new': closeDlg('#planDlg'); openTemplate(null); break;
+        case 'plan-close': closeDlg('#planDlg'); break;
+        case 'plan-week': {
+          state.planWeek = addDays(state.planWeek || mondayOf(todayISO()), Number(b.dataset.d) || 0);
+          renderWorkoutHome();
+          const f = document.querySelector('[data-action="plan-week"][data-d="' + b.dataset.d + '"]');
+          if (f) f.focus();
+          break;
+        }
+        case 'hist-filter': {
+          state.histFilter = b.dataset.v;
+          state.histN = 10;
+          renderWorkoutHome();
+          const f = [...document.querySelectorAll('[data-action="hist-filter"]')].find(x => x.dataset.v === state.histFilter);
+          if (f) f.focus();
+          break;
+        }
+        case 'hist-more': state.histN = (state.histN || 10) + 10; renderWorkoutHome(); break;
         case 'w-open': openWorkout(b.dataset.id); break;
         case 'w-close': closeWorkout(); break;
         case 'w-delete': deleteWorkout(b.dataset.id); break;
@@ -5604,15 +6137,23 @@ function buildProposal(products, opts) {
         case 'set-add': {
           const w = curWorkout(), ex = w && findEx(w, b.dataset.key);
           if (!ex) break;
-          ex.sets.push({ kg: null, reps: null, done: false });
+          const prevSet = ex.sets[ex.sets.length - 1];
+          const ns = { kg: null, reps: null, done: false };
+          if (prevSet && prevSet.pk != null) ns.pk = prevSet.pk;
+          if (prevSet && prevSet.pr != null) ns.pr = prevSet.pr;
+          if (w.isTpl && prevSet) { ns.kg = prevSet.kg; ns.reps = prevSet.reps; }
+          ex.sets.push(ns);
+          markEdited(w);
           touchWorkout(w, true);
           renderExo(w, ex);
+          if (w.isTpl) updateEditorStats();
           break;
         }
         case 'set-remove': {
           const w = curWorkout(), ex = w && findEx(w, b.dataset.key);
           if (!ex || !ex.sets.length) break;
           ex.sets.pop();
+          markEdited(w);
           touchWorkout(w, true);
           renderExo(w, ex);
           updateEditorStats();
@@ -5684,7 +6225,7 @@ function buildProposal(products, opts) {
       else if (t.id === 'exSearch') { picker.q = t.value; renderPicker(); }
       else if (t.id === 'me-name') { meDraft.name = t.value; renderMeDraft(); }
       else if (t.id === 'weName') { const w = curWorkout(); if (w) { w.name = t.value.slice(0, 40); touchWorkout(w); } }
-      else if (t.id === 'weNotes') { const w = curWorkout(); if (w) { w.notes = t.value.slice(0, 2000); touchWorkout(w); } }
+      else if (t.id === 'weNotes') { const w = curWorkout(); if (w) { w.notes = t.value.slice(0, 2000); markEdited(w); touchWorkout(w); } }
       else if (t.matches('[data-pf]')) onProfileNum(t);
       else if (t.matches('[data-gt]')) onGenTarget(t);
       else if (t.matches('[data-gportion]')) onGenPortion(t);
@@ -5717,6 +6258,7 @@ function buildProposal(products, opts) {
         else if (w) t.value = w.date;
       } else if (t.id === 'weName' || t.id === 'weNotes') { const w = curWorkout(); if (w) flushWorkout(w.id); }
       else if (t.id === 'progSelect') { state.progEx = t.value; rerenderProgressCard(); }
+      else if (t.id === 'planDate') { if (isISO(t.value)) { plan.date = t.value; renderPlan(); } }
       else if (t.matches('[data-gp]')) {
         const g = state.genSettings, id = t.dataset.gp;
         g.excluded = g.excluded.filter(x => x !== id);
@@ -5777,7 +6319,7 @@ function buildProposal(products, opts) {
           en.target._w = w;
           if (first) continue;
           if (state.tab === 'suivi') { renderWeightChart(); renderKcalChart(); }
-          else if (state.tab === 'seances' && !state.wOpen) renderProgressChart();
+          else if (state.tab === 'seances' && !state.wOpen && !state.tDraft) renderProgressChart();
         }
       });
       ro.observe($('#p-suivi'));

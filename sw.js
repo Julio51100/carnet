@@ -2,7 +2,7 @@
    - La page de l’appli vient du réseau quand il répond vite (3,5 s), sinon de la copie gardée sur le téléphone.
    - Polices, icônes et photos d’exercices sont servies depuis le téléphone une fois téléchargées.
    Fichier généré par src/build_site.py : ne pas modifier à la main. */
-const VERSION = '2026-10-03.b29f8f';
+const VERSION = '2026-10-04.85c3ec';
 /* Caches propres à l’adresse de l’appli : une autre appli du même site n’y touche pas */
 const PREFIX = 'carnet:' + new URL(self.registration.scope).pathname + ':';
 const CORE = PREFIX + 'core-' + VERSION;
