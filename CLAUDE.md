@@ -17,6 +17,14 @@ python3 src/build_site.py src/carnet.html . --fonts src/fonts
 
 Le numéro de version (date + empreinte de la source) change tout seul : les applis installées affichent « Une nouvelle version de Nutrisport est prête » à la prochaine ouverture. Ajoute `--assets` seulement pour refaire les icônes et les écrans de lancement à partir du logo `src/logo.png` (Pillow et Playwright requis). Le logo sert d’icône sur l’écran d’accueil du téléphone (et d’écran de lancement) : Jules ne le veut pas dans l’en-tête de l’appli.
 
+## Interface
+
+Style « Épuré » choisi par Jules : fond graphite, Instrument Sans (étroite pour les gros chiffres), couleurs réservées aux macros (protéines bleu, glucides orange, lipides vert) et au vert des réussites. Cartes sans bordure en sombre, filet léger en clair.
+
+- En-tête : un bonjour avec le pseudo sur Jour, le nom de l’onglet ailleurs, la photo de profil à droite. Le thème clair ou sombre se change dans le profil. L’état d’enregistrement ne s’affiche qu’en cas de problème.
+- Jour : ce qu’il reste à manger en grand, les macros, la routine en quatre cases (créatine, eau, cardio, poids), la séance du jour, puis les repas.
+- Séances : compteurs de la semaine et du mois, séance du jour, Mes séances, la semaine en cases, l’historique. Pendant une séance : barre de progression des séries, dernière fois en clair, badge de record.
+
 ## Règles
 
 - Les données de chacun restent sur son téléphone (IndexedDB, base `carnet:<chemin de l’appli>`, documents rangés par chemin : `days/AAAA-MM-JJ`, `products/<id>`, `workouts/<id>`, `programs/<id>`, `meals/<id>`, `exercises/<id>`, `settings/goals|profile|generator|ui|me`). `settings/me` est le profil (pseudo et photo en data URL JPEG 320 px). Une mise à jour ne doit jamais effacer ni renommer ces chemins sans migration.
