@@ -373,14 +373,15 @@ textarea { width: 100%; resize: vertical; font-family: ui-monospace, "SF Mono", 
 .ptable.compact tbody tr { cursor: default; }
 .ptable .pp { display: block; font-size: 12.5px; font-weight: 400; color: var(--muted); }
 .plist { display: none; list-style: none; margin: 0; padding: 0; }
-.prow { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name kcal" "meta macros"; align-items: baseline; gap: 2px 12px; padding: 12px 16px; border: 0; background: none; color: var(--fg); text-align: left; }
+.prow { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name kcal" "sub sub"; align-items: baseline; gap: 2px 12px; padding: 12px 16px; border: 0; background: none; color: var(--fg); text-align: left; }
+.prow-sub { grid-area: sub; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; min-width: 0; }
 .prow:hover { background: var(--surface-2); }
 .plist li + li .prow { border-top: 1px solid var(--line); }
 .prow-name { grid-area: name; font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
-.prow-meta { grid-area: meta; font-size: 12.5px; color: var(--muted); min-width: 0; }
+.prow-meta { font-size: 12.5px; color: var(--muted); min-width: 0; }
 .prow-k { grid-area: kcal; font-variant-numeric: tabular-nums; font-size: 13px; color: var(--muted); white-space: nowrap; text-align: right; }
 .prow-k strong { color: var(--fg); font-size: 15px; font-weight: 600; }
-.prow-m { grid-area: macros; display: flex; gap: 8px; justify-content: flex-end; font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.prow-m { margin-left: auto; display: flex; gap: 8px; justify-content: flex-end; font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .prow-m span { display: inline-flex; align-items: center; gap: 4px; }
 .prow-m .dot { width: 6px; height: 6px; }
 @media (max-width: 759px) {
@@ -401,6 +402,48 @@ textarea { width: 100%; resize: vertical; font-family: ui-monospace, "SF Mono", 
 .tpl-main .muted { font-size: 13px; font-variant-numeric: tabular-nums; }
 .tpl-items { font-size: 13px; color: var(--fg-2); overflow-wrap: anywhere; }
 .tpl-manage .empty, .tpllist .empty { padding: 4px 0; }
+/* Vues Mes produits / Catalogue, cases « proposer dans les repas » */
+.prod-views { margin: 4px 0 8px; }
+@media (min-width: 760px) { .prod-views { max-width: 380px; } }
+.seg-n { margin-left: 6px; color: var(--muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+.prod-lead { margin: -4px 2px 12px; }
+.cat-chips { margin-bottom: 14px; }
+.chip-n { margin-left: 3px; font-weight: 500; opacity: .7; }
+@media (max-width: 759px) { .cat-chips.scroll { margin-inline: -16px; padding-inline: 16px; scroll-padding-inline: 16px; scrollbar-width: none; } .cat-chips.scroll::-webkit-scrollbar { display: none; } }
+@media (max-width: 370px) { .btn-long { display: none; } }
+.use input, .gp-check input, .switch-row input { -webkit-appearance: none; appearance: none; display: grid; place-items: center; flex: none; width: 22px; height: 22px; margin: 0; border-radius: 7px; border: 1.5px solid var(--muted); background: transparent; cursor: pointer; transition: background-color .15s ease, border-color .15s ease; }
+.use input::after, .gp-check input::after, .switch-row input::after { content: ""; width: 14px; height: 14px; background: var(--on-fg); opacity: 0; transform: scale(.6); transition: opacity .15s ease, transform .2s cubic-bezier(.3, 1.6, .5, 1); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / contain no-repeat; }
+.use input:checked, .gp-check input:checked, .switch-row input:checked { background: var(--fg); border-color: var(--fg); }
+.use input:checked::after, .gp-check input:checked::after, .switch-row input:checked::after { opacity: 1; transform: none; }
+.use input:focus-visible, .gp-check input:focus-visible, .switch-row input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.use { display: grid; place-items: center; cursor: pointer; }
+.frow { display: grid; grid-template-columns: 50px minmax(0, 1fr); align-items: stretch; }
+.frow .use { padding-left: 6px; }
+.plist .frow .prow { border-top: 0; padding-left: 4px; }
+.plist li.frow + li.frow { border-top: 1px solid var(--line); }
+.plist.catlist { display: block; }
+.plist .cat-head { padding: 16px 16px 6px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.plist .cat-head:first-child { padding-top: 12px; }
+.plist li + .cat-head { border-top: 1px solid var(--line); }
+.ftag { display: inline-block; margin-left: 6px; padding: 0 7px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--fg-2); font-size: 11.5px; font-weight: 600; line-height: 1.6; white-space: nowrap; vertical-align: 1px; }
+.maxtag { color: var(--fg-2); font-weight: 600; }
+.ptable .pname-in { display: flex; align-items: flex-start; gap: 10px; }
+.ptable .use { margin-top: -1px; }
+/* Fenêtre d’un aliment du catalogue */
+.food-vals { margin: 0; padding: 2px 14px; border: 1px solid var(--line-2); border-radius: var(--r-md); }
+.food-vals > div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+.food-vals > div:last-child { border-bottom: 0; }
+.food-vals dt { font-weight: 600; }
+.food-vals dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.food-vals .sub dt { padding-left: 14px; font-weight: 400; color: var(--fg-2); }
+.food-vals .sub dd { font-weight: 400; color: var(--fg-2); }
+.switch-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--r-md); background: var(--surface-2); border: 1px solid var(--line); font-weight: 600; font-size: 14.5px; line-height: 1.3; cursor: pointer; }
+.prop-form { margin: 0; padding: 2px 14px 14px; border: 1px solid var(--line-2); border-radius: var(--r-md); display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.prop-form legend { padding: 0 6px; font-size: 13.5px; font-weight: 600; color: var(--fg-2); }
+.prop-form .switch-row { padding: 8px 0 0; background: none; border: 0; }
+.pv-max { display: flex; align-items: baseline; gap: 6px; font-size: 13.5px; color: var(--fg-2); }
+.pv-max.over { color: var(--over); font-weight: 600; }
+.gen-more { margin: 10px 0 0; }
 
 /* ---------- Séances ---------- */
 .w-grid { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); padding-block: 18px; }
@@ -781,7 +824,6 @@ input.we-name:focus-visible { background: var(--surface); }
 .gp { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name pin" "opts opts"; align-items: center; gap: 6px 8px; padding-block: 9px; border-top: 1px solid var(--line); }
 .gp:first-child { border-top: 0; }
 .gp-check { grid-area: name; display: flex; align-items: center; gap: 9px; min-width: 0; font-weight: 600; font-size: 14px; cursor: pointer; }
-.gp-check input { width: 18px; height: 18px; margin: 0; accent-color: var(--fg); flex: none; }
 .gp-check span { overflow-wrap: anywhere; }
 .gp-pin { grid-area: pin; padding: 6px 11px; font-size: 13px; }
 .gp-opts { grid-area: opts; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-left: 27px; }
@@ -824,7 +866,8 @@ dialog::backdrop { background: var(--backdrop); -webkit-backdrop-filter: blur(2p
 .dlg-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 4px 20px 18px; display: flex; flex-direction: column; gap: 14px; }
 .dlg-body > * { flex-shrink: 0; }
 .dlg-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 20px; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); background: var(--surface); }
-.foot-btns { display: flex; gap: 8px; margin-left: auto; }
+.foot-btns { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-left: auto; }
+@media (max-width: 600px) { #genActions { flex: 1 1 100%; } #genActions .btn { flex: 1 1 auto; } }
 .foot-info { margin: 0; display: flex; flex-direction: column; gap: 1px; font-size: 13px; font-variant-numeric: tabular-nums; min-width: 0; }
 .ok-msg { color: var(--good); font-weight: 600; }
 .me-photo { display: flex; align-items: center; gap: 18px; padding-top: 4px; }
@@ -1045,13 +1088,17 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
 
     <!-- ===== Produits ===== -->
     <section class="panel" id="p-produits" role="tabpanel" aria-labelledby="t-produits" hidden>
+      <div class="seg c2 prod-views" id="prodViews" role="group" aria-label="Produits affichés"></div>
       <div class="toolbar">
-        <input type="search" id="prodSearch" placeholder="Rechercher" aria-label="Rechercher un produit" autocomplete="off">
-        <button type="button" class="btn primary" data-action="product-new"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>Nouveau produit</button>
+        <input type="search" id="prodSearch" placeholder="Rechercher" aria-label="Rechercher un aliment" autocomplete="off">
+        <button type="button" class="btn primary" data-action="product-new" aria-label="Nouveau produit"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg><span>Nouveau<span class="btn-long"> produit</span></span></button>
       </div>
+      <p class="hint prod-lead" id="prodLead"></p>
+      <div class="chips scroll cat-chips" id="catChips" role="group" aria-label="Rayons" hidden></div>
       <div class="table-wrap" id="prodTable"></div>
-      <p class="hint prod-hint">Valeurs de l’emballage. Touche un produit pour le modifier. <button type="button" class="linkbtn" data-action="import-open">Importer depuis Excel</button></p>
-      <div class="tpl-section">
+      <p class="hint prod-hint" id="prodHint">Valeurs de l’emballage. <button type="button" class="linkbtn" data-action="import-open">Importer depuis Excel</button></p>
+      <p class="hint prod-hint" id="catHint" hidden>Valeurs moyennes, à titre indicatif. Pour une marque précise, crée ton produit avec les valeurs de l’emballage.</p>
+      <div class="tpl-section" id="tplSection">
         <h2>Repas types</h2>
         <p class="hint">Tes repas habituels, à ajouter d’un coup avec le + d’un repas.</p>
         <ul class="tpl-manage" id="tplManage"></ul>
@@ -1195,6 +1242,21 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
   </div>
 </dialog>
 
+<!-- ===== Fenêtre : aliment du catalogue ===== -->
+<dialog id="foodDlg" aria-labelledby="foodTitle">
+  <div class="dlg">
+    <header class="dlg-head">
+      <h2 id="foodTitle">Aliment</h2>
+      <button type="button" class="iconbtn" data-action="food-close" aria-label="Fermer"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
+    </header>
+    <div class="dlg-body" id="foodBody"></div>
+    <footer class="dlg-foot">
+      <button type="button" class="btn" data-action="food-close">Fermer</button>
+      <div class="foot-btns"><button type="button" class="btn primary" data-action="food-add"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>Ajouter au journal</button></div>
+    </footer>
+  </div>
+</dialog>
+
 <!-- ===== Fenêtre : produit ===== -->
 <dialog id="prodDlg" aria-labelledby="prodTitle">
   <form class="dlg" id="prodForm" novalidate>
@@ -1220,11 +1282,20 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
         <label class="nf-row" for="pf-salt"><span>Sel</span><span class="inp"><input type="text" id="pf-salt" inputmode="decimal" autocomplete="off"><em>g</em></span></label>
       </fieldset>
       <p class="kcal-check" id="pfCheck" aria-live="polite"></p>
-      <div class="field">
-        <label for="pf-portion">Portion fixe pour les propositions <span class="muted">(facultatif)</span></label>
-        <span class="inp"><input type="text" id="pf-portion" inputmode="decimal" autocomplete="off" placeholder="libre"><em id="pfPortionUnit">g</em></span>
-        <span class="f-help">Ex. 250 si ta barquette de 500 g fait 2 repas : l’appli proposera 250 g ou 500 g, jamais 230 g. Laisse vide si la quantité peut s’adapter (riz, légumes surgelés…).</span>
-      </div>
+      <fieldset class="prop-form">
+        <legend>Dans les propositions de repas</legend>
+        <label class="switch-row" for="pf-use"><input type="checkbox" id="pf-use" checked><span>Me proposer ce produit</span></label>
+        <div class="field">
+          <label for="pf-max">Maximum par jour <span class="muted">(facultatif)</span></label>
+          <span class="inp"><input type="text" id="pf-max" inputmode="decimal" autocomplete="off" placeholder="aucun"><em id="pfMaxUnit">g</em></span>
+          <span class="f-help">Ex. 3 pour 3 œufs : l’appli ne t’en proposera jamais plus sur une journée, tous repas confondus.</span>
+        </div>
+        <div class="field">
+          <label for="pf-portion">Portion fixe <span class="muted">(facultatif)</span></label>
+          <span class="inp"><input type="text" id="pf-portion" inputmode="decimal" autocomplete="off" placeholder="libre"><em id="pfPortionUnit">g</em></span>
+          <span class="f-help">Ex. 250 si ta barquette de 500 g fait 2 repas : l’appli proposera 250 g ou 500 g, jamais 230 g. Laisse vide si la quantité peut s’adapter (riz, légumes surgelés…).</span>
+        </div>
+      </fieldset>
       <details class="paste">
         <summary>Remplir depuis une ligne Excel</summary>
         <p class="hint">Copie une ligne de ton tableau (le nom, puis kcal, matières grasses, AGS, glucides, sucres, fibres, protéines, sel) et colle-la ici.</p>
@@ -1384,9 +1455,10 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
         </div>
       </div>
       <details class="paste">
-        <summary id="genProdsSum">Produits utilisés</summary>
-        <p class="hint">Décoche ce que tu ne veux pas. <strong>Portion fixe</strong> : 250 si ta barquette de 500 g fait 2 repas, l’appli ne proposera que 250 g ou 500 g ; laisse « libre » pour ce qui s’adapte (riz, pâtes, légumes surgelés). <strong>Prioritaire</strong> : l’appli l’utilise dès qu’elle peut, par exemple à midi et le soir.</p>
+        <summary id="genProdsSum">Aliments utilisés</summary>
+        <p class="hint">Décoche ce que tu ne veux pas. <strong>Max/jour</strong> : la quantité totale sur la journée ne dépassera jamais ce nombre (3 pour 3 œufs). <strong>Portion fixe</strong> : 250 si ta barquette de 500 g fait 2 repas, l’appli ne proposera que 250 g ou 500 g ; laisse « libre » pour ce qui s’adapte (riz, pâtes, légumes surgelés). <strong>Prioritaire</strong> : l’appli l’utilise dès qu’elle peut, par exemple à midi et le soir.</p>
         <ul class="gen-prods" id="genProdList"></ul>
+        <p class="gen-more"><button type="button" class="linkbtn" data-action="catalog-open">Choisir d’autres aliments dans le catalogue</button></p>
       </details>
       <section class="gen-result" id="genResult" aria-label="Journée proposée"></section>
     </div>
@@ -1990,6 +2062,124 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
     ['Beurre de cacahuète', 100, 'g', 620, 52, 9.5, 13, 6, 7, 25, 0.5],
     ['Amandes', 100, 'g', 610, 52, 4, 8, 4.5, 12, 22, 0.01]
   ];
+  /* Catalogue d’aliments, valeurs moyennes. Ces aliments ne sont jamais écrits dans products/ : on les coche
+     (settings/foods) pour que l’appli les propose. Les identifiants ne changent jamais, ils sont gardés dans
+     settings/foods et dans les journées. Les aliments de STARTER_PRODUCTS gardent le même nom (doublons masqués).
+     [id, nom, rayon, rôle dans les propositions, quantité de référence, unité, portion habituelle,
+      kcal, mat. grasses, AGS, glucides, sucres, fibres, protéines, sel, portions proposées [typique, min, max] (facultatif)] */
+  const FOOD_CATS = [
+    { v: 'poissons', label: 'Poissons' },
+    { v: 'viandes', label: 'Viandes et œufs' },
+    { v: 'laitages', label: 'Laitages' },
+    { v: 'legumineuses', label: 'Légumineuses' },
+    { v: 'feculents', label: 'Féculents' },
+    { v: 'legumes', label: 'Légumes' },
+    { v: 'fruits', label: 'Fruits' },
+    { v: 'oleagineux', label: 'Oléagineux' },
+    { v: 'huiles', label: 'Huiles' }
+  ];
+  const FOOD_CAT_LABEL = Object.fromEntries(FOOD_CATS.map(c => [c.v, c.label]));
+  /* Mots en plus pour la recherche (le rayon est aussi cherché) */
+  const FOOD_KEYWORDS = {
+    'cat-cabillaud': 'poisson blanc', 'cat-colin': 'poisson blanc lieu', 'cat-merlu': 'poisson blanc', 'cat-lieu-noir': 'poisson blanc',
+    'cat-truite': 'poisson gras omega 3', 'cat-saumon': 'poisson gras omega 3', 'cat-maquereau': 'poisson gras omega 3', 'cat-sardines': 'poisson gras omega 3 conserve',
+    'cat-thon': 'conserve', 'cat-crevettes': 'fruits de mer', 'cat-poulet': 'volaille', 'cat-poulet-cuisse': 'volaille', 'cat-dinde': 'volaille',
+    'cat-steak-5': 'boeuf viande hachee', 'cat-steak-15': 'boeuf viande hachee', 'cat-rumsteck': 'boeuf steak', 'cat-blancs-oeufs': 'oeuf',
+    'cat-whey': 'proteine en poudre shake', 'cat-soja': 'lait vegetal', 'cat-tofu': 'soja vegetarien', 'cat-edamame': 'soja',
+    'cat-lentilles-cuites': 'legumineuse', 'cat-pois-chiches': 'legumineuse', 'cat-haricots-rouges': 'legumineuse', 'cat-haricots-blancs': 'legumineuse',
+    'cat-avoine': 'cereales porridge', 'cat-semoule': 'couscous', 'cat-pdt': 'patate', 'cat-galette-riz': 'riz souffle',
+    'cat-puree-amande': 'beurre d amande', 'cat-cacahuete': 'arachide', 'cat-avocat': 'bon gras', 'cat-huile-colza': 'omega 3'
+  };
+  const FOOD_CATALOG_ROWS = [
+    ['cat-cabillaud', 'Cabillaud, cru', 'poissons', 'meat', 100, 'g', 150, 77, 0.7, 0.1, 0, 0, 0, 17.8, 0.2],
+    ['cat-colin', 'Colin d’Alaska, cru', 'poissons', 'meat', 100, 'g', 150, 72, 0.8, 0.15, 0, 0, 0, 16.2, 0.25],
+    ['cat-merlu', 'Merlu, cru', 'poissons', 'meat', 100, 'g', 150, 84, 1.6, 0.3, 0, 0, 0, 17.4, 0.25],
+    ['cat-lieu-noir', 'Lieu noir, cru', 'poissons', 'meat', 100, 'g', 150, 84, 0.9, 0.2, 0, 0, 0, 19, 0.2],
+    ['cat-truite', 'Filet de truite, cru', 'poissons', 'meat', 100, 'g', 150, 140, 6.2, 1.4, 0, 0, 0, 20.6, 0.15],
+    ['cat-saumon', 'Pavé de saumon, cru', 'poissons', 'meat', 100, 'g', 130, 200, 13, 2.6, 0, 0, 0, 20.5, 0.15],
+    ['cat-maquereau', 'Maquereau, cru', 'poissons', 'meat', 100, 'g', 130, 195, 13.5, 3.2, 0, 0, 0, 18.6, 0.2],
+    ['cat-sardines', 'Sardines à l’huile, égouttées', 'poissons', 'meat', 100, 'g', 100, 208, 12.4, 2.6, 0, 0, 0, 24, 0.9, [100, 50, 150]],
+    ['cat-thon', 'Thon au naturel, égoutté', 'poissons', 'meat', 100, 'g', 100, 112, 1, 0.3, 0, 0, 0, 25.5, 0.9],
+    ['cat-thon-cru', 'Thon albacore, cru', 'poissons', 'meat', 100, 'g', 150, 108, 0.6, 0.2, 0, 0, 0, 24.4, 0.1],
+    ['cat-crevettes', 'Crevettes cuites, décortiquées', 'poissons', 'meat', 100, 'g', 120, 95, 1, 0.2, 0, 0, 0, 21.5, 1.5],
+    ['cat-poulet', 'Blanc de poulet, cru', 'viandes', 'meat', 100, 'g', 150, 112, 1.5, 0.4, 0, 0, 0, 24, 0.15],
+    ['cat-poulet-cuisse', 'Haut de cuisse de poulet sans peau, cru', 'viandes', 'meat', 100, 'g', 150, 120, 4.3, 1.1, 0, 0, 0, 19.5, 0.2],
+    ['cat-dinde', 'Escalope de dinde, crue', 'viandes', 'meat', 100, 'g', 150, 106, 1.2, 0.4, 0, 0, 0, 23.5, 0.15],
+    ['cat-steak-5', 'Steak haché 5 %, cru', 'viandes', 'meat', 100, 'g', 125, 125, 5, 2.2, 0, 0, 0, 20, 0.2],
+    ['cat-steak-15', 'Steak haché 15 %, cru', 'viandes', 'meat', 100, 'g', 125, 205, 15, 6.5, 0, 0, 0, 17.5, 0.2],
+    ['cat-rumsteck', 'Rumsteck, cru', 'viandes', 'meat', 100, 'g', 150, 122, 3.8, 1.5, 0, 0, 0, 22, 0.15],
+    ['cat-porc-filet', 'Filet mignon de porc, cru', 'viandes', 'meat', 100, 'g', 150, 115, 3.2, 1.1, 0, 0, 0, 21.5, 0.15],
+    ['cat-jambon', 'Jambon blanc', 'viandes', 'meat', 100, 'g', 80, 112, 3, 1.1, 1, 1, 0, 20.5, 1.9, [80, 40, 160]],
+    ['cat-oeuf', 'Œuf', 'viandes', 'meat', 1, 'unité', 2, 85, 6, 1.7, 0.4, 0.4, 0, 7.5, 0.2],
+    ['cat-blancs-oeufs', 'Blancs d’œufs liquides', 'viandes', 'meat', 100, 'g', 150, 48, 0.2, 0, 0.7, 0.7, 0, 10.8, 0.4],
+    ['cat-skyr', 'Skyr nature', 'laitages', 'dairyp', 100, 'g', 150, 60, 0.2, 0.1, 4, 4, 0, 10.5, 0.1],
+    ['cat-fb-0', 'Fromage blanc 0 %', 'laitages', 'dairyp', 100, 'g', 150, 47, 0.2, 0.1, 4, 4, 0, 7.5, 0.1],
+    ['cat-fb-3', 'Fromage blanc 3 %', 'laitages', 'dairyp', 100, 'g', 150, 74, 3.2, 2.1, 3.8, 3.8, 0, 7.4, 0.1],
+    ['cat-grec-0', 'Yaourt grec 0 %', 'laitages', 'dairyp', 100, 'g', 150, 54, 0, 0, 3, 3, 0, 10.3, 0.1],
+    ['cat-cottage', 'Cottage cheese', 'laitages', 'dairyp', 100, 'g', 150, 96, 4.3, 2.8, 3.4, 3.4, 0, 11, 0.8],
+    ['cat-lait-ecreme', 'Lait écrémé', 'laitages', 'milk', 100, 'ml', 250, 34, 0.1, 0.1, 4.9, 4.9, 0, 3.3, 0.1],
+    ['cat-lait', 'Lait demi-écrémé', 'laitages', 'milk', 100, 'ml', 250, 46, 1.6, 1, 4.8, 4.8, 0, 3.3, 0.1],
+    ['cat-lait-entier', 'Lait entier', 'laitages', 'milk', 100, 'ml', 250, 64, 3.6, 2.3, 4.8, 4.8, 0, 3.3, 0.1],
+    ['cat-soja', 'Boisson soja nature, non sucrée', 'laitages', 'milk', 100, 'ml', 250, 33, 1.8, 0.3, 0.2, 0.2, 0.6, 3.3, 0.09],
+    ['cat-whey', 'Whey protéine', 'laitages', 'dairyp', 30, 'g', 30, 118, 1.8, 1.1, 2.5, 2, 0, 23, 0.15, [30, 15, 60]],
+    ['cat-emmental', 'Emmental', 'laitages', 'other', 100, 'g', 30, 378, 29.5, 19, 0.5, 0.5, 0, 28, 0.7, [30, 15, 50]],
+    ['cat-lentilles', 'Lentilles, crues', 'legumineuses', 'starch', 100, 'g', 80, 330, 1.5, 0.2, 48, 2, 14, 24, 0.02],
+    ['cat-lentilles-corail', 'Lentilles corail, crues', 'legumineuses', 'starch', 100, 'g', 80, 345, 2.2, 0.3, 52, 2, 11, 24, 0.02],
+    ['cat-lentilles-cuites', 'Lentilles, cuites', 'legumineuses', 'starch', 100, 'g', 200, 110, 0.5, 0.1, 14, 0.8, 7.5, 9, 0.02, [220, 120, 350]],
+    ['cat-pois-chiches', 'Pois chiches en conserve, égouttés', 'legumineuses', 'starch', 100, 'g', 150, 128, 2.7, 0.3, 15, 0.5, 7, 7.2, 0.5, [200, 100, 300]],
+    ['cat-haricots-rouges', 'Haricots rouges en conserve, égouttés', 'legumineuses', 'starch', 100, 'g', 150, 106, 0.6, 0.1, 13.5, 0.8, 6.5, 7.6, 0.5, [200, 100, 300]],
+    ['cat-haricots-blancs', 'Haricots blancs en conserve, égouttés', 'legumineuses', 'starch', 100, 'g', 150, 94, 0.5, 0.1, 12.3, 0.5, 6.5, 6.8, 0.5, [200, 100, 300]],
+    ['cat-edamame', 'Edamame (fèves de soja), surgelés', 'legumineuses', 'veg', 100, 'g', 120, 120, 5.2, 0.7, 3.8, 2.2, 5.2, 11.9, 0.02],
+    ['cat-tofu', 'Tofu ferme nature', 'legumineuses', 'meat', 100, 'g', 150, 128, 7.5, 1.2, 1.2, 0.5, 0.8, 13.5, 0.02],
+    ['cat-avoine', 'Flocons d’avoine', 'feculents', 'cereal', 100, 'g', 60, 370, 7, 1.3, 59, 1, 10, 13.5, 0.02],
+    ['cat-riz', 'Riz blanc, cru', 'feculents', 'starch', 100, 'g', 80, 352, 0.7, 0.2, 78, 0.3, 1.3, 7.5, 0.01],
+    ['cat-riz-complet', 'Riz complet, cru', 'feculents', 'starch', 100, 'g', 80, 350, 2.8, 0.6, 72, 0.7, 3.5, 8, 0.01],
+    ['cat-pates', 'Pâtes, crues', 'feculents', 'starch', 100, 'g', 90, 357, 1.6, 0.3, 71, 3.5, 3, 12.5, 0.01],
+    ['cat-pates-completes', 'Pâtes complètes, crues', 'feculents', 'starch', 100, 'g', 90, 350, 2.2, 0.4, 64, 3, 8, 13.5, 0.01],
+    ['cat-quinoa', 'Quinoa, cru', 'feculents', 'starch', 100, 'g', 80, 355, 6, 0.7, 57, 2, 7, 14, 0.01],
+    ['cat-semoule', 'Semoule (couscous), crue', 'feculents', 'starch', 100, 'g', 80, 360, 1.5, 0.3, 72, 2, 4, 12.5, 0.01],
+    ['cat-boulgour', 'Boulgour, cru', 'feculents', 'starch', 100, 'g', 80, 340, 1.3, 0.2, 63, 0.4, 12.5, 12.3, 0.02],
+    ['cat-sarrasin', 'Sarrasin (kasha), cru', 'feculents', 'starch', 100, 'g', 80, 350, 2.7, 0.6, 64.6, 1, 10.3, 11.7, 0.03],
+    ['cat-pdt', 'Pommes de terre, crues', 'feculents', 'starch', 100, 'g', 250, 80, 0.1, 0, 17, 0.8, 1.8, 2, 0.01, [300, 150, 450]],
+    ['cat-patate-douce', 'Patate douce, crue', 'feculents', 'starch', 100, 'g', 250, 86, 0.1, 0, 18.5, 4.2, 3, 1.6, 0.1, [300, 150, 450]],
+    ['cat-pain-complet', 'Pain complet', 'feculents', 'cereal', 100, 'g', 60, 247, 3.5, 0.7, 41, 3.5, 7, 10, 1.1],
+    ['cat-galette-riz', 'Galette de riz soufflé', 'feculents', 'cereal', 1, 'unité', 3, 29, 0.2, 0.05, 6, 0.05, 0.3, 0.6, 0],
+    ['cat-haricots-verts', 'Haricots verts, surgelés', 'legumes', 'veg', 100, 'g', 200, 30, 0.2, 0, 4.5, 1.5, 3, 1.8, 0.01],
+    ['cat-brocolis', 'Brocolis, surgelés', 'legumes', 'veg', 100, 'g', 200, 30, 0.4, 0.1, 3, 1.5, 3, 2.8, 0.03],
+    ['cat-epinards', 'Épinards, surgelés', 'legumes', 'veg', 100, 'g', 200, 25, 0.5, 0.1, 1.2, 0.5, 2.6, 2.9, 0.18],
+    ['cat-courgette', 'Courgette', 'legumes', 'veg', 100, 'g', 200, 17, 0.3, 0.1, 2, 2, 1.1, 1.2, 0.01],
+    ['cat-carotte', 'Carotte', 'legumes', 'veg', 100, 'g', 150, 36, 0.2, 0, 6.6, 5, 2.7, 0.6, 0.1],
+    ['cat-poivron', 'Poivron rouge', 'legumes', 'veg', 100, 'g', 150, 30, 0.3, 0.1, 5.2, 4.5, 1.9, 0.8, 0.01],
+    ['cat-tomate', 'Tomate', 'legumes', 'veg', 100, 'g', 150, 19, 0.3, 0.1, 2.8, 2.6, 1.2, 0.9, 0.01],
+    ['cat-chou-fleur', 'Chou-fleur', 'legumes', 'veg', 100, 'g', 200, 24, 0.3, 0.1, 2.3, 2, 2, 1.9, 0.03],
+    ['cat-champignons', 'Champignons de Paris', 'legumes', 'veg', 100, 'g', 150, 21, 0.3, 0.1, 0.6, 0.4, 1.3, 3.1, 0.02],
+    ['cat-petits-pois', 'Petits pois, surgelés', 'legumes', 'veg', 100, 'g', 150, 74, 0.4, 0.1, 9.5, 4, 5, 5.4, 0.01],
+    ['cat-banane', 'Banane', 'fruits', 'fruit', 1, 'unité', 1, 108, 0.4, 0.1, 24, 18, 3, 1.3, 0],
+    ['cat-pomme', 'Pomme', 'fruits', 'fruit', 1, 'unité', 1, 80, 0.3, 0.1, 17.5, 15, 3, 0.4, 0],
+    ['cat-orange', 'Orange', 'fruits', 'fruit', 1, 'unité', 1, 66, 0.3, 0, 12.8, 12.5, 3.3, 1.4, 0],
+    ['cat-kiwi', 'Kiwi', 'fruits', 'fruit', 1, 'unité', 2, 44, 0.4, 0, 8.3, 7.5, 2.3, 0.8, 0],
+    ['cat-myrtilles', 'Myrtilles', 'fruits', 'fruit', 100, 'g', 125, 58, 0.3, 0, 12, 10, 2.4, 0.7, 0],
+    ['cat-fraises', 'Fraises', 'fruits', 'fruit', 100, 'g', 150, 33, 0.3, 0, 6, 5, 2, 0.7, 0],
+    ['cat-framboises', 'Framboises', 'fruits', 'fruit', 100, 'g', 125, 45, 0.6, 0, 5.4, 4.4, 6.5, 1.2, 0],
+    ['cat-mangue', 'Mangue', 'fruits', 'fruit', 100, 'g', 150, 64, 0.4, 0.1, 13.5, 13, 1.7, 0.7, 0],
+    ['cat-ananas', 'Ananas', 'fruits', 'fruit', 100, 'g', 150, 52, 0.2, 0, 11.5, 10, 1.3, 0.5, 0],
+    ['cat-dattes', 'Dattes sèches', 'fruits', 'fruit', 100, 'g', 40, 290, 0.4, 0.1, 66, 63, 8, 2.5, 0.02, [40, 20, 80]],
+    ['cat-raisins-secs', 'Raisins secs', 'fruits', 'fruit', 100, 'g', 30, 300, 0.5, 0.1, 70, 65, 4, 3, 0.05, [30, 15, 60]],
+    ['cat-compote', 'Compote de pommes sans sucre ajouté', 'fruits', 'fruit', 100, 'g', 100, 54, 0.2, 0, 12, 11, 1.5, 0.3, 0],
+    ['cat-avocat', 'Avocat', 'fruits', 'oil', 100, 'g', 70, 167, 15.4, 2.1, 1.8, 0.3, 6.8, 2, 0.02, [60, 30, 120]],
+    ['cat-amandes', 'Amandes', 'oleagineux', 'nuts', 100, 'g', 30, 610, 52, 4, 8, 4.5, 12, 22, 0.01],
+    ['cat-noix', 'Noix (cerneaux)', 'oleagineux', 'nuts', 100, 'g', 30, 686, 65, 6, 7, 2.6, 6.7, 15, 0.01],
+    ['cat-cajou', 'Noix de cajou', 'oleagineux', 'nuts', 100, 'g', 30, 582, 44, 7.8, 27, 6, 3.3, 18, 0.03],
+    ['cat-noisettes', 'Noisettes', 'oleagineux', 'nuts', 100, 'g', 30, 655, 61, 4.5, 7, 4.3, 9.7, 15, 0],
+    ['cat-pistaches', 'Pistaches nature', 'oleagineux', 'nuts', 100, 'g', 30, 576, 45.3, 5.6, 16.6, 7.7, 10.6, 20.2, 0.01],
+    ['cat-cacahuete', 'Beurre de cacahuète', 'oleagineux', 'nuts', 100, 'g', 20, 620, 52, 9.5, 13, 6, 7, 25, 0.5],
+    ['cat-puree-amande', 'Purée d’amande complète', 'oleagineux', 'nuts', 100, 'g', 20, 634, 54, 4.3, 6.2, 4, 11, 25, 0.01],
+    ['cat-chia', 'Graines de chia', 'oleagineux', 'nuts', 100, 'g', 15, 445, 31, 3.3, 7.7, 0, 34, 16.5, 0.04, [15, 10, 30]],
+    ['cat-courge', 'Graines de courge', 'oleagineux', 'nuts', 100, 'g', 20, 590, 49, 8.7, 4.7, 1.4, 6, 30, 0.02],
+    ['cat-lin', 'Graines de lin', 'oleagineux', 'nuts', 100, 'g', 15, 515, 42, 3.7, 1.6, 1.6, 27, 18.3, 0.08, [15, 10, 30]],
+    ['cat-huile-olive', 'Huile d’olive', 'huiles', 'oil', 10, 'ml', 10, 82, 9.1, 1.3, 0, 0, 0, 0, 0],
+    ['cat-huile-colza', 'Huile de colza', 'huiles', 'oil', 10, 'ml', 10, 82, 9.1, 0.7, 0, 0, 0, 0, 0]
+  ];
 
   /* ================= Calculateur : repères ================= */
   const ACTIVITY = [
@@ -2151,9 +2341,17 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
     if (q < 100) return Math.max(5, Math.round(q / 5) * 5);
     return Math.round(q / 10) * 10;
   }
+  /* Arrondi vers le bas, pour rester sous un maximum par jour (0 s’il ne reste pas de quoi faire une portion) */
+  function floorQty(q, unit) {
+    if (!(q > 0)) return 0;
+    if (unit === 'unité') return Math.floor(q + 1e-9);
+    if (q < 100) return Math.floor(q / 5 + 1e-9) * 5;
+    return Math.floor(q / 10 + 1e-9) * 10;
+  }
   /* Les idées sont calculées l’une après l’autre (protéines, lipides, puis glucides)
-     pour qu’ensemble elles ne dépassent pas ce qui manque, avec une portion raisonnable au maximum. */
-  function buildSuggestions(products, totals, goals, cycle) {
+     pour qu’ensemble elles ne dépassent pas ce qui manque, avec une portion raisonnable au maximum.
+     maxLeft(p) : ce qui reste du maximum par jour de cet aliment (Infinity sans maximum). */
+  function buildSuggestions(products, totals, goals, cycle, maxLeft) {
     const running = Object.assign({}, totals);
     const out = [];
     for (const key of ['protein', 'fat', 'carbs']) {
@@ -2166,11 +2364,13 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
       }).map(p => {
         let qty = roundQty(need / (p[key] / p.ref), p.unit);
         const cap = portionCap(p);
-        const capped = qty > cap;
+        let capped = qty > cap;
         if (capped) qty = roundQty(cap, p.unit);
+        const left = maxLeft ? maxLeft(p) : Infinity;
+        if (qty > left) { qty = floorQty(left, p.unit); capped = true; }
         const score = s.dens(p) - (capped ? 1 : 0) - (p.unit === 'unité' && qty > 3 ? 0.5 : 0);
         return { p, qty, capped, score };
-      }).sort((a, b) => b.score - a.score || byName(a.p, b.p));
+      }).filter(c => c.qty > 0).sort((a, b) => b.score - a.score || byName(a.p, b.p));
       if (!cands.length) continue;
       const c = cands[(cycle[key] || 0) % cands.length];
       const vals = scaled(c.p, c.p.ref, c.qty);
@@ -2291,11 +2491,51 @@ function genStep(p, role) {
   if (role === 'milk' && p.unit === 'ml') return 50;
   return 10;
 }
+/* Portions proposées : celles de l’aliment s’il en a (catalogue), sinon celles de son rôle.
+   Un féculent déjà cuit ou peu dense (pommes de terre, riz cuit…) se mange en plus grande quantité ;
+   une protéine en poudre (whey) se compte en dizaines de grammes. */
+function genPortion(p, role) {
+  if (Array.isArray(p.gp) && p.gp.length === 3) return p.gp;
+  if (p.unit === 'unité') return GEN_PORTION_UNIT[role];
+  const per100 = k => (p.ref > 0 ? (p[k] || 0) / p.ref * 100 : 0);
+  if (role === 'starch' && per100('kcal') > 0 && per100('kcal') < 200) return [250, 120, 400];
+  if (role === 'dairyp' && per100('protein') >= 50) return [30, 15, 60];
+  return GEN_PORTION[role];
+}
+/* Bornes d’un aliment dans un repas. Avec un maximum par jour, ce qui reste de ce maximum limite la portion
+   (ce qui a déjà été réservé dans les repas précédents compte) ; s’il ne reste pas assez pour une vraie portion, null. */
+function genBounds(p, role, maxDay, held) {
+  const unit = p.unit === 'unité';
+  const [t0, mn0, mx0] = genPortion(p, role);
+  let mn = mn0, mx = mx0, step = genStep(p, role);
+  const portion = p.portion > 0 ? p.portion : 0;
+  if (portion) {
+    const kmin = Math.max(1, Math.ceil(mn0 / portion - 1e-9));
+    const kmax = Math.max(kmin, Math.floor(mx0 / portion + 1e-9));
+    mn = kmin * portion;
+    mx = kmax * portion;
+    step = portion;
+  }
+  const cap = maxDay && maxDay[p.id] > 0 ? maxDay[p.id] - ((held && held[p.id]) || 0) : Infinity;
+  if (cap < Infinity) {
+    if (portion) {
+      const k = Math.floor(cap / portion + 1e-9);
+      if (k < 1) return null;
+      mx = Math.min(mx, k * portion);
+    } else {
+      if (cap < Math.max(unit ? 1 : 5, mn * 0.5)) return null;
+      mx = Math.min(mx, unit ? Math.floor(cap + 1e-9) : cap);
+    }
+    mn = Math.min(mn, mx);
+  }
+  return { t0, min: mn, max: mx, step, fixed: !!portion, unit };
+}
 /* Compose les repas : un produit par emplacement, en évitant les répétitions */
 /* Un produit prioritaire prend chaque emplacement qui lui correspond (par exemple la viande du midi et du soir).
-   Un produit avec une portion fixe n’est servi que par multiples de cette portion (250 g, 500 g…). */
-function composeDay(pool, mealIds, rng, pinned) {
-  const uses = {};
+   Un produit avec une portion fixe n’est servi que par multiples de cette portion (250 g, 500 g…).
+   Un produit avec un maximum par jour n’est jamais proposé au-delà, tous repas confondus. */
+function composeDay(pool, mealIds, rng, pinned, maxDay) {
+  const uses = {}, held = {};
   const meals = [];
   for (const id of mealIds) {
     const items = [];
@@ -2304,28 +2544,21 @@ function composeDay(pool, mealIds, rng, pinned) {
       pool.forEach(x => {
         const ri = roles.indexOf(x.role);
         if (ri < 0 || items.some(it => it.p.id === x.p.id)) return;
-        cands.push({ x, w: (ri === 0 ? 1 : 0.6) / (1 + 3 * (uses[x.p.id] || 0)) });
+        const b = genBounds(x.p, x.role, maxDay, held);
+        if (!b) return;
+        cands.push({ x, b, w: (ri === 0 ? 1 : 0.6) / (1 + 3 * (uses[x.p.id] || 0)) });
       });
       if (!cands.length) continue;
       const pins = cands.filter(c => pinned && pinned.has(c.x.p.id));
-      if (pins.length) cands = pins.map(c => ({ x: c.x, w: 1 / (1 + (uses[c.x.p.id] || 0)) }));
+      if (pins.length) cands = pins.map(c => ({ x: c.x, b: c.b, w: 1 / (1 + (uses[c.x.p.id] || 0)) }));
       let r = rng() * cands.reduce((s, c) => s + c.w, 0), pick = cands[cands.length - 1];
       for (const c of cands) { r -= c.w; if (r <= 0) { pick = c; break; } }
-      uses[pick.x.p.id] = (uses[pick.x.p.id] || 0) + 1;
-      const pr = pick.x.p, unit = pr.unit === 'unité';
-      const [t0, mn0, mx0] = (unit ? GEN_PORTION_UNIT : GEN_PORTION)[pick.x.role];
-      let tj = unit ? t0 : t0 * (0.85 + 0.3 * rng());
-      let mn = mn0, mx = mx0, step = genStep(pr, pick.x.role);
-      const portion = pr.portion > 0 ? pr.portion : 0;
-      if (portion) {
-        const kmin = Math.max(1, Math.ceil(mn0 / portion - 1e-9));
-        const kmax = Math.max(kmin, Math.floor(mx0 / portion + 1e-9));
-        mn = kmin * portion;
-        mx = kmax * portion;
-        step = portion;
-        tj = Math.min(mx, Math.max(mn, tj));
-      }
-      items.push({ p: pr, role: pick.x.role, t: Math.max(tj, unit ? 1 : 5), min: mn, max: mx, step, fixed: !!portion, lam: GEN_LAMBDA * (GEN_LAMBDA_ROLE[pick.x.role] || 1) });
+      const pr = pick.x.p, b = pick.b;
+      uses[pr.id] = (uses[pr.id] || 0) + 1;
+      if (maxDay && maxDay[pr.id] > 0) held[pr.id] = (held[pr.id] || 0) + b.max;
+      let tj = b.unit ? b.t0 : b.t0 * (0.85 + 0.3 * rng());
+      tj = Math.min(b.max, Math.max(b.min, tj));
+      items.push({ p: pr, role: pick.x.role, t: Math.max(tj, b.unit ? 1 : 5), min: b.min, max: b.max, step: b.step, fixed: b.fixed, lam: GEN_LAMBDA * (GEN_LAMBDA_ROLE[pick.x.role] || 1) });
     }
     if (items.length) meals.push({ id, items });
   }
@@ -2394,15 +2627,15 @@ function optimizeQty(items, target) {
 function buildProposal(products, opts) {
   const roles = opts.roles || {};
   const excluded = new Set(opts.excluded || []);
-  const pool = products.filter(p => !excluded.has(p.id) && p.kcal > 0 && p.ref > 0).map(p => ({ p, role: roles[p.id] || autoRole(p) }));
+  const pool = products.filter(p => !excluded.has(p.id) && p.kcal > 0 && p.ref > 0).map(p => ({ p, role: roles[p.id] || p.role || autoRole(p) }));
   const notes = [];
   const has = r => pool.some(x => x.role === r);
   if (!has('starch')) notes.push('Ajoute un féculent (riz, pâtes…) à ta sélection pour remplir les repas en glucides.');
   if (!has('meat') && !has('dairyp')) notes.push('Ajoute une source de protéines (viande, poisson, œufs, skyr…) à ta sélection.');
   const rng = mulberry32(opts.seed || 1);
-  const meals = composeDay(pool, GEN_MEAL_SETS[opts.meals] || GEN_MEAL_SETS[5], rng, new Set(opts.pinned || []));
+  const meals = composeDay(pool, GEN_MEAL_SETS[opts.meals] || GEN_MEAL_SETS[5], rng, new Set(opts.pinned || []), opts.maxDay || null);
   const items = meals.flatMap(m => m.items);
-  if (!items.length) return { meals: [], totals: null, notes: notes.length ? notes : ['Sélectionne des produits pour composer une journée.'] };
+  if (!items.length) return { meals: [], totals: null, notes: notes.length ? notes : ['Coche des aliments pour composer une journée.'] };
   const xs = optimizeQty(items, opts.target);
   items.forEach((it, j) => { it.qty = xs[j]; });
   meals.forEach(m => { m.items = m.items.filter(it => it.qty > 0); });
@@ -2424,6 +2657,29 @@ function buildProposal(products, opts) {
     const b = { name: p.name, ref: p.ref, unit: p.unit, portion: p.portion || null, createdAt: p.createdAt || Date.now() };
     for (const k of NK) b[k] = p[k];
     return b;
+  }
+  /* Même produit (nom, quantité de référence, unité, portion fixe, valeurs) : rien à réenregistrer */
+  const sameProduct = (a, b) => a.name === b.name && a.ref === b.ref && a.unit === b.unit && (a.portion || null) === (b.portion || null) && NK.every(k => a[k] === b[k]);
+  /* Les aliments du catalogue ont la même forme que les produits, mais ne sont jamais enregistrés dans products/ */
+  const slugOf = s => norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  const FOOD_CATALOG = FOOD_CATALOG_ROWS.map(([id, name, group, role, ref, unit, qty, kcal, fat, sat, carbs, sugars, fiber, protein, salt, gp]) => ({
+    id, name, ref, unit, portion: null, createdAt: 0, kcal, fat, sat, carbs, sugars, fiber, protein, salt,
+    catalog: true, group, role, qty, gp: gp || null, normName: norm(name), starterId: 'c-' + slugOf(name),
+    search: norm(name + ' ' + (FOOD_CAT_LABEL[group] || '') + ' ' + (FOOD_KEYWORDS[id] || ''))
+  }));
+  const CATALOG_MAP = new Map(FOOD_CATALOG.map(c => [c.id, c]));
+  /* settings/foods : aliments du catalogue cochés (on) et maximum par jour de n’importe quel aliment (max, par identifiant) */
+  function normFoods(d) {
+    d = d || {};
+    const on = Array.isArray(d.on) ? [...new Set(d.on.map(String))].filter(id => id && id.length <= 80).slice(0, 500) : [];
+    const max = {};
+    if (d.max && typeof d.max === 'object') {
+      for (const k of Object.keys(d.max).slice(0, 2000)) {
+        const v = parseNum(d.max[k]);
+        if (k && k.length <= 80 && v != null && v > 0 && v <= 100000) max[k] = v;
+      }
+    }
+    return { on, max, updatedAt: Number(d.updatedAt) || 0 };
   }
   function normEntry(e) {
     if (!e || typeof e !== 'object') return null;
@@ -2583,6 +2839,7 @@ function buildProposal(products, opts) {
     wOpen: null, wMenu: null, wNaming: false, progEx: null,
     tDraft: null, planWeek: null, histFilter: 'all', histN: 10,
     genSettings: null,
+    foods: null, prodView: lsGet('cpm.prodView') === 'catalog' ? 'catalog' : 'mine', catFilter: 'all',
     goalsSet: false, goalsLoaded: false,
     ui: { welcomeHidden: false }, uiLoaded: false,
     me: { name: '', photo: '', updatedAt: 0 }, meLoaded: false,
@@ -2590,11 +2847,13 @@ function buildProposal(products, opts) {
   };
   state.day = emptyDay(state.date);
   state.genSettings = normGenSettings(null);
+  state.foods = normFoods(null);
   const recentlyDeleted = new Map();
   const markDeleted = path => recentlyDeleted.set(path, Date.now());
   const wasDeleted = path => { const t = recentlyDeleted.get(path); return !!t && Date.now() - t < 15000; };
 
-  const productById = id => state.products.find(p => p.id === id) || null;
+  /* Un produit de la liste, ou un aliment du catalogue */
+  const productById = id => state.products.find(p => p.id === id) || CATALOG_MAP.get(id) || null;
   const findByName = name => state.products.find(p => norm(p.name) === norm(name)) || null;
   function allDays() {
     const map = new Map();
@@ -2606,7 +2865,7 @@ function buildProposal(products, opts) {
   function dayFor(iso) { return iso === state.day.date ? state.day : (state.history.find(d => d.date === iso) || null); }
   function lastQty(p) {
     for (const d of allDaysDesc()) for (let i = d.entries.length - 1; i >= 0; i--) if (d.entries[i].pid === p.id && d.entries[i].qty > 0) return d.entries[i].qty;
-    return p.ref;
+    return p.catalog && p.qty > 0 ? p.qty : p.ref;
   }
   function recentProducts(n) {
     const seen = new Set(), out = [];
@@ -2745,7 +3004,7 @@ function buildProposal(products, opts) {
           }
         };
         const readSetting = async s => { const snap = await db.doc(prefix + 'settings/' + s).get(); if (snap.exists) out['settings/' + s] = snap.data(); };
-        await Promise.all(['products', 'meals', 'programs', 'exercises', 'days', 'workouts'].map(readCol).concat(['goals', 'profile', 'generator', 'ui', 'me'].map(readSetting)));
+        await Promise.all(['products', 'meals', 'programs', 'exercises', 'days', 'workouts'].map(readCol).concat(['goals', 'profile', 'generator', 'foods', 'ui', 'me'].map(readSetting)));
         return out;
       }
     };
@@ -2937,6 +3196,7 @@ function buildProposal(products, opts) {
     renderProducts();
     renderExtras();
     renderWelcome();
+    renderDayCta();
     refreshAddIfOpen();
     if (isOpen('#genDlg')) {
       if (!$('#genProdList').contains(document.activeElement)) renderGenControls();
@@ -3233,13 +3493,14 @@ function buildProposal(products, opts) {
     if (!el) return;
     const ready = state.mode !== 'loading' && state.goalsLoaded && state.productsLoaded && state.programsLoaded && state.uiLoaded && state.meLoaded;
     if (!ready || state.ui.welcomeHidden) { el.innerHTML = ''; return; }
-    const nP = state.products.length, nS = state.programs.length;
+    const nP = state.products.length, nS = state.programs.length, nC = catalogOn().length;
     const steps = [
       { done: !!state.me.name, title: 'Crée ton profil', text: 'Un pseudo et une photo, pour que ce carnet soit vraiment le tien.', ok: 'Salut ' + state.me.name + ' !',
         act: 'data-action="me-open"', label: 'Créer mon profil' },
       { done: state.goalsSet, title: 'Calcule tes besoins', text: 'Calories et macros adaptées à ton objectif : prise de masse, maintien ou perte de gras.', ok: 'Objectif : ' + fmt(state.goals.kcal, 0) + ' kcal par jour.',
         act: 'data-action="tab" data-tab="objectifs"', label: 'Calculer' },
-      { done: nP > 0, title: 'Ajoute tes produits', text: 'Pars d’une liste de produits courants, puis ajuste-les avec tes emballages.', ok: nP + (nP > 1 ? ' produits' : ' produit') + ' dans ta liste.',
+      { done: nP > 0 || nC > 0, title: 'Ajoute tes produits', text: 'Pars d’une liste de produits courants, puis ajuste-les avec tes emballages. Tu peux aussi cocher des aliments du catalogue.',
+        ok: nP ? nP + (nP > 1 ? ' produits' : ' produit') + ' dans ta liste.' : nC + (nC > 1 ? ' aliments cochés' : ' aliment coché') + ' dans le catalogue.',
         act: 'data-action="starter-products"', label: 'Ajouter les produits courants' },
       { done: nS > 0, title: 'Crée tes séances', text: 'Pull, Push, Jambes… avec tes exercices et tes charges, ou pars d’un programme tout prêt.', ok: nS + (nS > 1 ? ' séances prêtes.' : ' séance prête.'),
         act: 'data-action="tab" data-tab="seances"', label: 'Créer mes séances' }
@@ -3384,6 +3645,11 @@ function buildProposal(products, opts) {
     diner: '<path d="M3.5 11.5h17a8.5 8.5 0 0 1-17 0z"/><path d="M8 8c0-1.5 1-1.8 1-3.2M12 8c0-1.5 1-1.8 1-3.2M16 8c0-1.5 1-1.8 1-3.2"/>',
     soiree: '<path d="M19.5 14.5A7.5 7.5 0 1 1 9.5 4.5a6 6 0 0 0 10 10z"/>'
   };
+  /* Journée vide : proposer une journée complète, dès qu’il y a des aliments à proposer */
+  function renderDayCta() {
+    const show = state.mode !== 'loading' && state.dayLoaded && !state.day.entries.length && usedPool().length > 0;
+    $('#dayCta').innerHTML = show ? '<div class="gen-cta"><div class="gen-cta-txt"><strong>Rien de noté pour l’instant</strong><span>Nutrisport peut te proposer une journée complète avec tes aliments cochés, calée sur tes objectifs.</span></div><button type="button" class="btn" data-action="gen-open">Proposer une journée</button></div>' : '';
+  }
   function renderJournal() {
     const el = $('#meals');
     if (state.mode === 'loading' || !state.dayLoaded) {
@@ -3391,7 +3657,7 @@ function buildProposal(products, opts) {
       $('#dayCta').innerHTML = '';
       return;
     }
-    $('#dayCta').innerHTML = state.day.entries.length || !state.products.length ? '' : '<div class="gen-cta"><div class="gen-cta-txt"><strong>Rien de noté pour l’instant</strong><span>Nutrisport peut te proposer une journée complète avec tes produits, calée sur tes objectifs.</span></div><button type="button" class="btn" data-action="gen-open">Proposer une journée</button></div>';
+    renderDayCta();
     el.innerHTML = MEALS.map(m => {
       const items = state.day.entries.filter(e => e.meal === m.id);
       const tv = sumVals(items.map(entryVals));
@@ -3441,11 +3707,12 @@ function buildProposal(products, opts) {
   }
   function suggestCard(t, g) {
     let body;
+    const pool = state.productsLoaded ? usedPool() : [];
     if (state.mode === 'loading' || !state.productsLoaded) body = '<p class="muted">Chargement…</p>';
-    else if (!state.products.length) body = '<p class="muted">Ajoute tes produits dans l’onglet Produits pour recevoir des idées.</p>';
+    else if (!pool.length) body = '<p class="muted">' + (state.products.length ? 'Coche des aliments dans l’onglet Produits (tes produits ou le catalogue) pour recevoir des idées.' : 'Ajoute tes produits ou coche des aliments du catalogue dans l’onglet Produits pour recevoir des idées.') + '</p>';
     else if (t.kcal < g.kcal / 3) body = '<p class="muted">Les idées pour compléter s’affichent dès que tu as noté un tiers de tes calories du jour (' + fmt(g.kcal / 3, 0) + ' kcal).</p><button type="button" class="btn small" data-action="gen-open">Proposer une journée complète</button>';
     else {
-      const sug = buildSuggestions(state.products, t, g, state.cycle);
+      const sug = buildSuggestions(pool, t, g, state.cycle, maxLeftToday);
       const rem = g.kcal - t.kcal;
       body = rem > 0
         ? '<p class="sugg-lead">Il te reste <strong>' + fmt(rem, 0) + ' kcal</strong> pour atteindre ton objectif.</p>'
@@ -3486,35 +3753,102 @@ function buildProposal(products, opts) {
   }
 
   /* ================= Rendu : produits ================= */
+  /* Deux vues : tes produits (ta base, jamais modifiée sans toi) et le catalogue d’aliments à cocher */
   function renderProducts() {
     renderHeader();
-    renderProductTable();
+    renderProdList();
+  }
+  function renderProdList() {
+    const cat = state.prodView === 'catalog';
+    const lead = $('#prodLead');
+    lead.textContent = cat ? 'Coche les aliments que tu manges : l’appli pourra te les proposer dans tes repas. Touche un aliment pour voir ses valeurs ou lui fixer un maximum par jour.'
+      : 'Coche ce que l’appli peut te proposer dans tes repas. Touche un produit pour le modifier ou lui fixer un maximum par jour.';
+    lead.hidden = !cat && !(state.productsLoaded && state.products.length);
+    $('#catChips').hidden = !cat;
+    $('#prodHint').hidden = cat;
+    $('#catHint').hidden = !cat;
+    $('#tplSection').hidden = cat;
+    if (cat) renderCatalog();
+    else { renderProdCounts(); renderProductTable(); }
+  }
+  /* Compteurs des deux vues et filtres du catalogue (sans refaire la liste, pour ne pas la bouger sous le doigt) */
+  function renderProdCounts() {
+    const idx = catalogIndex();
+    const nCat = idx.length, own = state.products.length;
+    const seg = $('#prodViews');
+    if (seg) {
+      seg.innerHTML = '<button type="button" class="seg-btn" data-action="prod-view" data-v="mine" aria-pressed="' + (state.prodView !== 'catalog') + '">Mes produits' + (state.productsLoaded ? '<span class="seg-n">' + own + '</span>' : '') + '</button>' +
+        '<button type="button" class="seg-btn" data-action="prod-view" data-v="catalog" aria-pressed="' + (state.prodView === 'catalog') + '">Catalogue<span class="seg-n">' + nCat + '</span></button>';
+    }
+    const box = $('#catChips');
+    if (!box) return;
+    const used = idx.filter(r => isUsed(r.own ? r.own.id : r.c.id)).length;
+    const f = state.catFilter;
+    const chip = (v, label, n) => '<button type="button" class="chip" data-action="cat-filter" data-v="' + v + '" aria-pressed="' + (f === v) + '">' + esc(label) + (n != null ? ' <span class="chip-n">' + n + '</span>' : '') + '</button>';
+    box.innerHTML = chip('all', 'Tout', null) + chip('on', 'Cochés', used) + FOOD_CATS.map(c => chip(c.v, c.label, null)).join('');
+  }
+  /* Case « proposer dans les repas » d’une ligne */
+  function useBox(p) {
+    return '<label class="use"><input type="checkbox" data-use="' + esc(p.id) + '"' + (isUsed(p.id) ? ' checked' : '') + '><span class="sr">Proposer ' + esc(p.name) + ' dans les repas</span></label>';
+  }
+  const warnTag = p => (kcalMismatch(p) ? ' <span class="warn" title="Les kcal ne correspondent pas aux macros : vérifie les valeurs">▲</span>' : '');
+  function prodMeta(p) {
+    const m = maxOf(p.id);
+    return esc(refLabel(p)) + (p.portion ? ' · portion fixe ' + esc(qtyLabel(p.portion, p.unit)) : '') + (m ? ' · <span class="maxtag">max ' + esc(maxLabel(m, p.unit)) + '</span>' : '');
+  }
+  function foodRow(p, action, tag) {
+    return '<li class="frow">' + useBox(p) + '<button type="button" class="prow" data-action="' + action + '" data-id="' + esc(p.id) + '">' +
+      '<span class="prow-name">' + esc(p.name) + (tag || '') + '</span>' +
+      '<span class="prow-k"><strong>' + fmt(p.kcal, 0) + '</strong> kcal</span>' +
+      '<span class="prow-sub"><span class="prow-meta">' + prodMeta(p) + '</span>' +
+      '<span class="prow-m">' + MACROS.map(m => '<span><i class="dot ' + m.cls + '"></i>' + m.short + ' ' + fmt(p[m.k]) + '</span>').join('') + '</span></span>' +
+      '</button></li>';
   }
   function renderProductTable() {
     const box = $('#prodTable');
     if (!state.productsLoaded) { box.innerHTML = '<p class="empty pad">Chargement des produits…</p>'; return; }
     if (!state.products.length) {
-      box.innerHTML = '<div class="empty-state"><h3>Aucun produit pour l’instant</h3><p>Commence avec une liste de produits courants (riz, poulet, œufs, skyr…), puis ajuste les valeurs avec tes emballages. Tu peux aussi créer tes produits un par un ou coller les lignes d’un tableau Excel.</p><div class="row"><button type="button" class="btn primary" data-action="starter-products">Ajouter les produits courants</button><button type="button" class="btn" data-action="product-new">Nouveau produit</button><button type="button" class="btn" data-action="import-open">Importer depuis Excel</button></div></div>';
+      box.innerHTML = '<div class="empty-state"><h3>Aucun produit pour l’instant</h3><p>Commence avec une liste de produits courants (riz, poulet, œufs, skyr…), puis ajuste les valeurs avec tes emballages. Tu peux aussi créer tes produits un par un, coller les lignes d’un tableau Excel ou cocher des aliments dans le catalogue.</p><div class="row"><button type="button" class="btn primary" data-action="starter-products">Ajouter les produits courants</button><button type="button" class="btn" data-action="product-new">Nouveau produit</button><button type="button" class="btn" data-action="prod-view" data-v="catalog">Voir le catalogue</button></div></div>';
       return;
     }
     const q = norm($('#prodSearch').value);
     const list = q ? state.products.filter(p => norm(p.name).includes(q)) : state.products;
-    if (!list.length) { box.innerHTML = '<p class="empty pad">Aucun produit ne correspond à cette recherche.</p>'; return; }
+    if (!list.length) { box.innerHTML = '<p class="empty pad">Aucun produit ne correspond à cette recherche.' + (q ? ' <button type="button" class="linkbtn" data-action="prod-view" data-v="catalog">Chercher dans le catalogue</button>' : '') + '</p>'; return; }
     box.innerHTML = '<table class="ptable"><thead><tr><th scope="col" class="sticky">Aliment</th><th scope="col">Pour</th>' +
       NUTRIENTS.map(n => '<th scope="col" class="num' + (n.sub ? ' subh' : '') + '">' + esc(n.col) + '</th>').join('') +
       '<th scope="col"><span class="sr">Modifier</span></th></tr></thead><tbody>' +
-      list.map(p => '<tr data-action="product-edit" data-id="' + esc(p.id) + '">' +
-        '<th scope="row" class="sticky pname">' + esc(p.name) + (kcalMismatch(p) ? ' <span class="warn" title="Les kcal ne correspondent pas aux macros : vérifie les valeurs">▲</span>' : '') + (p.portion ? '<span class="pp">Portion fixe : ' + esc(qtyLabel(p.portion, p.unit)) + '</span>' : '') + '</th>' +
-        '<td class="muted">' + esc(qtyLabel(p.ref, p.unit)) + '</td>' +
-        NK.map(k => '<td class="num">' + fmt(p[k], k === 'kcal' ? 0 : 2) + '</td>').join('') +
-        '<td><button type="button" class="linkbtn" data-action="product-edit" data-id="' + esc(p.id) + '">Modifier</button></td></tr>').join('') +
+      list.map(p => {
+        const m = maxOf(p.id);
+        return '<tr data-action="product-edit" data-id="' + esc(p.id) + '">' +
+          '<th scope="row" class="sticky pname"><span class="pname-in">' + useBox(p) + '<span>' + esc(p.name) + warnTag(p) + (p.portion ? '<span class="pp">Portion fixe : ' + esc(qtyLabel(p.portion, p.unit)) + '</span>' : '') + (m ? '<span class="pp">Max ' + esc(maxLabel(m, p.unit)) + '</span>' : '') + '</span></span></th>' +
+          '<td class="muted">' + esc(qtyLabel(p.ref, p.unit)) + '</td>' +
+          NK.map(k => '<td class="num">' + fmt(p[k], k === 'kcal' ? 0 : 2) + '</td>').join('') +
+          '<td><button type="button" class="linkbtn" data-action="product-edit" data-id="' + esc(p.id) + '">Modifier</button></td></tr>';
+      }).join('') +
       '</tbody></table>' +
-      '<ul class="plist">' + list.map(p => '<li><button type="button" class="prow" data-action="product-edit" data-id="' + esc(p.id) + '">' +
-        '<span class="prow-name">' + esc(p.name) + (kcalMismatch(p) ? ' <span class="warn" title="Les kcal ne correspondent pas aux macros : vérifie les valeurs">▲</span>' : '') + '</span>' +
-        '<span class="prow-k"><strong>' + fmt(p.kcal, 0) + '</strong> kcal</span>' +
-        '<span class="prow-meta">' + esc(refLabel(p)) + (p.portion ? ' · portion fixe ' + esc(qtyLabel(p.portion, p.unit)) : '') + '</span>' +
-        '<span class="prow-m">' + MACROS.map(m => '<span><i class="dot ' + m.cls + '"></i>' + m.short + ' ' + fmt(p[m.k]) + '</span>').join('') + '</span>' +
-        '</button></li>').join('') + '</ul>';
+      '<ul class="plist">' + list.map(p => foodRow(p, 'product-edit', warnTag(p))).join('') + '</ul>';
+  }
+  /* Catalogue : par rayon, avec les cases ; un aliment que tu as déjà dans tes produits renvoie vers ton produit */
+  function renderCatalog() {
+    const box = $('#prodTable');
+    renderProdCounts();
+    const q = norm($('#prodSearch').value), f = state.catFilter;
+    let rows = catalogIndex();
+    if (f === 'on') rows = rows.filter(r => isUsed(r.own ? r.own.id : r.c.id));
+    else if (f !== 'all') rows = rows.filter(r => r.c.group === f);
+    if (q) rows = rows.filter(r => r.c.search.includes(q) || (r.own && norm(r.own.name).includes(q)));
+    if (!rows.length) {
+      const raw = $('#prodSearch').value.trim();
+      box.innerHTML = '<p class="empty pad">' + (f === 'on' && !q ? 'Aucun aliment coché pour l’instant. Coche ceux que tu manges : l’appli pourra te les proposer dans tes repas.'
+        : 'Aucun aliment ne correspond' + (q ? ' à « ' + esc(raw) + ' »' : '') + (f === 'on' ? ' parmi les aliments cochés' : f !== 'all' ? ' dans ce rayon' : '') + '.' + (q ? ' <button type="button" class="linkbtn" data-action="product-new" data-name="' + esc(cap1(raw).slice(0, 80)) + '">Créer ce produit</button>' : '')) + '</p>';
+      return;
+    }
+    let html = '', group = '';
+    for (const r of rows) {
+      if (r.c.group !== group) { group = r.c.group; html += '<li class="cat-head">' + esc(FOOD_CAT_LABEL[group]) + '</li>'; }
+      html += r.own ? foodRow(r.own, 'product-edit', ' <span class="ftag">dans tes produits</span>') : foodRow(r.c, 'food-open', '');
+    }
+    box.innerHTML = '<ul class="plist catlist">' + html + '</ul>';
   }
   function templateSummary(t) {
     const v = sumVals(t.items.map(entryVals));
@@ -3535,7 +3869,7 @@ function buildProposal(products, opts) {
     let added = 0;
     STARTER_PRODUCTS.forEach(([name, ref, unit, kcal, fat, sat, carbs, sugars, fiber, protein, salt]) => {
       if (findByName(name)) return;
-      const id = 'c-' + norm(name).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      const id = 'c-' + slugOf(name);
       if (productById(id)) return;
       recentlyDeleted.delete('products/' + id);
       const p = normProduct(id, { name, ref, unit, kcal, fat, sat, carbs, sugars, fiber, protein, salt, createdAt: now });
@@ -3607,25 +3941,29 @@ function buildProposal(products, opts) {
   }
   /* Un produit de la liste ; les récents ont un bouton pour l’ajouter tout de suite avec la dernière quantité */
   function pickItem(p, quick) {
-    const pick = '<button type="button" class="pick" data-action="pick" data-pid="' + esc(p.id) + '"><span class="pick-name">' + esc(p.name) + '</span>' +
+    const pick = '<button type="button" class="pick" data-action="pick" data-pid="' + esc(p.id) + '"><span class="pick-name">' + esc(p.name) + (p.catalog ? ' <span class="ftag">catalogue</span>' : '') + '</span>' +
       '<span class="pick-meta"><span>' + esc(refLabel(p)) + ' · ' + fmt(p.kcal, 0) + ' kcal</span>' +
       MACROS.map(m => '<span><i class="dot ' + m.cls + '"></i>' + m.short + ' ' + fmt(p[m.k]) + '</span>').join('') + '</span></button>';
     if (!quick) return '<li>' + pick + '</li>';
     const q = qtyLabel(lastQty(p), p.unit);
     return '<li class="pick-row">' + pick + '<button type="button" class="btn small pick-quick" data-action="quick-add" data-pid="' + esc(p.id) + '" aria-label="' + esc('Ajouter ' + q + ' de ' + p.name) + '">' + ICON.plus + esc(q) + '</button></li>';
   }
+  /* Tes produits, puis les aliments cochés du catalogue ; la recherche trouve aussi tout le catalogue */
   function renderPickList() {
     const ul = $('#pickList');
     if (!state.productsLoaded) { ul.innerHTML = '<li class="empty">Chargement des produits…</li>'; return; }
-    if (!state.products.length) { ul.innerHTML = '<li class="empty">Aucun produit pour l’instant. Crée ton premier produit ci-dessous.</li>'; return; }
     const q = norm(addState.q);
+    const idx = catalogIndex().filter(r => !r.own).map(r => r.c);
     if (q) {
-      const list = state.products.filter(p => norm(p.name).includes(q));
-      ul.innerHTML = list.length ? list.map(p => pickItem(p)).join('') : '<li class="empty">Aucun produit ne correspond à « ' + esc(addState.q) + ' ».</li>';
+      const list = state.products.filter(p => norm(p.name).includes(q)).concat(idx.filter(c => c.search.includes(q)));
+      ul.innerHTML = list.length ? list.map(p => pickItem(p)).join('') : '<li class="empty">Aucun aliment ne correspond à « ' + esc(addState.q) + ' ».</li>';
       return;
     }
-    const rec = recentProducts(5);
-    ul.innerHTML = (rec.length ? '<li class="pick-group">Récents</li>' + rec.map(p => pickItem(p, true)).join('') + '<li class="pick-group">Tous les produits</li>' : '') + state.products.map(p => pickItem(p)).join('');
+    const on = catalogOn(), rec = recentProducts(5);
+    if (!state.products.length && !on.length && !rec.length) { ul.innerHTML = '<li class="empty">Aucun produit pour l’instant. Cherche un aliment du catalogue ou crée ton premier produit ci-dessous.</li>'; return; }
+    ul.innerHTML = (rec.length ? '<li class="pick-group">Récents</li>' + rec.map(p => pickItem(p, true)).join('') : '') +
+      (state.products.length ? (rec.length ? '<li class="pick-group">Tous les produits</li>' : '') + state.products.map(p => pickItem(p)).join('') : '') +
+      (on.length ? '<li class="pick-group">Catalogue, aliments cochés</li>' + on.map(p => pickItem(p)).join('') : '');
   }
   function renderTemplateList() {
     const ul = $('#tplList');
@@ -3661,7 +3999,15 @@ function buildProposal(products, opts) {
     btn.disabled = false;
     const v = scaled(p, p.ref, q), t = dayTotals(state.day), g = dayGoals(state.day);
     box.innerHTML = '<div class="pv-add"><span class="pv-k">+' + fmt(v.kcal, 0) + ' kcal</span>' + MACROS.map(m => '<span><i class="dot ' + m.cls + '"></i>' + m.short + ' ' + fmt(v[m.k]) + ' g</span>').join('') + '</div>' +
-      '<div class="pv-after">Après ajout : <strong>' + fmt(t.kcal + v.kcal, 0) + '</strong> / ' + fmt(g.kcal, 0) + ' kcal · protéines <strong>' + fmt(t.protein + v.protein, 0) + '</strong> / ' + fmt(g.protein, 0) + ' g</div>';
+      '<div class="pv-after">Après ajout : <strong>' + fmt(t.kcal + v.kcal, 0) + '</strong> / ' + fmt(g.kcal, 0) + ' kcal · protéines <strong>' + fmt(t.protein + v.protein, 0) + '</strong> / ' + fmt(g.protein, 0) + ' g</div>' +
+      maxNote(p, q);
+  }
+  /* Rappel du maximum par jour de cet aliment, avec ce qui est déjà noté ce jour-là */
+  function maxNote(p, q) {
+    const m = maxOf(p.id);
+    if (!m) return '';
+    const eaten = eatenOn(state.day, p.id), over = eaten + q > m + 1e-9;
+    return '<div class="pv-max' + (over ? ' over' : '') + '">' + (over ? '<span aria-hidden="true">▲</span>Au-delà de ton maximum de ' : 'Ton maximum : ') + esc(maxLabel(m, p.unit)) + (eaten > 0 ? ' (déjà ' + esc(qtyLabel(eaten, p.unit)) + ' ce jour-là)' : '') + '</div>';
   }
   function renderAddFooter() {
     const t = dayTotals(state.day), g = dayGoals(state.day);
@@ -3699,6 +4045,11 @@ function buildProposal(products, opts) {
     $('#pf-portion').value = p && p.portion ? fmtInput(p.portion) : '';
     $('#pf-portion').removeAttribute('aria-invalid');
     $('#pfPortionUnit').textContent = unitShort(p ? p.unit : 'g', 2);
+    $('#pf-use').checked = p ? isUsed(p.id) : true;
+    const mx = p ? maxOf(p.id) : null;
+    $('#pf-max').value = mx ? fmtInput(mx) : '';
+    $('#pf-max').removeAttribute('aria-invalid');
+    $('#pfMaxUnit').textContent = unitShort(p ? p.unit : 'g', 2);
     $('#pfError').textContent = '';
     $('#pfDelete').hidden = !p;
     $('#prodForm .paste').open = false;
@@ -3747,12 +4098,24 @@ function buildProposal(products, opts) {
     const rawPortion = $('#pf-portion').value.trim();
     const portion = rawPortion ? parseNum(rawPortion) : null;
     if (rawPortion && (portion == null || portion <= 0 || portion > 5000)) { err.textContent = 'Portion invalide : indique une quantité, par exemple 250, ou laisse vide.'; $('#pf-portion').focus(); return; }
+    const rawMax = $('#pf-max').value.trim();
+    const mx = rawMax ? parseNum(rawMax) : null;
+    if (rawMax && (mx == null || mx <= 0 || mx > 100000)) { err.textContent = 'Maximum invalide : indique une quantité par jour, par exemple 3 ou 200, ou laisse vide.'; $('#pf-max').setAttribute('aria-invalid', 'true'); $('#pf-max').focus(); return; }
     const p = normProduct(editing ? editing.id : uid('p'), Object.assign({ name, ref, unit: $('#pf-unit').value, portion, createdAt: editing ? editing.createdAt : Date.now() }, vals));
     const wasNew = !editing, ret = editReturn;
-    upsertProductLocal(p);
-    save('products/' + p.id, productBody(p));
+    /* Un produit inchangé n’est pas réécrit : seuls ses réglages de propositions changent (settings) */
+    const changed = wasNew || !sameProduct(p, editing);
+    if (changed) {
+      upsertProductLocal(p);
+      save('products/' + p.id, productBody(p));
+    }
+    const use = $('#pf-use').checked;
+    const setsChanged = isUsed(p.id) !== use || (maxOf(p.id) || null) !== (mx || null);
+    if (isUsed(p.id) !== use) setUsed(p.id, use);
+    if ((maxOf(p.id) || null) !== (mx || null)) setFoodMax(p.id, mx);
+    if (setsChanged) refreshFoodViews();
     closeDlg('#prodDlg');
-    toast(wasNew ? p.name + ' ajouté à tes produits' : p.name + ' mis à jour');
+    toast(wasNew ? p.name + ' ajouté à tes produits' : (changed || setsChanged ? p.name + ' mis à jour' : 'Aucun changement'));
     if (ret) openAdd(addState.meal, { pid: p.id, qty: p.ref });
   }
   function deleteCurrentProduct() {
@@ -3768,6 +4131,40 @@ function buildProposal(products, opts) {
       upsertProductLocal(p);
       save('products/' + p.id, productBody(p));
     });
+  }
+
+  /* ================= Fenêtre : aliment du catalogue ================= */
+  let foodOpen = null;
+  function openFood(id) {
+    const p = CATALOG_MAP.get(id);
+    if (!p) return;
+    foodOpen = id;
+    renderFoodSheet();
+    openDlg('#foodDlg');
+  }
+  function renderFoodSheet() {
+    const p = CATALOG_MAP.get(foodOpen);
+    if (!p) return;
+    $('#foodTitle').textContent = p.name;
+    const mx = maxOf(p.id);
+    $('#foodBody').innerHTML = '<p class="hint">' + esc(FOOD_CAT_LABEL[p.group]) + ' · valeurs moyennes ' + esc(refLabel(p)) + '</p>' +
+      '<dl class="food-vals">' + NUTRIENTS.map(n => '<div' + (n.sub ? ' class="sub"' : '') + '><dt>' + esc(n.label) + '</dt><dd>' + fmt(p[n.k], n.k === 'kcal' ? 0 : p[n.k] < 1 ? 2 : 1) + (n.k === 'kcal' ? ' kcal' : ' g') + '</dd></div>').join('') + '</dl>' +
+      '<label class="switch-row"><input type="checkbox" data-use="' + esc(p.id) + '"' + (isUsed(p.id) ? ' checked' : '') + '><span>Me proposer cet aliment dans mes repas</span></label>' +
+      '<div class="field"><label for="foodMax">Maximum par jour <span class="muted">(facultatif)</span></label>' +
+      '<span class="inp"><input type="text" id="foodMax" data-fmax="' + esc(p.id) + '" inputmode="decimal" autocomplete="off" placeholder="aucun" value="' + (mx ? esc(fmtInput(mx)) : '') + '"><em>' + esc(unitShort(p.unit, 2)) + '</em></span>' +
+      '<span class="f-help">Les propositions ne dépasseront jamais cette quantité sur une journée, tous repas confondus.</span></div>';
+  }
+  /* Maximum par jour saisi dans la fenêtre d’un aliment ou dans « Aliments utilisés » */
+  function onFoodMax(inp) {
+    const id = inp.dataset.fmax;
+    if (!productById(id)) return;
+    const raw = inp.value.trim();
+    const v = raw ? parseNum(raw) : null;
+    if (raw && (v == null || v <= 0 || v > 100000)) { inp.setAttribute('aria-invalid', 'true'); return; }
+    inp.removeAttribute('aria-invalid');
+    if ((maxOf(id) || null) === (v || null)) return;
+    setFoodMax(id, v);
+    refreshFoodViews();
   }
 
   /* ================= Import Excel ================= */
@@ -3810,6 +4207,89 @@ function buildProposal(products, opts) {
     if (state.store && !state.readOnly) for (const p of saved) await state.store.put('products/' + p.id, productBody(p));
   }
 
+  /* ================= Aliments proposés : tes produits cochés et le catalogue ================= */
+  /* Tes produits sont proposés sauf si tu les décoches (settings/generator, excluded) ;
+     les aliments du catalogue seulement si tu les coches (settings/foods, on). Le maximum par jour est dans settings/foods. */
+  const isOwn = id => state.products.some(p => p.id === id);
+  function isUsed(id) {
+    if (isOwn(id)) return !state.genSettings.excluded.includes(id);
+    return state.foods.on.includes(id);
+  }
+  function setUsed(id, on) {
+    if (isOwn(id)) {
+      const g = state.genSettings;
+      g.excluded = g.excluded.filter(x => x !== id);
+      if (!on) g.excluded.push(id);
+      touchGenSettings();
+    } else if (CATALOG_MAP.has(id)) {
+      const f = state.foods;
+      f.on = f.on.filter(x => x !== id);
+      if (on) f.on.push(id);
+      touchFoods();
+    }
+  }
+  const maxOf = id => (state.foods.max[id] > 0 ? state.foods.max[id] : null);
+  function setFoodMax(id, v) {
+    if (v > 0) state.foods.max[id] = v; else delete state.foods.max[id];
+    touchFoods();
+  }
+  function maxLabel(n, unit) { return unit === 'unité' ? fmt(n, 1) + ' par jour' : fmt(n, 1) + ' ' + unit + ' par jour'; }
+  /* Chaque aliment du catalogue, avec ton produit du même nom s’il existe (c’est alors ton produit qui compte) */
+  function catalogIndex() {
+    const byId = new Map(state.products.map(p => [p.id, p]));
+    const byName = new Map(state.products.map(p => [norm(p.name), p]));
+    return FOOD_CATALOG.map(c => ({ c, own: byId.get(c.starterId) || byName.get(c.normName) || null }));
+  }
+  const catalogOn = () => { const on = new Set(state.foods.on); return catalogIndex().filter(r => !r.own && on.has(r.c.id)).map(r => r.c); };
+  /* Tout ce que l’appli peut proposer (les produits décochés sont écartés ensuite, via excluded) */
+  const proposalProducts = () => state.products.concat(catalogOn());
+  function usedPool() {
+    const ex = new Set(state.genSettings.excluded);
+    return proposalProducts().filter(p => !ex.has(p.id));
+  }
+  const eatenOn = (day, id) => day.entries.reduce((s, e) => s + (e.pid === id ? e.qty : 0), 0);
+  function maxLeftToday(p) {
+    const m = maxOf(p.id);
+    return m == null ? Infinity : m - eatenOn(state.day, p.id);
+  }
+  let foodsTimer = null;
+  const foodsBody = () => ({ on: state.foods.on.slice(), max: Object.assign({}, state.foods.max), updatedAt: state.foods.updatedAt });
+  function touchFoods() {
+    state.foods.updatedAt = Date.now();
+    clearTimeout(foodsTimer);
+    foodsTimer = setTimeout(flushFoods, 600);
+  }
+  function flushFoods() {
+    if (!foodsTimer) return;
+    clearTimeout(foodsTimer);
+    foodsTimer = null;
+    save('settings/foods', foodsBody());
+  }
+  function onFoods(data) {
+    const inc = normFoods(data);
+    if (inc.updatedAt < state.foods.updatedAt) return;
+    const same = JSON.stringify(inc) === JSON.stringify(foodsBody());
+    state.foods = inc;
+    if (same) return;
+    refreshFoodViews();
+  }
+  /* Après un changement de cases ou de maximum : listes, idées du jour, proposition en cours */
+  function refreshFoodViews() {
+    const act = document.activeElement;
+    if (state.tab === 'produits' && !(act && act.closest && act.closest('#prodTable'))) renderProdList();
+    else if (state.tab === 'produits') renderProdCounts();
+    renderExtras();
+    renderWelcome();
+    renderDayCta();
+    refreshAddIfOpen();
+    if (isOpen('#foodDlg') && !$('#foodBody').contains(act)) renderFoodSheet();
+    if (isOpen('#genDlg')) {
+      if (!$('#genProdList').contains(act)) renderGenControls(); else renderGenSummary();
+      clearTimeout(genTimer);
+      genTimer = setTimeout(runGenerator, 250);
+    }
+  }
+
   /* ================= Proposer une journée : interface ================= */
   const gen = { seed: 1, target: null, result: null };
   let genTimer = null, genSaveTimer = null;
@@ -3822,16 +4302,25 @@ function buildProposal(products, opts) {
   }
   function onGenSettings(data) {
     const inc = normGenSettings(data);
-    if (inc.updatedAt >= state.genSettings.updatedAt) state.genSettings = inc;
-    if (isOpen('#genDlg')) { renderGenControls(); runGenerator(); }
+    if (inc.updatedAt < state.genSettings.updatedAt) return;
+    const same = JSON.stringify(inc) === JSON.stringify(normGenSettings(state.genSettings));
+    state.genSettings = inc;
+    if (!same) refreshFoodViews();
   }
   function touchGenSettings() {
-    const g = state.genSettings;
-    g.updatedAt = Date.now();
+    state.genSettings.updatedAt = Date.now();
     clearTimeout(genSaveTimer);
-    genSaveTimer = setTimeout(() => save('settings/generator', { excluded: g.excluded.slice(), pinned: g.pinned.slice(), roles: Object.assign({}, g.roles), meals: g.meals, updatedAt: g.updatedAt }), 800);
+    genSaveTimer = setTimeout(flushGenSettings, 800);
   }
-  const genRoleOf = p => state.genSettings.roles[p.id] || autoRole(p);
+  function flushGenSettings() {
+    if (!genSaveTimer) return;
+    clearTimeout(genSaveTimer);
+    genSaveTimer = null;
+    const g = state.genSettings;
+    save('settings/generator', { excluded: g.excluded.slice(), pinned: g.pinned.slice(), roles: Object.assign({}, g.roles), meals: g.meals, updatedAt: g.updatedAt });
+  }
+  const defaultRole = p => p.role || autoRole(p);
+  const genRoleOf = p => state.genSettings.roles[p.id] || defaultRole(p);
   function goalTarget() {
     const g = dayGoals(state.day);
     return { kcal: g.kcal, protein: g.protein, carbs: g.carbs, fat: g.fat };
@@ -3851,21 +4340,28 @@ function buildProposal(products, opts) {
       el.removeAttribute('aria-invalid');
     }
   }
+  /* Tes produits, puis les aliments cochés du catalogue */
+  const genList = () => state.products.filter(p => p.kcal > 0).concat(catalogOn());
+  function renderGenSummary() {
+    const own = state.products.filter(p => p.kcal > 0), nCat = catalogOn().length;
+    const nOwn = own.filter(p => isUsed(p.id)).length;
+    $('#genProdsSum').textContent = 'Aliments utilisés : ' + (!nCat ? nOwn + ' sur ' + own.length : !nOwn ? nCat + ' du catalogue' : (nOwn + nCat) + ' dont ' + nCat + ' du catalogue');
+  }
   function renderGenControls() {
-    $('#genFor').textContent = 'Pour ' + dfLong.format(dateOf(state.date)) + (state.day.run ? ', jour de cardio' : '') + ', avec les produits de ta liste.';
+    $('#genFor').textContent = 'Pour ' + dfLong.format(dateOf(state.date)) + (state.day.run ? ', jour de cardio' : '') + ', avec tes aliments cochés.';
     document.querySelectorAll('#genMeals [data-v]').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.v) === state.genSettings.meals)));
-    const ex = new Set(state.genSettings.excluded);
-    const list = state.products.filter(p => p.kcal > 0);
-    $('#genProdsSum').textContent = 'Produits utilisés : ' + list.filter(p => !ex.has(p.id)).length + ' sur ' + list.length;
+    renderGenSummary();
+    const list = genList();
     const pins = new Set(state.genSettings.pinned);
     $('#genProdList').innerHTML = list.length ? list.map(p => {
-      const id = esc(p.id), nm = esc(p.name);
-      return '<li class="gp"><label class="gp-check"><input type="checkbox" data-gp="' + id + '"' + (ex.has(p.id) ? '' : ' checked') + '><span>' + nm + '</span></label>' +
+      const id = esc(p.id), nm = esc(p.name), mx = maxOf(p.id), u = esc(unitShort(p.unit, 2));
+      return '<li class="gp"><label class="gp-check"><input type="checkbox" data-use="' + id + '"' + (isUsed(p.id) ? ' checked' : '') + '><span>' + nm + (p.catalog ? ' <span class="ftag">catalogue</span>' : '') + '</span></label>' +
         '<button type="button" class="chip gp-pin" data-action="gen-pin" data-id="' + id + '" aria-pressed="' + pins.has(p.id) + '" aria-label="Utiliser ' + nm + ' en priorité">Prioritaire</button>' +
         '<div class="gp-opts"><select data-grole="' + id + '" aria-label="Rôle de ' + nm + '">' + GEN_ROLES.map(r => '<option value="' + r.v + '"' + (r.v === genRoleOf(p) ? ' selected' : '') + '>' + esc(r.label) + '</option>').join('') + '</select>' +
-        '<label class="inp gp-portion"><span class="gp-lbl">Portion</span><input type="text" inputmode="decimal" autocomplete="off" data-gportion="' + id + '" value="' + (p.portion ? esc(fmtInput(p.portion)) : '') + '" placeholder="libre" aria-label="Portion fixe de ' + nm + '"><em>' + esc(unitShort(p.unit, 2)) + '</em></label></div></li>';
+        '<label class="inp gp-portion"><span class="gp-lbl">Max/jour</span><input type="text" inputmode="decimal" autocomplete="off" data-fmax="' + id + '" value="' + (mx ? esc(fmtInput(mx)) : '') + '" placeholder="aucun" aria-label="Maximum par jour de ' + nm + '"><em>' + u + '</em></label>' +
+        (p.catalog ? '' : '<label class="inp gp-portion"><span class="gp-lbl">Portion</span><input type="text" inputmode="decimal" autocomplete="off" data-gportion="' + id + '" value="' + (p.portion ? esc(fmtInput(p.portion)) : '') + '" placeholder="libre" aria-label="Portion fixe de ' + nm + '"><em>' + u + '</em></label>') + '</div></li>';
     }).join('')
-      : '<li class="empty">Aucun produit. Ajoute tes produits dans l’onglet Produits.</li>';
+      : '<li class="empty">Aucun aliment. Ajoute tes produits ou coche des aliments du catalogue dans l’onglet Produits.</li>';
     renderGenActions();
   }
   function renderGenActions() {
@@ -3880,7 +4376,7 @@ function buildProposal(products, opts) {
     if (!state.productsLoaded) box.innerHTML = '<p class="muted">Chargement des produits…</p>';
     else if (!t || GEN_KEYS.some(k => !(t[k] > 0))) box.innerHTML = '<p class="form-error">Indique des objectifs supérieurs à 0.</p>';
     else {
-      gen.result = buildProposal(state.products, { target: t, meals: state.genSettings.meals, seed: gen.seed, roles: state.genSettings.roles, excluded: state.genSettings.excluded, pinned: state.genSettings.pinned });
+      gen.result = buildProposal(proposalProducts(), { target: t, meals: state.genSettings.meals, seed: gen.seed, roles: state.genSettings.roles, excluded: state.genSettings.excluded, pinned: state.genSettings.pinned, maxDay: state.foods.max });
       renderGenResult();
     }
     renderGenActions();
@@ -3936,14 +4432,14 @@ function buildProposal(products, opts) {
   const portionTimers = {};
   function onGenPortion(inp) {
     const p = productById(inp.dataset.gportion);
-    if (!p) return;
+    if (!p || p.catalog) return;
     const raw = inp.value.trim();
     const v = raw ? parseNum(raw) : null;
     if (raw && (v == null || v <= 0 || v > 5000)) { inp.setAttribute('aria-invalid', 'true'); return; }
     inp.removeAttribute('aria-invalid');
     p.portion = v;
     clearTimeout(portionTimers[p.id]);
-    portionTimers[p.id] = setTimeout(() => { save('products/' + p.id, productBody(p)); renderProductTable(); }, 800);
+    portionTimers[p.id] = setTimeout(() => { save('products/' + p.id, productBody(p)); if (state.tab === 'produits') renderProdList(); }, 800);
     clearTimeout(genTimer);
     genTimer = setTimeout(runGenerator, 300);
   }
@@ -5771,6 +6267,9 @@ function buildProposal(products, opts) {
     const name = 'nutrisport-sauvegarde-' + (slug ? slug + '-' : '') + todayISO() + '.json';
     /* Site installé : partage du fichier (Enregistrer dans Fichiers, AirDrop…) ou téléchargement.
        Rien n’est attendu avant le partage, pour garder le geste de l’utilisateur. */
+    /* Les réglages encore en attente d’enregistrement partent avec la sauvegarde */
+    flushGenSettings();
+    flushFoods();
     if (!inClaude()) {
       if (!state.store.dump) return;
       if (state.dayDirty) flushDay();
@@ -6130,6 +6629,9 @@ function buildProposal(products, opts) {
     clearTimeout(genSaveTimer);
     genSaveTimer = null;
     state.genSettings = normGenSettings(null);
+    clearTimeout(foodsTimer);
+    foodsTimer = null;
+    state.foods = normFoods(null);
     state.me = normMe(null);
     state.goalsDirty = false;
     recentlyDeleted.clear();
@@ -6183,6 +6685,7 @@ function buildProposal(products, opts) {
     renderHeader();
     try { localStorage.setItem('cpm.tab', tab); } catch (e) { /* stockage indisponible */ }
     if (tab === 'jour') renderDayWorkout();
+    if (tab === 'produits') renderProducts();
     if (tab === 'seances') renderSeances();
     if (tab === 'suivi') renderSuivi();
     if (tab === 'objectifs') { syncCalcForm(); renderCalcResult(); renderObjLayout(); }
@@ -6193,6 +6696,8 @@ function buildProposal(products, opts) {
     document.addEventListener('click', e => {
       if (e.target.tagName === 'DIALOG') { closeDlg('#' + e.target.id); return; }
       if (e.target.closest && e.target.closest('.calc-sum')) $('#calcBox').dataset.touched = '1';
+      /* La case d’une ligne de produit ne l’ouvre pas */
+      if (e.target.closest && e.target.closest('label.use')) return;
       const b = e.target.closest('[data-action]');
       if (!b) return;
       const a = b.dataset.action;
@@ -6263,8 +6768,38 @@ function buildProposal(products, opts) {
         case 'day-clear': clearDay(); break;
         case 'sugg-add': openAdd(defaultMeal(), { pid: b.dataset.pid, qty: Number(b.dataset.q) }); break;
         case 'sugg-next': state.cycle[b.dataset.key] = (state.cycle[b.dataset.key] || 0) + 1; renderExtras(); break;
-        case 'product-new': openProductForm(null); break;
-        case 'product-edit': { const p = productById(b.dataset.id); if (p) openProductForm(p); break; }
+        case 'product-new': openProductForm(null, b.dataset.name ? { name: b.dataset.name } : undefined); break;
+        case 'product-edit': { const p = productById(b.dataset.id); if (p && !p.catalog) openProductForm(p); else if (p) openFood(p.id); break; }
+        case 'prod-view': {
+          state.prodView = b.dataset.v === 'catalog' ? 'catalog' : 'mine';
+          lsSet('cpm.prodView', state.prodView);
+          renderProducts();
+          const f = document.querySelector('#prodViews [data-v="' + state.prodView + '"]');
+          if (f && b.closest('#prodViews')) f.focus();
+          break;
+        }
+        case 'cat-filter': {
+          state.catFilter = b.dataset.v;
+          renderCatalog();
+          const f = document.querySelector('#catChips [data-v="' + state.catFilter + '"]');
+          if (f) f.focus();
+          break;
+        }
+        case 'food-open': openFood(b.dataset.id); break;
+        case 'food-close': closeDlg('#foodDlg'); break;
+        case 'food-add': {
+          const p = CATALOG_MAP.get(foodOpen);
+          closeDlg('#foodDlg');
+          if (p) openAdd(defaultMeal(), { pid: p.id, qty: lastQty(p) });
+          break;
+        }
+        case 'catalog-open':
+          closeDlg('#genDlg');
+          state.prodView = 'catalog';
+          lsSet('cpm.prodView', 'catalog');
+          setTab('produits');
+          window.scrollTo(0, 0);
+          break;
         case 'prod-close': closeDlg('#prodDlg'); break;
         case 'prod-delete': deleteCurrentProduct(); break;
         case 'pf-usekcal': { const c = calcKcal(readPfValues()); $('#pf-kcal').value = fmtInput(Math.round(c)); updatePfCheck(); break; }
@@ -6423,7 +6958,7 @@ function buildProposal(products, opts) {
       else if (t.id === 'weightInput') onWeight(t);
       else if (t.id === 'addSearch') { addState.q = t.value; renderPickList(); }
       else if (t.id === 'addQty') { addState.qtyStr = t.value; updateQtyLive(); }
-      else if (t.id === 'prodSearch') renderProductTable();
+      else if (t.id === 'prodSearch') renderProdList();
       else if (t.id === 'pf-paste') applyPaste(t.value);
       else if (t.closest('#prodForm')) updatePfCheck();
       else if (t.id === 'importText') renderImportPreview();
@@ -6434,6 +6969,8 @@ function buildProposal(products, opts) {
       else if (t.matches('[data-pf]')) onProfileNum(t);
       else if (t.matches('[data-gt]')) onGenTarget(t);
       else if (t.matches('[data-gportion]')) onGenPortion(t);
+      else if (t.matches('[data-fmax]')) onFoodMax(t);
+      else if (t.id === 'pf-max') { t.removeAttribute('aria-invalid'); updatePfCheck(); }
       else if (t.matches('input[data-sport]')) onSportInput(t);
       else if (t.closest('#goalsForm')) onGoalsInput();
     });
@@ -6464,24 +7001,27 @@ function buildProposal(products, opts) {
       } else if (t.id === 'weName' || t.id === 'weNotes') { const w = curWorkout(); if (w) flushWorkout(w.id); }
       else if (t.id === 'progSelect') { state.progEx = t.value; rerenderProgressCard(); }
       else if (t.id === 'planDate') { if (isISO(t.value)) { plan.date = t.value; renderPlan(); } }
-      else if (t.matches('[data-gp]')) {
-        const g = state.genSettings, id = t.dataset.gp;
-        g.excluded = g.excluded.filter(x => x !== id);
-        if (!t.checked) g.excluded.push(id);
-        touchGenSettings();
-        const list = state.products.filter(p => p.kcal > 0);
-        $('#genProdsSum').textContent = 'Produits utilisés : ' + list.filter(p => !g.excluded.includes(p.id)).length + ' sur ' + list.length;
-        runGenerator();
+      else if (t.matches('[data-use]')) {
+        /* Proposer ou non un aliment : la même case peut être affichée à plusieurs endroits */
+        const id = t.dataset.use;
+        setUsed(id, t.checked);
+        document.querySelectorAll('input[data-use]').forEach(x => { if (x.dataset.use === id) x.checked = t.checked; });
+        if (state.tab === 'produits') renderProdCounts();
+        renderExtras();
+        renderWelcome();
+        renderDayCta();
+        refreshAddIfOpen();
+        if (isOpen('#genDlg')) { renderGenSummary(); runGenerator(); }
       } else if (t.matches('[data-grole]')) {
         const p = productById(t.dataset.grole);
-        if (p) { if (t.value === autoRole(p)) delete state.genSettings.roles[p.id]; else state.genSettings.roles[p.id] = t.value; touchGenSettings(); runGenerator(); }
+        if (p) { if (t.value === defaultRole(p)) delete state.genSettings.roles[p.id]; else state.genSettings.roles[p.id] = t.value; touchGenSettings(); runGenerator(); }
       }
       else if (t.matches('select[data-sport]')) { const s = state.profile.sports[Number(t.dataset.sport)]; if (s) { s.type = t.value; profileChanged(); } }
       else if (t.matches('[data-pf]') || t.matches('input[data-sport]')) flushProfile();
       else if (t.id === 'weightInput') {
         if (t.getAttribute('aria-invalid') === 'true') { t.value = state.day.weight != null ? fmtInput(state.day.weight) : ''; t.removeAttribute('aria-invalid'); }
         flushDay();
-      } else if (t.id === 'pf-unit') { updatePfCheck(); $('#pfPortionUnit').textContent = unitShort(t.value, 2); }
+      } else if (t.id === 'pf-unit') { updatePfCheck(); $('#pfPortionUnit').textContent = unitShort(t.value, 2); $('#pfMaxUnit').textContent = unitShort(t.value, 2); }
     });
 
     document.addEventListener('keydown', e => {
@@ -6514,6 +7054,7 @@ function buildProposal(products, opts) {
     });
     $('#addDlg').addEventListener('close', () => { addState.last = null; });
     $('#prodDlg').addEventListener('close', () => { editing = null; editReturn = false; });
+    $('#foodDlg').addEventListener('close', () => { foodOpen = null; });
 
     if ('ResizeObserver' in window) {
       const ro = new ResizeObserver(entries => {
@@ -6530,7 +7071,7 @@ function buildProposal(products, opts) {
       ro.observe($('#p-suivi'));
       ro.observe($('#p-seances'));
     }
-    const flushAll = () => { flushDay(); flushAllWorkouts(); flushProfile(); };
+    const flushAll = () => { flushDay(); flushAllWorkouts(); flushProfile(); flushGenSettings(); flushFoods(); };
     window.addEventListener('pagehide', flushAll);
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushAll(); });
   }
@@ -6645,6 +7186,7 @@ function buildProposal(products, opts) {
     s.watchDoc('settings/goals', onGoals);
     s.watchDoc('settings/profile', onProfile);
     s.watchDoc('settings/generator', onGenSettings);
+    s.watchDoc('settings/foods', onFoods);
     s.watchDoc('settings/ui', onUi);
     s.watchDoc('settings/me', onMe);
     s.watchCol('days', onHistory, { order: 'date', dir: 'desc', limit: 70 });
