@@ -32,7 +32,7 @@
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin-ext.woff2) format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 </style>
-<script>window.CARNET_VERSION = "2026-10-06.746513";</script>
+<script>window.CARNET_VERSION = "2026-10-06.92879f";</script>
 <style>
 /* Carnet de bord calme : fond graphite profond, cartes à filet fin, actions en encre claire (version claire en option).
    Les couleurs des macros (protéines, glucides, lipides) sont les seules teintes vives ; les chiffres clés
@@ -311,7 +311,6 @@ textarea { width: 100%; resize: vertical; font-family: ui-monospace, "SF Mono", 
 .journal-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; }
 .journal-head .btn { display: none; }
 @media (min-width: 920px) { .journal-head { margin-top: 0; } .journal-head .btn { display: inline-flex; } }
-#dayCta:empty { display: none; }
 .meals { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--card-line); border-radius: var(--r); box-shadow: var(--shadow-sm); min-width: 0; overflow: hidden; }
 .meal { min-width: 0; }
 .meal + .meal { border-top: 1px solid var(--line); }
@@ -839,12 +838,36 @@ input.we-name:focus-visible { background: var(--surface); }
 .card .aside-text { color: var(--fg-2); font-size: 14px; }
 
 /* ---------- Proposition de journée ---------- */
-#dayCta { margin-bottom: 16px; }
-#dayCta:empty { display: none; }
-.gen-cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 16px; padding: 16px 16px 16px 18px; border-radius: var(--r); border: 1px dashed var(--line-2); background: var(--surface-2); }
-.gen-cta-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 220px; }
-.gen-cta-txt strong { font-weight: 600; }
-.gen-cta-txt span { color: var(--fg-2); font-size: 13.5px; }
+/* Assistant : carte de Jour et consignes */
+.assist { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; padding: 14px 14px 12px; background: var(--surface); border: 1px solid var(--card-line); border-radius: var(--r); box-shadow: var(--shadow-sm); min-width: 0; }
+.as-head { display: flex; align-items: center; gap: 11px; min-width: 0; }
+.as-ico { width: 36px; height: 36px; flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--surface-2); color: var(--fg); }
+.as-ico .ico { width: 19px; height: 19px; }
+.as-txt { min-width: 0; }
+.as-txt h3 { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.25; }
+.as-txt p { margin: 1px 0 0; font-size: 13px; color: var(--muted); }
+.as-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 8px; }
+.as-form textarea { width: 100%; min-height: 46px; max-height: 140px; resize: none; padding: 11px 13px; border-radius: 14px; font-family: var(--font-body); font-size: 16px; line-height: 1.35; overflow-y: auto; }
+.as-go { width: 46px; height: 46px; min-height: 46px; padding: 0; border-radius: 50%; }
+.as-go .ico { width: 20px; height: 20px; stroke-width: 2.2; }
+.as-ideas .chip { padding: 7px 12px; font-size: 13px; }
+.assist .as-ideas { margin-inline: -14px; padding-inline: 14px; scroll-padding-inline: 14px; scrollbar-width: none; }
+.assist .as-ideas::-webkit-scrollbar { display: none; }
+.as-box { display: flex; flex-direction: column; gap: 8px; }
+.as-box textarea { width: 100%; min-height: 66px; resize: vertical; font-family: var(--font-body); font-size: 16px; line-height: 1.35; }
+.cons-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.cons-chips:empty { display: none; }
+.cons-lbl { margin-right: 2px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.cchip { display: inline-flex; align-items: center; gap: 1px; max-width: 100%; min-width: 0; padding: 3px 3px 3px 11px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--fg); font-size: 13px; font-weight: 600; line-height: 1.3; }
+.cchip > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cchip button { width: 26px; height: 26px; flex: none; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--muted); }
+.cchip button:hover { background: var(--surface-3); color: var(--fg); }
+.cchip button .ico { width: 14px; height: 14px; stroke-width: 2.4; }
+.cchip.q { background: transparent; border-style: dashed; border-color: var(--line-2); color: var(--fg-2); font-weight: 500; }
+.cchip.w { border-color: var(--over); border-color: color-mix(in srgb, var(--over) 45%, var(--line)); color: var(--over); }
+.cons-help { flex-basis: 100%; margin: 2px 0 0; font-size: 12.5px; color: var(--muted); }
+.gen-goals-body { display: flex; flex-direction: column; gap: 12px; }
+.gen-with { margin: 0; font-size: 12.5px; font-weight: 600; color: var(--muted); }
 .gen-targets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 @media (max-width: 520px) { .gen-targets { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .gt { display: flex; flex-direction: column; gap: 5px; font-size: 12.5px; font-weight: 600; color: var(--muted); min-width: 0; }
@@ -1105,7 +1128,15 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
         </div>
         <section class="journal" aria-labelledby="mealsTitle">
           <div class="journal-head"><h2 class="section-title" id="mealsTitle">Repas</h2><button type="button" class="btn primary small" data-action="add-open"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>Ajouter un aliment</button></div>
-          <div id="dayCta"></div>
+          <section class="assist" id="assist" aria-labelledby="assistTitle" hidden>
+            <div class="as-head"><span class="as-ico"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.5l1.8 4.7 4.7 1.8-4.7 1.8L12 16.5l-1.8-4.7L5.5 10l4.7-1.8z"/><path d="M18.5 15l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg></span><div class="as-txt"><h3 id="assistTitle">Prépare ta journée</h3><p id="assistSub"></p></div></div>
+            <form class="as-form" id="assistForm" autocomplete="off">
+              <label class="sr" for="assistText">Tes consignes pour la journée</label>
+              <textarea id="assistText" rows="1" enterkeyhint="go" placeholder="Ex. 3000 kcal, sans pomme"></textarea>
+              <button type="submit" class="btn primary as-go" aria-label="Préparer ma journée"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
+            </form>
+            <div class="chips scroll as-ideas" id="assistIdeas" role="group" aria-label="Idées de consignes"></div>
+          </section>
           <div class="meals" id="meals"></div>
           <div class="journal-tools" id="journalTools"></div>
         </section>
@@ -1464,29 +1495,43 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
   </div>
 </dialog>
 
-<!-- ===== Fenêtre : proposer une journée ===== -->
+<!-- ===== Fenêtre : prépare ta journée (assistant) ===== -->
 <dialog id="genDlg" aria-labelledby="genTitle">
   <div class="dlg">
     <header class="dlg-head">
-      <h2 id="genTitle">Proposer une journée</h2>
+      <h2 id="genTitle">Prépare ta journée</h2>
       <button type="button" class="iconbtn" data-action="gen-close" aria-label="Fermer"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
     </header>
     <div class="dlg-body">
       <p class="hint" id="genFor"></p>
-      <div class="gen-targets">
-        <label class="gt" for="gt-kcal"><span>Calories</span><span class="inp"><input type="text" id="gt-kcal" data-gt="kcal" inputmode="decimal" autocomplete="off"><em>kcal</em></span></label>
-        <label class="gt" for="gt-protein"><span><i class="dot x-p"></i>Protéines</span><span class="inp"><input type="text" id="gt-protein" data-gt="protein" inputmode="decimal" autocomplete="off"><em>g</em></span></label>
-        <label class="gt" for="gt-carbs"><span><i class="dot x-c"></i>Glucides</span><span class="inp"><input type="text" id="gt-carbs" data-gt="carbs" inputmode="decimal" autocomplete="off"><em>g</em></span></label>
-        <label class="gt" for="gt-fat"><span><i class="dot x-f"></i>Lipides</span><span class="inp"><input type="text" id="gt-fat" data-gt="fat" inputmode="decimal" autocomplete="off"><em>g</em></span></label>
+      <div class="as-box">
+        <label class="f-lbl" for="genText">Tes consignes</label>
+        <textarea id="genText" rows="2" autocomplete="off" enterkeyhint="done" placeholder="Ex. 3000 kcal, sans pomme, max 20 g d’amandes, du saumon ce soir"></textarea>
+        <div class="cons-chips" id="genChips" aria-live="polite"></div>
       </div>
-      <div><button type="button" class="linkbtn" data-action="gen-reset-targets">Reprendre mes objectifs du jour</button></div>
-      <div class="f-item"><span class="f-lbl">Nombre de repas</span>
-        <div class="seg c3" id="genMeals" role="group" aria-label="Nombre de repas">
-          <button type="button" class="seg-btn" data-action="gen-meals" data-v="3" aria-pressed="false">3 repas</button>
-          <button type="button" class="seg-btn" data-action="gen-meals" data-v="4" aria-pressed="false">4 repas</button>
-          <button type="button" class="seg-btn" data-action="gen-meals" data-v="5" aria-pressed="false">5 repas</button>
+      <div class="seg c2" id="genMode" role="group" aria-label="Ce que je prépare" hidden>
+        <button type="button" class="seg-btn" data-action="gen-mode" data-v="complete" aria-pressed="true">Compléter ma journée</button>
+        <button type="button" class="seg-btn" data-action="gen-mode" data-v="full" aria-pressed="false">Refaire toute la journée</button>
+      </div>
+      <details class="paste" id="genGoals">
+        <summary id="genGoalsSum">Objectifs</summary>
+        <div class="gen-goals-body">
+          <div class="gen-targets">
+            <label class="gt" for="gt-kcal"><span>Calories</span><span class="inp"><input type="text" id="gt-kcal" data-gt="kcal" inputmode="decimal" autocomplete="off"><em>kcal</em></span></label>
+            <label class="gt" for="gt-protein"><span><i class="dot x-p"></i>Protéines</span><span class="inp"><input type="text" id="gt-protein" data-gt="protein" inputmode="decimal" autocomplete="off"><em>g</em></span></label>
+            <label class="gt" for="gt-carbs"><span><i class="dot x-c"></i>Glucides</span><span class="inp"><input type="text" id="gt-carbs" data-gt="carbs" inputmode="decimal" autocomplete="off"><em>g</em></span></label>
+            <label class="gt" for="gt-fat"><span><i class="dot x-f"></i>Lipides</span><span class="inp"><input type="text" id="gt-fat" data-gt="fat" inputmode="decimal" autocomplete="off"><em>g</em></span></label>
+          </div>
+          <div><button type="button" class="linkbtn" data-action="gen-reset-targets">Reprendre mes objectifs du jour</button></div>
+          <div class="f-item"><span class="f-lbl">Nombre de repas</span>
+            <div class="seg c3" id="genMeals" role="group" aria-label="Nombre de repas">
+              <button type="button" class="seg-btn" data-action="gen-meals" data-v="3" aria-pressed="false">3 repas</button>
+              <button type="button" class="seg-btn" data-action="gen-meals" data-v="4" aria-pressed="false">4 repas</button>
+              <button type="button" class="seg-btn" data-action="gen-meals" data-v="5" aria-pressed="false">5 repas</button>
+            </div>
+          </div>
         </div>
-      </div>
+      </details>
       <details class="paste">
         <summary id="genProdsSum">Aliments utilisés</summary>
         <p class="hint">Décoche ce que tu ne veux pas. <strong>Max/jour</strong> : la quantité totale sur la journée ne dépassera jamais ce nombre (3 pour 3 œufs). <strong>Portion fixe</strong> : 250 si ta barquette de 500 g fait 2 repas, l’appli ne proposera que 250 g ou 500 g ; laisse « libre » pour ce qui s’adapte (riz, pâtes, légumes surgelés). <strong>Prioritaire</strong> : l’appli l’utilise dès qu’elle peut, par exemple à midi et le soir.</p>
@@ -2550,7 +2595,9 @@ function genBounds(p, role, maxDay, held) {
     step = portion;
   }
   const cap = maxDay && maxDay[p.id] > 0 ? maxDay[p.id] - ((held && held[p.id]) || 0) : Infinity;
+  let capped = false;
   if (cap < Infinity) {
+    capped = true;
     if (portion) {
       const k = Math.floor(cap / portion + 1e-9);
       if (k < 1) return null;
@@ -2561,40 +2608,72 @@ function genBounds(p, role, maxDay, held) {
     }
     mn = Math.min(mn, mx);
   }
-  return { t0, min: mn, max: mx, step, fixed: !!portion, unit };
+  return { t0, min: mn, max: mx, step, fixed: !!portion, unit, capped };
 }
+/* Où mettre un aliment voulu quand aucun repas prévu n’a de place pour son rôle */
+const GEN_ROLE_HOME = { cereal: ['petitdej', 'collation'], milk: ['petitdej', 'soiree', 'collation'], dairyp: ['collation', 'petitdej', 'soiree'], fruit: ['collation', 'petitdej', 'soiree'], nuts: ['collation', 'petitdej', 'soiree'], other: ['collation', 'soiree'], starch: ['dejeuner', 'diner'], meat: ['dejeuner', 'diner'], veg: ['dejeuner', 'diner'], oil: ['dejeuner', 'diner'] };
 /* Compose les repas : un produit par emplacement, en évitant les répétitions */
 /* Un produit prioritaire prend chaque emplacement qui lui correspond (par exemple la viande du midi et du soir).
    Un produit avec une portion fixe n’est servi que par multiples de cette portion (250 g, 500 g…).
-   Un produit avec un maximum par jour n’est jamais proposé au-delà, tous repas confondus. */
-function composeDay(pool, mealIds, rng, pinned, maxDay) {
+   Un produit avec un maximum par jour n’est jamais proposé au-delà, tous repas confondus.
+   ext (consignes du jour) : require = aliments voulus au moins une fois (dans un repas donné ou non), mealExcl = aliments
+   interdits dans un repas, maxUses = nombre de repas au plus ; ext.unmet reçoit les aliments voulus qui n’ont pas trouvé de place. */
+function composeDay(pool, mealIds, rng, pinned, maxDay, ext) {
+  ext = ext || {};
   const uses = {}, held = {};
+  const reqs = (ext.require || []).map(q => ({ ids: q.ids, meal: q.meal || null, done: false }));
+  const mealExcl = ext.mealExcl || {}, maxUses = ext.maxUses || {};
+  // Les emplacements de chaque repas, plus une place pour un aliment voulu qui n’en a pas (« 3 œufs au petit-déj »)
+  const slots = {};
+  mealIds.forEach(id => { slots[id] = GEN_MEALS[id].map(roles => ({ roles })); });
+  reqs.forEach((q, qi) => {
+    const cands = pool.filter(x => q.ids.has(x.p.id));
+    if (!cands.length) return;
+    const roles = [...new Set(cands.map(x => x.role))];
+    const fits = m => slots[m].some(sl => roles.some(r => sl.roles.includes(r)));
+    if (q.meal) { if (slots[q.meal] && !fits(q.meal)) slots[q.meal].push({ roles, req: qi }); return; }
+    if (mealIds.some(fits)) return;
+    const home = (GEN_ROLE_HOME[roles[0]] || []).find(m => slots[m]) || mealIds[0];
+    if (home) slots[home].push({ roles, req: qi });
+  });
   const meals = [];
   for (const id of mealIds) {
     const items = [];
-    for (const roles of GEN_MEALS[id]) {
+    for (const slot of slots[id]) {
+      const roles = slot.roles;
       let cands = [];
       pool.forEach(x => {
         const ri = roles.indexOf(x.role);
         if (ri < 0 || items.some(it => it.p.id === x.p.id)) return;
+        if (mealExcl[id] && mealExcl[id].has(x.p.id)) return;
+        if (maxUses[x.p.id] != null && (uses[x.p.id] || 0) >= maxUses[x.p.id]) return;
+        if (slot.req != null && !reqs[slot.req].ids.has(x.p.id)) return;
         const b = genBounds(x.p, x.role, maxDay, held);
         if (!b) return;
         cands.push({ x, b, w: (ri === 0 ? 1 : 0.6) / (1 + 3 * (uses[x.p.id] || 0)) });
       });
       if (!cands.length) continue;
+      // Un aliment voulu passe en premier dans le premier emplacement qui lui convient
+      for (const q of reqs) {
+        if (q.done || (q.meal && q.meal !== id)) continue;
+        const rc = cands.filter(c => q.ids.has(c.x.p.id));
+        if (rc.length) { cands = rc; break; }
+      }
       const pins = cands.filter(c => pinned && pinned.has(c.x.p.id));
       if (pins.length) cands = pins.map(c => ({ x: c.x, b: c.b, w: 1 / (1 + (uses[c.x.p.id] || 0)) }));
       let r = rng() * cands.reduce((s, c) => s + c.w, 0), pick = cands[cands.length - 1];
       for (const c of cands) { r -= c.w; if (r <= 0) { pick = c; break; } }
       const pr = pick.x.p, b = pick.b;
       uses[pr.id] = (uses[pr.id] || 0) + 1;
+      reqs.forEach(q => { if (!q.done && (!q.meal || q.meal === id) && q.ids.has(pr.id)) q.done = true; });
       if (maxDay && maxDay[pr.id] > 0) held[pr.id] = (held[pr.id] || 0) + b.max;
       let tj = b.unit ? b.t0 : b.t0 * (0.85 + 0.3 * rng());
       tj = Math.min(b.max, Math.max(b.min, tj));
-      items.push({ p: pr, role: pick.x.role, t: Math.max(tj, b.unit ? 1 : 5), min: b.min, max: b.max, step: b.step, fixed: b.fixed, lam: GEN_LAMBDA * (GEN_LAMBDA_ROLE[pick.x.role] || 1) });
+      items.push({ p: pr, role: pick.x.role, t: Math.max(tj, b.unit ? 1 : 5), min: b.min, max: b.max, step: b.step, fixed: b.fixed, capped: b.capped, lam: GEN_LAMBDA * (GEN_LAMBDA_ROLE[pick.x.role] || 1) });
     }
     if (items.length) meals.push({ id, items });
   }
+  ext.unmet = reqs.filter(q => !q.done).map(q => ({ ids: q.ids, meal: q.meal }));
   return meals;
 }
 const GEN_KEYS = ['kcal', 'protein', 'carbs', 'fat'];
@@ -2661,18 +2740,343 @@ function buildProposal(products, opts) {
   const roles = opts.roles || {};
   const excluded = new Set(opts.excluded || []);
   const pool = products.filter(p => !excluded.has(p.id) && p.kcal > 0 && p.ref > 0).map(p => ({ p, role: roles[p.id] || p.role || autoRole(p) }));
+  const mealIds = opts.mealIds || GEN_MEAL_SETS[opts.meals] || GEN_MEAL_SETS[5];
   const notes = [];
   const has = r => pool.some(x => x.role === r);
-  if (!has('starch')) notes.push('Ajoute un féculent (riz, pâtes…) à ta sélection pour remplir les repas en glucides.');
+  if (mealIds.some(m => GEN_MEALS[m].some(sl => sl.includes('starch'))) && !has('starch')) notes.push('Ajoute un féculent (riz, pâtes…) à ta sélection pour remplir les repas en glucides.');
   if (!has('meat') && !has('dairyp')) notes.push('Ajoute une source de protéines (viande, poisson, œufs, skyr…) à ta sélection.');
   const rng = mulberry32(opts.seed || 1);
-  const meals = composeDay(pool, GEN_MEAL_SETS[opts.meals] || GEN_MEAL_SETS[5], rng, new Set(opts.pinned || []), opts.maxDay || null);
+  const ext = { require: opts.require, mealExcl: opts.mealExcl, maxUses: opts.maxUses };
+  const meals = composeDay(pool, mealIds, rng, new Set(opts.pinned || []), opts.maxDay || null, ext);
   const items = meals.flatMap(m => m.items);
-  if (!items.length) return { meals: [], totals: null, notes: notes.length ? notes : ['Coche des aliments pour composer une journée.'] };
+  if (!items.length) return { meals: [], totals: null, notes: notes.length ? notes : ['Coche des aliments pour composer une journée.'], unmet: ext.unmet };
+  // Peu de repas à préparer pour beaucoup de calories (ou l’inverse) : les portions s’élargissent pour pouvoir atteindre l’objectif
+  const free = it => !it.fixed && !it.capped;
+  const per = k => (k === 'kcal' ? 1 : k === 'fat' ? 9 : 4);
+  for (const k of GEN_KEYS) {
+    const room = items.reduce((s, it) => s + it.p[k] / it.p.ref * it.max, 0);
+    if (!(opts.target[k] > 0) || room >= opts.target[k]) continue;
+    // ce nutriment ne peut pas être atteint : les aliments qui en apportent surtout peuvent grossir (une fois et demie au plus)
+    const f = Math.min(1.5, opts.target[k] * 1.08 / Math.max(room, 1));
+    items.forEach(it => {
+      if (!free(it) || (k !== 'kcal' && it.p[k] * per(k) < 0.5 * it.p.kcal)) return;
+      it.max = it.p.unit === 'unité' ? Math.max(it.max, Math.round(it.max * f)) : Math.max(it.max, Math.round(it.max * f / it.step) * it.step);
+    });
+  }
+  const floor = items.reduce((s, it) => s + it.p.kcal / it.p.ref * it.min, 0);
+  if (floor > opts.target.kcal) {
+    const f = Math.max(0.5, opts.target.kcal * 0.92 / floor);
+    items.forEach(it => { if (free(it) && it.p.unit !== 'unité') it.min = Math.min(it.min, Math.round(it.min * f / it.step) * it.step); });
+  }
   const xs = optimizeQty(items, opts.target);
   items.forEach((it, j) => { it.qty = xs[j]; });
   meals.forEach(m => { m.items = m.items.filter(it => it.qty > 0); });
-  return { meals: meals.filter(m => m.items.length), totals: genTotals(items, xs), notes };
+  return { meals: meals.filter(m => m.items.length), totals: genTotals(items, xs), notes, unmet: ext.unmet };
+}
+
+/* ================= Assistant : consignes du jour, comprises sans réseau ================= */
+/* « 3000 kcal, sans pomme, max 20 g d’amandes, du saumon ce soir » devient une liste d’éléments
+   (calories, macros, aliments exclus, maximums, aliments voulus, repas…), chacun avec sa place dans le texte
+   pour pouvoir l’enlever d’un geste. Tout se passe sur le téléphone. */
+const CONS_NUMW = { un: 1, une: 1, deux: 2, trois: 3, quatre: 4, cinq: 5, six: 6, sept: 7, huit: 8, neuf: 9, dix: 10, douze: 12, quinze: 15, vingt: 20, trente: 30, quarante: 40, cinquante: 50, cent: 100 };
+const CONS_Q = '(\\d+(?:[.,]\\d+)?|une?|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|douze|quinze|vingt|trente|quarante|cinquante|cent)';
+const CONS_U = '(kg|kilos?|g|gr|grs|grammes?|ml|cl|dl|l|litres?)';
+const CONS_NUM = '(\\d{1,3}(?:[ \\u00a0\\u202f]\\d{3})+|\\d+(?:[.,]\\d+)?)';
+const CONS_MEAL = '(petit dej(?:euner|eun|s)?|p tit dej|ptit dej|pdj|matin|dejeuner|dej|midi|collation|gouter|en cas|encas|apres midi|aprem|diner|soir|soiree)';
+const CONS_FILLER = new Set(('a ai aie ajd aujourd auj hui alors aussi au aux avec bien bon ca c ce cette d de des donc du e en est et fais faire fait '
+  + 'il j je journee jour juste la le les l lui m ma me merci mes moi mon ne n objectif objectifs ok on pas peu peux pls please plus pour pres '
+  + 'propose proposes prepare prepares quand que qu s sans se si sil plait stp svp t ta te tes toi ton total tu un une veux voudrais aimerais '
+  + 'vise viser atteindre arriver environ autour vers minimum max maximum mini moins demain voila bcp beaucoup genre idee idees repas '
+  + 'manger mange aime envie compose composer planning plan programme fasse mettre voir faut y avoir menu menus equilibre equilibree '
+  + 'sain saine healthy normal normale classique type complet complete simple bonne belle grosse gros petite petit').split(/\s+/));
+const CONS_MAXW = '(?:max(?:imum|i)?|au (?:plus|maximum|max)|pas plus (?:de|d|que)|moins (?:de|d)|jusqu a|pas au dessus (?:de|d))';
+const CONS_EXW = '(?:sans|pas (?:de|d|du|des|les|le|la|l)|pas|jamais (?:de|d)|aucune?|zero|evite(?:r|z)?(?: le| la| les| l| de| d| du| des)?|ne (?:mets?|met)(?: pas)?(?: de| d| du| des| le| la| les| l)?|ne pas mettre(?: de| d)?|pas mettre(?: de| d)?|enleve(?:r|z)?(?: le| la| les| l)?|retire(?:r|z)?(?: le| la| les| l)?|exclu(?:s|re|e)?|sauf|hors|interdit|oublie(?:r|z)?(?: le| la| les| l)?)';
+const CONS_INW = 'avec|ajoute(?:r|z)?|mets?|met|inclu(?:s|re|e)|je veux|je voudrais|j aimerais|il me faut|prends?|prendre|mange(?:r)?|je mange|j adore|j aime|je kiffe|je prefere|plein (?:de|d)|plus (?:de|d)|beaucoup (?:de|d)|davantage (?:de|d)';
+function consNum(t) {
+  const v = CONS_NUMW[t];
+  return v != null ? v : parseFloat(String(t).replace(/[\s  ]/g, '').replace(',', '.'));
+}
+function consUnit(u, v) {
+  if (!u) return { unit: null, v };
+  if (/^k/.test(u)) return { unit: 'g', v: v * 1000 };
+  if (/^g/.test(u)) return { unit: 'g', v };
+  if (u === 'ml') return { unit: 'ml', v };
+  if (u === 'cl') return { unit: 'ml', v: v * 10 };
+  if (u === 'dl') return { unit: 'ml', v: v * 100 };
+  return { unit: 'ml', v: v * 1000 };
+}
+function consMealId(w) {
+  if (/^(petit|p tit|ptit|pdj|matin)/.test(w)) return 'petitdej';
+  if (/^(dejeuner|dej|midi)$/.test(w)) return 'dejeuner';
+  if (/^(collation|gouter|en cas|encas|apres midi|aprem)$/.test(w)) return 'collation';
+  if (w === 'soiree') return 'soiree';
+  return 'diner';
+}
+/* Texte en minuscules sans accents, avec pour chaque caractère sa place dans le texte d’origine */
+function consMap(text) {
+  let s = '';
+  const map = [];
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i], lc = ch.toLowerCase();
+    let n;
+    if (lc === 'œ') n = 'oe';
+    else if (lc === 'æ') n = 'ae';
+    else if ((ch === '-' || ch === '−') && /\d/.test(text[i + 1] || '') && (!i || /\s/.test(text[i - 1]))) n = '-';
+    else if (/[’'`´‘\-–—_/]/.test(ch)) n = ' ';
+    else n = lc.normalize('NFD').replace(/[̀-ͯ]/g, '');
+    for (const c of n) { s += c; map.push(i); }
+  }
+  map.push(text.length);
+  return { s, map };
+}
+const consStem = w => (w.length > 3 && /[sx]$/.test(w) ? w.slice(0, -1) : w);
+const consStems = str => consMap(String(str || '')).s.split(/[^a-z0-9]+/).filter(Boolean).map(consStem);
+/* Familles d’aliments : « sans poisson », « pas de laitages », « avec des légumes »… */
+const CONS_CATS = [
+  { k: 'poisson', label: 'poisson', words: ['poisson', 'fruit de mer'],
+    test: f => f.group === 'poissons' || /\b(thon|saumon|sardine|maquereau|cabillaud|colin|merlu|lieu|truite|poisson|crevette|dorade|bar|sole|hareng|surimi|moule|calamar)/.test(f.n) },
+  { k: 'viande', label: 'viande', words: ['viande', 'viande rouge', 'viande blanche'],
+    test: f => (f.group === 'viandes' && !/oeuf/.test(f.n)) || (!f.group && /\b(poulet|dinde|boeuf|steak|hach|veau|porc|jambon|canard|lapin|agneau|escalope|rumsteck|bavette|entrecote|merguez|saucisse|lardon|chorizo|bacon|kebab|viande|cordon)/.test(f.n)) },
+  { k: 'volaille', label: 'volaille', words: ['volaille'], test: f => /\b(poulet|dinde|canard|volaille|pintade)/.test(f.n) },
+  { k: 'porc', label: 'porc', words: ['porc', 'cochon'], test: f => /\b(porc|jambon|lardon|saucisse|chorizo|bacon|saucisson)/.test(f.n) },
+  { k: 'boeuf', label: 'bœuf', words: ['boeuf', 'boeuf hache', 'viande hachee'], test: f => /\b(boeuf|steak|rumsteck|hache|bavette|entrecote|onglet)/.test(f.n) },
+  { k: 'laitage', label: 'laitages', words: ['laitage', 'produit laitier', 'laitier', 'lactose', 'produit lacte'],
+    test: f => (f.group === 'laitages' && !/soja/.test(f.n)) || (!f.group && (f.role === 'dairyp' || (f.role === 'milk' && !/(soja|avoine|amande|riz|coco)/.test(f.n)) || /\b(fromage|yaourt|skyr|cottage|emmental|lait|whey|creme)/.test(f.n))) },
+  { k: 'fruit', label: 'fruits', words: ['fruit', 'fruit frai'], test: f => f.role === 'fruit' },
+  { k: 'fruitsec', label: 'fruits secs', words: ['fruit sec', 'fruit seche'], test: f => /\b(datte|raisin sec|abricot sec|pruneau|figue seche)/.test(f.n) || f.role === 'nuts' },
+  { k: 'noix', label: 'oléagineux', words: ['oleagineux', 'oleagineu', 'fruit a coque', 'noix et graine', 'graine'], test: f => f.role === 'nuts' || f.group === 'oleagineux' },
+  { k: 'legume', label: 'légumes', words: ['legume', 'legume vert', 'crudite'], test: f => f.role === 'veg' },
+  { k: 'legumineuse', label: 'légumineuses', words: ['legumineuse', 'legume sec'], test: f => f.group === 'legumineuses' || /\b(lentille|pois chiche|haricot rouge|haricot blanc|feve|flageolet|pois casse)/.test(f.n) },
+  { k: 'feculent', label: 'féculents', words: ['feculent'], test: f => f.role === 'starch' },
+  { k: 'cereale', label: 'céréales', words: ['cereale', 'cereale du matin'], test: f => f.role === 'cereal' },
+  { k: 'gras', label: 'matières grasses', words: ['matiere grasse', 'gras', 'graisse'], test: f => f.role === 'oil' },
+  { k: 'complement', label: 'compléments', words: ['complement', 'proteine en poudre', 'poudre', 'shaker', 'shake'], test: f => /\b(whey|caseine|proteine|gainer)/.test(f.n) },
+  { k: 'soja', label: 'soja', words: ['soja'], test: f => /\b(soja|tofu|tempeh|edamame)/.test(f.n) }
+];
+/* Aliments qui correspondent à un mot : nom exact (3), variété (« lentilles corail », 2),
+   complément (« pavé de saumon », 1), mot-clé (0,6), mot contenu (0,5), début de mot (0,4) */
+function consScore(e, o) {
+  const n = o.length;
+  if (!n) return 0;
+  const at = (arr, i) => o.every((x, j) => arr[i + j] === x);
+  if (e.core.length === n && at(e.core, 0)) return 3;
+  if (e.core.length > n && at(e.core, 0) && e.core[n] !== 'de' && e.core[n] !== 'd') return 2;
+  for (let i = 1; i + n <= e.full.length; i++) if (at(e.full, i) && /^(de|d|au|aux|a)$/.test(e.full[i - 1])) return 1;
+  for (let i = 0; i + n <= e.kw.length; i++) if (at(e.kw, i)) return 0.6;
+  for (let i = 0; i + n <= e.full.length; i++) if (at(e.full, i)) return 0.5;
+  if (n === 1 && o[0].length >= 4 && e.full.some(w => w.startsWith(o[0]))) return 0.4;
+  return 0;
+}
+/* Les aliments que désigne un morceau de phrase (le meilleur pour « avec … », tous pour « sans … ») */
+function consResolve(obj, idx, pickOne) {
+  const parts = obj.split(/\s+(?:ou|et|ni)\s+/).map(x => x.trim()).filter(Boolean);
+  let ids = [];
+  const names = [];
+  let cat = null;
+  for (const part of parts) {
+    const o = consStems(part);
+    while (o.length && /^(le|la|les|l|du|de|d|des|un|une|que|qu|seulement|uniquement|juste|surtout|plutot)$/.test(o[0])) o.shift();
+    if (!o.length) continue;
+    const key = o.join(' ');
+    const c = CONS_CATS.find(x => x.words.some(w => consStems(w).join(' ') === key));
+    if (c) {
+      const hits = idx.filter(e => c.test(e.f));
+      if (hits.length) { if (parts.length === 1) cat = c; names.push(c.label); hits.forEach(e => ids.push(e.f.id)); continue; }
+    }
+    const scored = idx.map(e => ({ e, s: consScore(e, o) })).filter(x => x.s > 0);
+    if (!scored.length) return { ids: [], miss: part };
+    const M = Math.max(...scored.map(x => x.s));
+    let hits = scored.filter(x => x.s >= (M >= 2 ? 1 : Math.min(M, 0.5)));
+    if (pickOne) hits = scored.filter(x => x.s === M).sort((a, b) => b.e.f.rank - a.e.f.rank || a.e.f.name.length - b.e.f.name.length).slice(0, 1);
+    hits.forEach(x => ids.push(x.e.f.id));
+    names.push(hits.length === 1 ? hits[0].e.f.name : part);
+  }
+  ids = [...new Set(ids)];
+  return { ids, cat, what: names.join(', '), alt: parts.length > 1 };
+}
+/* Découpe en consignes : virgules, points, « et », « mais », « ni », retours à la ligne */
+const CONS_SEP = /[;\n!?]+|[,.](?!\d)|\s+(?:et|mais|puis|ni|alors|sinon)\s+/g;
+/* Mots qui commencent une consigne au milieu d’une phrase (« 3000 kcal sans pomme max 20 g d’amandes ») */
+const CONS_KW = /(?:^|\s)((?:ne (?:mets?|met) )?pas plus (?:de|d|que)|pas trop (?:de|d)|sans|pas (?:de|d|du|des|le|la|les|l)|jamais (?:de|d)|aucune?|evite(?:r|z)?|ne (?:mets?|met|pas mettre)(?: pas)?|max(?:imum|i)?|au (?:plus|maximum|max)|moins (?:de|d)|limite(?:r|z)?|avec|ajoute(?:r|z)?|mets|met|inclu(?:s|re|e)|une? seule?(?! fois)|1 seule?(?! fois)|privilegie(?:r|z)?|plutot|exclu(?:s|re|e)?|enleve(?:r|z)?|retire(?:r|z)?|plein\s+(?:de|d))(?=\s|$)/g;
+function consParse(text, foods) {
+  const { s, map } = consMap(String(text || ''));
+  const idx = foods.map(f => {
+    const e = { f, core: consStems(String(f.name).split(/[,(]/)[0]), full: consStems(f.name), kw: consStems(f.kw || '') };
+    f.n = e.full.join(' ');
+    return e;
+  });
+  const byId = new Map(foods.map(f => [f.id, f]));
+  const items = [];
+  const orig = (a, b) => [map[a], b > a ? map[b - 1] + 1 : map[a]];
+  const clauses = [];
+  let last = 0, m;
+  CONS_SEP.lastIndex = 0;
+  while ((m = CONS_SEP.exec(s))) { clauses.push([last, m.index, /\bni\b/.test(m[0])]); last = m.index + m[0].length; }
+  clauses.push([last, s.length, false]);
+  let prev = null, niBefore = false;
+  for (const [ca, cb, niAfter] of clauses) {
+    const viaNi = niBefore;
+    niBefore = niAfter;
+    let w = s.slice(ca, cb);
+    if (!w.trim()) continue;
+    const blank = (a, b) => { w = w.slice(0, a) + ' '.repeat(b - a) + w.slice(b); };
+    const found = [];
+    const push = (it, a, b) => { it.span = orig(ca + a, ca + b); found.push(it); };
+    let r;
+    // « un max de légumes » veut dire beaucoup, pas un maximum
+    w = w.replace(/\bun max(imum)? de\b/g, mt => 'plein' + ' '.repeat(mt.length - 8) + ' de');
+    // Calories : « 3000 kcal », « 2 800 calories », « +300 kcal », « 300 kcal de plus »
+    const reRel = new RegExp('(?:^|\\s)(\\+|plus|moins|-)\\s*' + CONS_NUM + '\\s*(?:kcal|kcals|cal|cals|calories?)\\b|' + CONS_NUM + '\\s*(?:kcal|kcals|cal|cals|calories?)\\s+(de plus|en plus|de moins|en moins)\\b');
+    if ((r = reRel.exec(w))) {
+      const neg = r[1] ? /moins|-/.test(r[1]) : /moins/.test(r[4]);
+      const v = consNum(r[2] || r[3]);
+      push({ kind: 'kcal', v: neg ? -v : v, rel: true }, r.index, r.index + r[0].length);
+      blank(r.index, r.index + r[0].length);
+    }
+    const reK = new RegExp(CONS_NUM + '\\s*(?:kcal|kcals|cal|cals|calories?|kilocalories?)\\b');
+    if ((r = reK.exec(w))) {
+      let v = consNum(r[1]);
+      if (v < 20) v *= 1000;
+      if (v >= 800 && v <= 9000) push({ kind: 'kcal', v: Math.round(v), rel: false }, r.index, r.index + r[0].length);
+      else push({ kind: 'warn', code: 'kcal' }, r.index, r.index + r[0].length);
+      blank(r.index, r.index + r[0].length);
+    }
+    // Macros : « 200 g de protéines », « protéines 200 », « 80 g de lipides »
+    const MAC = '(proteines?|prot|prots|glucides?|gluc|carbs?|hydrates? de carbone|lipides?|lip|graisses?|matieres? grasses)';
+    const macKey = t => (/^prot/.test(t) ? 'protein' : /^(gluc|carb|hydrat)/.test(t) ? 'carbs' : 'fat');
+    const reM1 = new RegExp('(\\d+(?:[.,]\\d+)?)\\s*(?:g|gr|grs|grammes?)?\\s*(?:de |d )?' + MAC + '(?=\\s|$)', 'g');
+    const reM2 = new RegExp('(?:^|\\s)' + MAC + '\\s*(?::|=|a|de|d)?\\s*(\\d+(?:[.,]\\d+)?)\\s*(?:g|gr|grs|grammes?)?(?=\\s|$)', 'g');
+    for (const [re, qi, ki] of [[reM1, 1, 2], [reM2, 2, 1]]) {
+      re.lastIndex = 0;
+      const hits = [];
+      while ((r = re.exec(w))) hits.push(r);
+      for (const h of hits) {
+        const v = consNum(h[qi]);
+        if (v > 0 && v < 2000) push({ kind: 'macro', k: macKey(h[ki]), v }, h.index, h.index + h[0].length);
+        blank(h.index, h.index + h[0].length);
+      }
+    }
+    // Nombre de repas : « en 4 repas »
+    if ((r = /(?:^|\s)(?:en |sur |avec )?(\d|deux|trois|quatre|cinq|six)\s+repas(?=\s|$)/.exec(w))) {
+      const n = consNum(r[1]);
+      push({ kind: 'meals', n: Math.min(5, Math.max(3, n)), asked: n }, r.index, r.index + r[0].length);
+      blank(r.index, r.index + r[0].length);
+    }
+    // Cardio : « j’ai foot ce soir », « footing », « j’ai couru 10 km », « pas de cardio »
+    if ((r = /(?:^|\s)(?:(pas de |pas d |sans |aucun |zero )\s*)?(?:(?:j ai|j aurai|je fais|je vais faire|je vais au|je vais a la|je vais|on a|seance de|entrainement de|entrainement|match de)\s+)?(cardio|footing|jogging|running|course a pied|foot|football|match|velo|natation|piscine|hiit|tennis|padel|basket|handball|rugby|boxe|cours|couru|courir|crossfit|spinning|biking|rameur|elliptique)(?:\s+\d+(?:[.,]\d+)?\s*(?:km|kilometres?|min|minutes?|h|heures?))?(?:\s+(?:ce soir|aujourd hui|ce matin|cet aprem|cet apres midi|ce midi|tout a l heure|plus tard))?(?=\s|$)/.exec(w))) {
+      push({ kind: 'cardio', on: !r[1] }, r.index, r.index + r[0].length);
+      blank(r.index, r.index + r[0].length);
+    }
+    // Le reste : consignes sur les aliments, découpées aux mots qui en commencent une
+    const cuts = new Set([0, w.length]);
+    CONS_KW.lastIndex = 0;
+    while ((r = CONS_KW.exec(w))) cuts.add(r.index + r[0].length - r[1].length);
+    const pts = [...cuts].sort((a, b) => a - b);
+    const segs = [];
+    for (let i = 0; i < pts.length - 1; i++) if (w.slice(pts[i], pts[i + 1]).trim()) segs.push([pts[i], pts[i + 1]]);
+    const merged = [];
+    for (const g of segs) {
+      const t = w.slice(g[0], g[1]).trim();
+      const tail = /^(?:max(?:imum|i)?|au (?:plus|maximum|max)|pas plus|grand max)(?:\s+\d+(?:[.,]\d+)?\s*(?:kg|g|gr|grammes?|ml|cl|l)?)?$/.test(t) || /^(?:une? seule?|1 seule?) fois(?: max(?:imum)?)?$/.test(t);
+      if (tail && merged.length) merged[merged.length - 1][1] = g[1]; else merged.push(g.slice());
+    }
+    let foodSeen = false;
+    for (const [ga, gb] of merged) {
+      const raw = w.slice(ga, gb), t0 = raw.trim();
+      if (!t0) continue;
+      const lead = ga + raw.indexOf(t0);
+      const res = consFood(t0, idx, byId, prev, viaNi);
+      if (res.filler) continue;
+      push(res.item, lead, lead + t0.length);
+      if (res.carry !== undefined) prev = res.carry;
+      foodSeen = true;
+    }
+    if (found.length && !foodSeen) prev = null;
+    found.forEach(it => items.push(it));
+  }
+  return items;
+}
+/* Une consigne sur des aliments : sans X, max N de X, une seule fois X, N g de X, avec X, ou X seul */
+function consFood(t, idx, byId, prev, viaNi) {
+  let x = t.replace(/\s+/g, ' ').trim();
+  let r;
+  // Repas sauté : « sans collation », « je saute le petit-déj », « rien au petit-déj », « resto ce midi »
+  const SKIPW = '(?:sans |pas (?:de |d |du |le |la )?|aucune? |rien (?:au |a |le |pour le |pour la |ce )?|pas faim (?:au |a |le |ce )?|zappe(?:r|z)? (?:le |la )?|saute(?:r|z)? (?:le |la )?|on saute (?:le |la )?|je saute (?:le |la )?|pas besoin (?:de |d )?|je jeune (?:au |le |ce )?)';
+  if ((r = new RegExp('^' + SKIPW + CONS_MEAL + '$').exec(x))) return { item: { kind: 'skip', meal: consMealId(r[1]) }, carry: { kind: 'skip' } };
+  if ((r = new RegExp('^(?:je mange |on mange |je suis |repas )?(?:au |a l |en )?(?:resto|restau|restaurant|mcdo|macdo|fast food|cantine|self|dehors|exterieur|invite)\\s+(?:au |a |ce |le |pour le )?' + CONS_MEAL + '$').exec(x))
+    || (r = new RegExp('^(?:au |a |ce |le )?' + CONS_MEAL + ' (?:je mange |on mange |je suis )?(?:au |a l |en )?(?:resto|restau|restaurant|mcdo|macdo|fast food|cantine|self|dehors|exterieur|invite)$').exec(x))) {
+    return { item: { kind: 'skip', meal: consMealId(r[1]), out: true }, carry: null };
+  }
+  if (prev && prev.kind === 'skip' && (r = new RegExp('^(?:de |d |du |le |la )?' + CONS_MEAL + '$').exec(x))) return { item: { kind: 'skip', meal: consMealId(r[1]) }, carry: prev };
+  // Repas visé : « au dîner », « ce soir », « le midi »
+  let meal = null;
+  const mm = new RegExp('(?:^|\\s)(?:(?:au|a|le|la|ce|cet|du|pour le|pour la|en|pendant le|dans le|d|de|pour)\\s+)?' + CONS_MEAL + '(?=\\s|$)').exec(x);
+  if (mm) { meal = consMealId(mm[1]); x = (x.slice(0, mm.index) + ' ' + x.slice(mm.index + mm[0].length)).replace(/\s+/g, ' ').trim(); }
+  x = x.replace(/^(?:et|mais|puis|alors|donc|aussi|stp|svp|merci|aujourd hui|ajd|auj|pour aujourd hui|:)\s+/, '')
+    .replace(/\s+(?:stp|svp|s il te plait|merci|aujourd hui|ajd|auj|dans la journee|sur la journee|de la journee|par jour|aussi|en plus|si possible|please|pls|a chaque repas|a tous les repas|tous les jours)$/, '')
+    .replace(/^ne (?:mets?|met) pas plus/, 'pas plus').replace(/^(?:ne )?depasse(?:r|z)? pas(?: les?| la)?\s+/, 'max ').trim();
+  const words = x.split(' ').filter(Boolean);
+  if (!words.length || words.every(wd => CONS_FILLER.has(wd))) return { filler: true };
+  // Un nombre seul : les calories (« je veux 3000 »)
+  if ((r = /^(?:(?:je veux|objectif|vise|viser|atteindre|a|environ|pres de|autour de|total)\s+)*(\d{1,3}(?:[   ]\d{3})+|\d{3,4})$/.exec(x))) {
+    const v = consNum(r[1]);
+    if (v >= 800 && v <= 9000) return { item: { kind: 'kcal', v, rel: false }, carry: null };
+  }
+  const Q = CONS_Q, U = CONS_U;
+  const clean = o => o.replace(/^(?:(?:de la|de l|de|d|du|des|les|le|la|l|un|une|mon|ma|mes|que|qu|seulement|uniquement|juste|surtout|plutot|:)\s+)+/, '')
+    .replace(/\s+(?:max(?:imum|i)?|au max(?:imum)?|seulement|uniquement)$/, '').trim();
+  const qty = (q, u) => consUnit(u, consNum(q));
+  const make = (kind, obj, extra) => {
+    const o = clean(obj);
+    const res = consResolve(o, idx, kind === 'incl' || kind === 'exact');
+    if (!res.ids.length) return { item: { kind: 'unknown', miss: res.miss || o }, carry: null };
+    const it = Object.assign({ kind, ids: res.ids, what: res.what, cat: res.cat ? res.cat.k : null, catLabel: res.cat ? res.cat.label : null, meal }, extra || {});
+    if (kind === 'max' || kind === 'exact') {
+      // Sans unité, une quantité se compte (3 œufs) ; en g ou ml, elle se pèse. Un compte sur un aliment pesé (2 steaks) = nombre de repas
+      const counted = id => byId.get(id).unit === 'unité';
+      if (it.unit) it.ids = it.ids.filter(id => !counted(id));
+      else if (it.qty >= 10) { it.ids = it.ids.filter(id => !counted(id)); it.unit = 'g'; }
+      else {
+        const units = it.ids.filter(counted);
+        if (units.length) it.ids = units;
+        else if (kind === 'max') return { item: Object.assign(it, { kind: 'uses', n: Math.max(1, Math.round(it.qty)) }), carry: { kind: 'max', qty: it.qty, unit: null, meal } };
+        else return { item: Object.assign(it, { kind: 'incl', qty: undefined }), carry: { kind: 'incl', meal } };
+      }
+      if (!it.ids.length) return { item: { kind: 'warn', code: it.unit ? 'counted' : 'weighed', what: res.what }, carry: null };
+    }
+    if (kind === 'incl' && (res.cat || res.alt)) it.any = true;
+    return { item: it, carry: { kind: kind === 'exact' ? 'incl' : kind, qty: it.qty, unit: it.unit, meal } };
+  };
+  // Une seule fois : « une seule banane », « saumon une seule fois »
+  if ((r = /^(?:qu )?(?:une? seule?s?|1 seule?s?)\s+(?:fois\s+)?(?:de |d |du )?(.+)$/.exec(x))) {
+    return make('max', r[1], { qty: 1, unit: null });
+  }
+  if ((r = /^(.+?)\s+(?:une seule fois|1 seule fois|une fois|1 fois)(?:\s+max(?:imum)?)?$/.exec(x))) return make('uses', r[1], { n: 1 });
+  // Maximum : « max 20 g d’amandes », « pas plus de 2 œufs », « 20 g d’amandes max », « amandes : 20 g max », « limite le riz à 100 g »
+  if ((r = new RegExp('^' + CONS_MAXW + '\\s+' + Q + '\\s*' + U + '?\\s*(?:de |d |du |des )?(.+)$').exec(x))) { const q = qty(r[1], r[2]); return make('max', r[3], { qty: q.v, unit: q.unit }); }
+  if ((r = new RegExp('^limite(?:r|z)?\\s+(?:le |la |les |l )?(.+?)\\s+a\\s+' + Q + '\\s*' + U + '?$').exec(x))) { const q = qty(r[2], r[3]); return make('max', r[1], { qty: q.v, unit: q.unit }); }
+  if ((r = new RegExp('^' + Q + '\\s*' + U + '?\\s*(?:de |d |du |des )?(.+?)\\s+(?:max(?:imum|i)?|au (?:plus|maximum|max)|grand max|pas plus)$').exec(x))) { const q = qty(r[1], r[2]); return make('max', r[3], { qty: q.v, unit: q.unit }); }
+  if ((r = new RegExp('^(.+?)\\s*:?\\s*(?:max(?:imum|i)?|au (?:plus|maximum|max)|pas plus (?:de|d|que))\\s*:?\\s*' + Q + '\\s*' + U + '?$').exec(x))) { const q = qty(r[2], r[3]); return make('max', r[1], { qty: q.v, unit: q.unit }); }
+  if ((r = new RegExp('^(.+?)\\s*:\\s*' + Q + '\\s*' + U + '?\\s+(?:max(?:imum|i)?|au (?:plus|maximum|max)|maxi)$').exec(x))) { const q = qty(r[2], r[3]); return make('max', r[1], { qty: q.v, unit: q.unit }); }
+  if (/^(?:pas trop (?:de|d)|moins (?:de|d)|limite(?:r|z)?|max(?:imum|i)?|pas plus (?:de|d))\s+/.test(x)) return { item: { kind: 'warn', code: 'qty' }, carry: null };
+  // Exclusion : « sans pomme », « pas de lait », « évite le lactose », « ne mets pas de banane »
+  if ((r = new RegExp('^' + CONS_EXW + '\\s+(.+)$').exec(x))) return make('excl', r[1]);
+  // Quantité précise : « 150 g de saumon », « 3 œufs », « avec 2 bananes »
+  if ((r = new RegExp('^((?:' + CONS_INW + ')\\s+)?' + Q + '\\s*' + U + '?\\s*(?:de |d |du |des )?(.+)$').exec(x))) {
+    const q = qty(r[2], r[3]);
+    if (!r[1] && prev && prev.kind === 'max') return make('max', r[4], { qty: q.v, unit: q.unit });
+    if (!r[1] && prev && prev.kind === 'excl' && viaNi) return make('excl', r[4]);
+    return make('exact', r[4], { qty: q.v, unit: q.unit });
+  }
+  // Aliment voulu : « avec du saumon », « des lentilles », « plutôt du poisson »
+  if ((r = new RegExp('^(?:' + CONS_INW + '|privilegie(?:r|z)?|plutot|favorise(?:r|z)?|j ai envie (?:de|d)|envie (?:de|d)|du|de la|de l|des)\\s+(.+)$').exec(x))) return make('incl', r[1]);
+  // Un aliment seul reprend la consigne d’avant (« sans pomme, banane et kiwi »), sinon il est voulu
+  if (prev && (prev.kind === 'excl' || prev.kind === 'max' || prev.kind === 'uses')) {
+    if (prev.kind === 'max') return prev.qty ? make('max', x, { qty: prev.qty, unit: prev.unit }) : make('incl', x);
+    return make(prev.kind, x, prev.kind === 'uses' ? { n: 1 } : undefined);
+  }
+  if (prev && prev.kind === 'incl' && prev.meal && !meal) meal = prev.meal;
+  return make('incl', x);
 }
 
   /* ================= Normalisation ================= */
@@ -2697,7 +3101,7 @@ function buildProposal(products, opts) {
   const slugOf = s => norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
   const FOOD_CATALOG = FOOD_CATALOG_ROWS.map(([id, name, group, role, ref, unit, qty, kcal, fat, sat, carbs, sugars, fiber, protein, salt, gp]) => ({
     id, name, ref, unit, portion: null, createdAt: 0, kcal, fat, sat, carbs, sugars, fiber, protein, salt,
-    catalog: true, group, role, qty, gp: gp || null, normName: norm(name), starterId: 'c-' + slugOf(name),
+    catalog: true, group, role, qty, gp: gp || null, normName: norm(name), key: consStems(name).join(' '), starterId: 'c-' + slugOf(name),
     search: norm(name + ' ' + (FOOD_CAT_LABEL[group] || '') + ' ' + (FOOD_KEYWORDS[id] || ''))
   }));
   const CATALOG_MAP = new Map(FOOD_CATALOG.map(c => [c.id, c]));
@@ -3229,7 +3633,7 @@ function buildProposal(products, opts) {
     renderProducts();
     renderExtras();
     renderWelcome();
-    renderDayCta();
+    renderAssist();
     refreshAddIfOpen();
     if (isOpen('#genDlg')) {
       if (!$('#genProdList').contains(document.activeElement)) renderGenControls();
@@ -3678,19 +4082,13 @@ function buildProposal(products, opts) {
     diner: '<path d="M3.5 11.5h17a8.5 8.5 0 0 1-17 0z"/><path d="M8 8c0-1.5 1-1.8 1-3.2M12 8c0-1.5 1-1.8 1-3.2M16 8c0-1.5 1-1.8 1-3.2"/>',
     soiree: '<path d="M19.5 14.5A7.5 7.5 0 1 1 9.5 4.5a6 6 0 0 0 10 10z"/>'
   };
-  /* Journée vide : proposer une journée complète, dès qu’il y a des aliments à proposer */
-  function renderDayCta() {
-    const show = state.mode !== 'loading' && state.dayLoaded && !state.day.entries.length && usedPool().length > 0;
-    $('#dayCta').innerHTML = show ? '<div class="gen-cta"><div class="gen-cta-txt"><strong>Rien de noté pour l’instant</strong><span>Nutrisport peut te proposer une journée complète avec tes aliments cochés, calée sur tes objectifs.</span></div><button type="button" class="btn" data-action="gen-open">Proposer une journée</button></div>' : '';
-  }
   function renderJournal() {
     const el = $('#meals');
+    renderAssist();
     if (state.mode === 'loading' || !state.dayLoaded) {
       el.innerHTML = '<div class="meal"><div class="meal-head"><h3>Chargement de ta journée…</h3></div></div>';
-      $('#dayCta').innerHTML = '';
       return;
     }
-    renderDayCta();
     el.innerHTML = MEALS.map(m => {
       const items = state.day.entries.filter(e => e.meal === m.id);
       const tv = sumVals(items.map(entryVals));
@@ -3729,7 +4127,7 @@ function buildProposal(products, opts) {
     const el = $('#journalTools');
     if (state.mode === 'loading' || !state.dayLoaded) { el.innerHTML = ''; return; }
     const opts = allDaysDesc().filter(d => d.date !== state.date && d.entries.length).slice(0, 14);
-    el.innerHTML = (state.day.entries.length ? '<button type="button" class="btn small" data-action="gen-open">Proposer une journée</button>' : '') +
+    el.innerHTML =
       (opts.length ? '<label class="sr" for="copyFrom">Copier les repas d’une autre journée</label><select id="copyFrom"><option value="">Copier une autre journée…</option>' +
         opts.map(d => '<option value="' + d.date + '">' + esc(cap1(dfShort.format(dateOf(d.date)))) + ' · ' + fmt(dayTotals(d).kcal, 0) + ' kcal</option>').join('') + '</select>' : '') +
       (state.day.entries.length ? '<button type="button" class="linkbtn" data-action="day-clear">Vider la journée</button>' : '');
@@ -3743,7 +4141,7 @@ function buildProposal(products, opts) {
     const pool = state.productsLoaded ? usedPool() : [];
     if (state.mode === 'loading' || !state.productsLoaded) body = '<p class="muted">Chargement…</p>';
     else if (!pool.length) body = '<p class="muted">' + (state.products.length ? 'Coche des aliments dans l’onglet Produits (tes produits ou le catalogue) pour recevoir des idées.' : 'Ajoute tes produits ou coche des aliments du catalogue dans l’onglet Produits pour recevoir des idées.') + '</p>';
-    else if (t.kcal < g.kcal / 3) body = '<p class="muted">Les idées pour compléter s’affichent dès que tu as noté un tiers de tes calories du jour (' + fmt(g.kcal / 3, 0) + ' kcal).</p><button type="button" class="btn small" data-action="gen-open">Proposer une journée complète</button>';
+    else if (t.kcal < g.kcal / 3) body = '<p class="muted">Les idées pour compléter s’affichent dès que tu as noté un tiers de tes calories du jour (' + fmt(g.kcal / 3, 0) + ' kcal).</p><button type="button" class="btn small" data-action="gen-open">Préparer ma journée</button>';
     else {
       const sug = buildSuggestions(pool, t, g, state.cycle, maxLeftToday);
       const rem = g.kcal - t.kcal;
@@ -4270,8 +4668,8 @@ function buildProposal(products, opts) {
   /* Chaque aliment du catalogue, avec ton produit du même nom s’il existe (c’est alors ton produit qui compte) */
   function catalogIndex() {
     const byId = new Map(state.products.map(p => [p.id, p]));
-    const byName = new Map(state.products.map(p => [norm(p.name), p]));
-    return FOOD_CATALOG.map(c => ({ c, own: byId.get(c.starterId) || byName.get(c.normName) || null }));
+    const byName = new Map(state.products.map(p => [consStems(p.name).join(' '), p]));
+    return FOOD_CATALOG.map(c => ({ c, own: byId.get(c.starterId) || byName.get(c.key) || null }));
   }
   const catalogOn = () => { const on = new Set(state.foods.on); return catalogIndex().filter(r => !r.own && on.has(r.c.id)).map(r => r.c); };
   /* Tout ce que l’appli peut proposer (les produits décochés sont écartés ensuite, via excluded) */
@@ -4313,7 +4711,7 @@ function buildProposal(products, opts) {
     else if (state.tab === 'produits') renderProdCounts();
     renderExtras();
     renderWelcome();
-    renderDayCta();
+    renderAssist();
     refreshAddIfOpen();
     if (isOpen('#foodDlg') && !$('#foodBody').contains(act)) renderFoodSheet();
     if (isOpen('#genDlg')) {
@@ -4323,8 +4721,9 @@ function buildProposal(products, opts) {
     }
   }
 
-  /* ================= Proposer une journée : interface ================= */
-  const gen = { seed: 1, target: null, result: null };
+  /* ================= Prépare ta journée : assistant et proposition ================= */
+  /* text : consignes écrites ; items : ce qui en est compris ; P : contraintes du jour ; mode : compléter les repas qui restent ou refaire toute la journée */
+  const gen = { seed: 1, target: null, result: null, text: '', lastText: null, manual: {}, mode: 'full', items: [], P: null, run: false, eaten: null, mealIds: [] };
   let genTimer = null, genSaveTimer = null;
   function normGenSettings(d) {
     d = d || {};
@@ -4354,14 +4753,32 @@ function buildProposal(products, opts) {
   }
   const defaultRole = p => p.role || autoRole(p);
   const genRoleOf = p => state.genSettings.roles[p.id] || defaultRole(p);
-  function goalTarget() {
-    const g = dayGoals(state.day);
-    return { kcal: g.kcal, protein: g.protein, carbs: g.carbs, fat: g.fat };
+  /* Consignes gardées pour le jour choisi, sur ce téléphone */
+  function consSaved() {
+    try { const o = JSON.parse(lsGet('cpm.consignes') || 'null'); return o && o.date === state.date ? String(o.text || '') : ''; } catch (e) { return ''; }
   }
-  function openGenerator() {
-    gen.target = goalTarget();
+  function consStore(text) { lsSet('cpm.consignes', JSON.stringify({ date: state.date, text: String(text || '').slice(0, 600) })); }
+  function setConsText(text, from) {
+    gen.text = String(text || '').slice(0, 600);
+    consStore(gen.text);
+    const a = $('#assistText'), g = $('#genText');
+    if (from !== 'assist' && document.activeElement !== a) { a.value = gen.text; autoGrow(a); }
+    if (from !== 'gen' && document.activeElement !== g) g.value = gen.text;
+  }
+  function autoGrow(el) {
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = Math.min(140, el.scrollHeight + 2) + 'px';
+  }
+  function openGenerator(opts) {
+    opts = opts || {};
     gen.seed = 1 + Math.floor(Math.random() * 1e9);
-    fillGenTargets();
+    gen.manual = {};
+    gen.mode = state.day.entries.length ? 'complete' : 'full';
+    setConsText(opts.text != null ? opts.text : (gen.text || consSaved()));
+    $('#genText').value = gen.text;
+    gen.lastText = gen.text;
+    $('#genGoals').open = false;
     renderGenControls();
     runGenerator();
     openDlg('#genDlg');
@@ -4369,9 +4786,158 @@ function buildProposal(products, opts) {
   function fillGenTargets() {
     for (const k of GEN_KEYS) {
       const el = $('#gt-' + k);
-      el.value = fmtInput(gen.target[k]);
+      if (document.activeElement === el) continue;
+      el.value = fmtInput(Math.round(gen.target[k]));
       el.removeAttribute('aria-invalid');
     }
+  }
+  /* Les aliments que les consignes peuvent nommer : tes produits, puis le catalogue (ceux qui servent déjà passent devant) */
+  function consFoods() {
+    const used = new Set(usedPool().map(p => p.id));
+    const out = state.products.filter(p => p.kcal > 0).map(p => ({ id: p.id, name: p.name, unit: p.unit, role: genRoleOf(p), group: null, kw: '', rank: used.has(p.id) ? 4 : 3 }));
+    for (const r of catalogIndex()) if (!r.own) out.push({ id: r.c.id, name: r.c.name, unit: r.c.unit, role: genRoleOf(r.c), group: r.c.group, kw: (FOOD_KEYWORDS[r.c.id] || '') + ' ' + (FOOD_CAT_LABEL[r.c.group] || ''), rank: used.has(r.c.id) ? 2 : 1 });
+    return out;
+  }
+  /* Ce que demandent les consignes, prêt pour le calcul des repas (la dernière consigne l’emporte) */
+  function consPlan(items) {
+    const used = new Set(usedPool().map(p => p.id));
+    const P = { kcal: null, macros: {}, meals: null, skip: new Set(), cardio: null, excl: new Set(), mealExcl: {}, max: {}, uses: {}, exact: {}, require: [], extra: new Set() };
+    const mex = m => (P.mealExcl[m] = P.mealExcl[m] || new Set());
+    const lower = (o, id, v) => { o[id] = Math.min(o[id] != null ? o[id] : Infinity, v); };
+    items.forEach((it, i) => {
+      if (it.kind === 'kcal') P.kcal = it;
+      else if (it.kind === 'macro') P.macros[it.k] = it.v;
+      else if (it.kind === 'meals') P.meals = it.n;
+      else if (it.kind === 'skip') P.skip.add(it.meal);
+      else if (it.kind === 'cardio') P.cardio = it.on;
+      else if (it.kind === 'excl') {
+        it.ids.forEach(id => {
+          if (it.meal) { mex(it.meal).add(id); return; }
+          P.excl.add(id);
+          P.extra.delete(id);
+          delete P.exact[id];
+          P.require.forEach(q => q.ids.delete(id));
+        });
+      } else if (it.kind === 'max') it.ids.forEach(id => lower(P.max, id, it.qty));
+      else if (it.kind === 'uses') it.ids.forEach(id => lower(P.uses, id, it.n));
+      else if (it.kind === 'incl' || it.kind === 'exact') {
+        let ids = it.ids;
+        // « avec du poisson » : un de tes poissons cochés, sinon un du catalogue (il change avec « Autre proposition »)
+        if (it.any) { const mine = ids.filter(id => used.has(id)); ids = mine.length ? mine : [ids[(gen.seed + i) % ids.length]]; }
+        ids.forEach(id => { P.excl.delete(id); if (it.meal && P.mealExcl[it.meal]) P.mealExcl[it.meal].delete(id); if (!used.has(id)) P.extra.add(id); });
+        if (it.kind === 'exact') ids.forEach(id => { P.exact[id] = it.qty; });
+        P.require.push({ ids: new Set(ids), meal: it.meal || null, single: ids.length === 1 && !it.any, it });
+      }
+    });
+    P.require = P.require.filter(q => q.ids.size);
+    return P;
+  }
+  /* Objectif de la journée : tes objectifs, puis les consignes (calories, macros, cardio), puis ce que tu changes à la main.
+     Quand seules les calories changent, les glucides s’ajustent (puis les lipides). */
+  function consTarget(P) {
+    const g = state.goals, bonus = g.runBonus || 0;
+    const run = P.cardio == null ? !!state.day.run : P.cardio;
+    const t = { kcal: g.kcal + (run ? bonus : 0), protein: g.protein, carbs: g.carbs + (run ? Math.round(bonus / 4) : 0), fat: g.fat };
+    const ex = {};
+    if (P.kcal) { t.kcal = Math.max(800, P.kcal.rel ? t.kcal + P.kcal.v : P.kcal.v); ex.kcal = true; }
+    ['protein', 'carbs', 'fat'].forEach(k => { if (P.macros[k] != null) { t[k] = P.macros[k]; ex[k] = true; } });
+    if (ex.kcal || ex.protein || ex.carbs || ex.fat) {
+      const fill = ['carbs', 'fat', 'protein'].find(k => !ex[k]);
+      if (fill) {
+        const others = (fill === 'protein' ? 0 : 4 * t.protein) + (fill === 'carbs' ? 0 : 4 * t.carbs) + (fill === 'fat' ? 0 : 9 * t.fat);
+        t[fill] = Math.max(0, Math.round((t.kcal - others) / (fill === 'fat' ? 9 : 4)));
+      } else if (!ex.kcal) t.kcal = Math.round(4 * t.protein + 4 * t.carbs + 9 * t.fat);
+    }
+    for (const k of GEN_KEYS) if (gen.manual[k] != null) t[k] = gen.manual[k];
+    return { t, run };
+  }
+  const shortName = n => String(n).split(',')[0].replace(/\s*\([^)]*\)\s*$/, '').trim();
+  function consWhat(it) {
+    if (it.catLabel) return it.catLabel;
+    const names = (it.ids || []).map(id => { const p = productById(id); return p ? shortName(p.name) : id; });
+    return names.length <= 2 ? names.join(', ') : names[0] + ' +' + (names.length - 1);
+  }
+  function consQty(q, unit) { return unit ? fmt(q, 1) + ' ' + unit : fmt(q, 1); }
+  function consChipText(it) {
+    const what = consWhat(it), mealTxt = it.meal ? ' ' + MEAL_TO[it.meal] : '';
+    switch (it.kind) {
+      case 'kcal': return (it.rel ? fmtSigned(it.v, 0) : fmt(it.v, 0)) + ' kcal';
+      case 'macro': return { protein: 'Protéines', carbs: 'Glucides', fat: 'Lipides' }[it.k] + ' ' + fmt(it.v, 0) + ' g';
+      case 'meals': return it.n + ' repas' + (it.asked !== it.n ? ' (de 3 à 5)' : '');
+      case 'skip': return 'Sans ' + MEAL_LABEL[it.meal].toLowerCase() + (it.out ? ' (dehors)' : '');
+      case 'cardio': return it.on ? 'Jour de cardio' + (state.goals.runBonus ? ' (+' + fmt(state.goals.runBonus, 0) + ' kcal)' : '') : 'Sans cardio';
+      case 'excl': return 'Sans ' + what + mealTxt;
+      case 'max': return what + ' : ' + consQty(it.qty, it.unit) + ' max';
+      case 'uses': return what + ' : ' + (it.n === 1 ? 'une fois' : it.n + ' fois') + ' max';
+      case 'exact': return what + ' : ' + consQty(it.qty, it.unit) + mealTxt;
+      case 'incl': return 'Avec ' + what + mealTxt;
+      case 'warn': return it.code === 'kcal' ? 'Calories : entre 800 et 9000 par jour' : it.code === 'counted' ? (it.what || 'Cet aliment') + ' se compte à l’unité' : it.code === 'weighed' ? (it.what || 'Cet aliment') + ' se pèse : précise les grammes' : 'Précise une quantité (ex. max 100 g)';
+      default: return '';
+    }
+  }
+  function renderGenChips() {
+    const box = $('#genChips');
+    const list = gen.items.map(it => {
+      const cls = it.kind === 'unknown' ? ' q' : it.kind === 'warn' ? ' w' : '';
+      const label = it.kind === 'unknown' ? '? « ' + gen.text.slice(it.span[0], it.span[1]).trim() + ' »' : consChipText(it);
+      return '<span class="cchip' + cls + '"><span>' + esc(label) + '</span><button type="button" data-action="cons-del" data-a="' + it.span[0] + '" data-b="' + it.span[1] + '" aria-label="' + esc('Enlever ' + label) + '">' + ICON.x + '</button></span>';
+    });
+    const unk = gen.items.some(it => it.kind === 'unknown');
+    box.innerHTML = list.length ? '<span class="cons-lbl">Compris</span>' + list.join('') + (unk ? '<p class="cons-help">Je n’ai pas compris ce qui est marqué « ? » : écris un aliment de ta liste ou du catalogue, « sans », « max 20 g de », « avec »…</p>' : '') : '';
+  }
+  /* Enlève une consigne du texte (et la ponctuation qui l’entourait) */
+  function consRemove(a, b) {
+    let t = gen.text.slice(0, a) + gen.text.slice(b);
+    t = t.replace(/\s*([,;.])(\s*[,;.])+/g, '$1').replace(/(^|[,;.]\s*)(?:et|mais|puis|ni)\s*(?=[,;.]|$)/gi, '$1').replace(/\s+(?:et|mais|puis|ni)\s*$/i, '')
+      .replace(/^[\s,;.]+|[\s,;]+$/g, '').replace(/\s{2,}/g, ' ').replace(/\s+([,;.])/g, '$1');
+    setConsText(t);
+    $('#genText').value = gen.text;
+    gen.lastText = null;
+    runGenerator();
+  }
+  function renderGenGoalsSum() {
+    const t = gen.target;
+    $('#genGoalsSum').textContent = 'Objectifs : ' + fmt(t.kcal, 0) + ' kcal · P ' + fmt(t.protein, 0) + ' · G ' + fmt(t.carbs, 0) + ' · L ' + fmt(t.fat, 0) + ' · ' + (gen.P && gen.P.meals || state.genSettings.meals) + ' repas' + (gen.run ? ' · cardio' : '');
+  }
+  /* Jour : la carte de l’assistant au-dessus des repas */
+  function renderAssist() {
+    const el = $('#assist');
+    if (!el) return;
+    const ready = state.mode !== 'loading' && state.dayLoaded && state.productsLoaded;
+    el.hidden = !ready;
+    if (!ready) return;
+    const n = state.day.entries.length;
+    const rem = dayGoals(state.day).kcal - dayTotals(state.day).kcal;
+    $('#assistTitle').textContent = n ? 'Complète ta journée' : 'Prépare ta journée';
+    $('#assistSub').textContent = !usedPool().length ? 'Coche des aliments dans Produits : je composerai tes repas avec.'
+      : n ? (rem > 120 ? 'Il te reste ' + fmt(rem, 0) + ' kcal : dis-moi ce que tu veux pour les repas qui restent.' : 'Objectif atteint. Je peux quand même te préparer une autre journée.')
+        : 'Dis-moi ce que tu veux pour aujourd’hui, je compose tes repas avec tes aliments cochés.';
+    const a = $('#assistText');
+    if (document.activeElement !== a) {
+      const v = consSaved();
+      gen.text = v;
+      if (a.value !== v) a.value = v;
+      autoGrow(a);
+    }
+    const k = Math.round(dayGoals(state.day).kcal / 50) * 50;
+    const ideas = [[fmt(k, 0) + ' kcal', k + ' kcal'], ['Sans…', 'sans '], ['Max 20 g de…', 'max 20 g de '], ['Avec…', 'avec '], ['Du poisson ce soir', 'du poisson ce soir'], ['En 4 repas', 'en 4 repas']];
+    $('#assistIdeas').innerHTML = ideas.map(([l, v]) => '<button type="button" class="chip" data-action="cons-idea" data-v="' + esc(v) + '">' + esc(l) + '</button>').join('');
+  }
+  function submitAssist() {
+    const a = $('#assistText');
+    setConsText(a.value, 'assist');
+    a.blur();
+    openGenerator({ text: a.value });
+  }
+  /* Une idée touchée s’ajoute à la fin des consignes */
+  function consInsert(v) {
+    const a = $('#assistText');
+    const cur = a.value.replace(/\s+$/, '');
+    a.value = cur ? (/[,;.]$/.test(cur) ? cur + ' ' : cur + ', ') + v : v;
+    setConsText(a.value, 'assist');
+    autoGrow(a);
+    a.focus();
+    try { a.setSelectionRange(a.value.length, a.value.length); } catch (e) { /* champ sans sélection */ }
   }
   /* Tes produits, puis les aliments cochés du catalogue */
   const genList = () => state.products.filter(p => p.kcal > 0).concat(catalogOn());
@@ -4381,7 +4947,8 @@ function buildProposal(products, opts) {
     $('#genProdsSum').textContent = 'Aliments utilisés : ' + (!nCat ? nOwn + ' sur ' + own.length : !nOwn ? nCat + ' du catalogue' : (nOwn + nCat) + ' dont ' + nCat + ' du catalogue');
   }
   function renderGenControls() {
-    $('#genFor').textContent = 'Pour ' + dfLong.format(dateOf(state.date)) + (state.day.run ? ', jour de cardio' : '') + ', avec tes aliments cochés.';
+    const eaten = state.day.entries.length ? dayTotals(state.day).kcal : 0;
+    $('#genFor').textContent = cap1(dfLong.format(dateOf(state.date))) + (eaten ? ' · déjà noté : ' + fmt(eaten, 0) + ' kcal' : '') + ' · avec tes aliments cochés.';
     document.querySelectorAll('#genMeals [data-v]').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.v) === state.genSettings.meals)));
     renderGenSummary();
     const list = genList();
@@ -4400,18 +4967,76 @@ function buildProposal(products, opts) {
   function renderGenActions() {
     const ok = !!(gen.result && gen.result.meals.length);
     const n = state.day.entries.length;
-    $('#genActions').innerHTML = (n ? '<button type="button" class="btn" data-action="gen-apply" data-mode="replace"' + (ok ? '' : ' disabled') + '>Remplacer ma journée</button>' : '') +
-      '<button type="button" class="btn primary" data-action="gen-apply" data-mode="add"' + (ok ? '' : ' disabled') + '>Ajouter à ma journée</button>';
+    const [label, mode] = gen.mode === 'complete' && n ? ['Ajouter ces repas', 'add'] : n ? ['Remplacer ma journée', 'replace'] : ['Ajouter à ma journée', 'add'];
+    $('#genActions').innerHTML = '<button type="button" class="btn primary" data-action="gen-apply" data-mode="' + mode + '"' + (ok ? '' : ' disabled') + '>' + label + '</button>';
   }
   function runGenerator() {
-    const t = gen.target, box = $('#genResult');
+    const box = $('#genResult');
     gen.result = null;
-    if (!state.productsLoaded) box.innerHTML = '<p class="muted">Chargement des produits…</p>';
-    else if (!t || GEN_KEYS.some(k => !(t[k] > 0))) box.innerHTML = '<p class="form-error">Indique des objectifs supérieurs à 0.</p>';
-    else {
-      gen.result = buildProposal(proposalProducts(), { target: t, meals: state.genSettings.meals, seed: gen.seed, roles: state.genSettings.roles, excluded: state.genSettings.excluded, pinned: state.genSettings.pinned, maxDay: state.foods.max });
-      renderGenResult();
+    gen.items = consParse(gen.text, consFoods());
+    const P = consPlan(gen.items);
+    // Une consigne écrite remplace ce qui avait été changé à la main pour la même valeur
+    if (gen.lastText !== gen.text) {
+      if (P.kcal) delete gen.manual.kcal;
+      Object.keys(P.macros).forEach(k => { delete gen.manual[k]; });
+      gen.lastText = gen.text;
     }
+    const { t, run } = consTarget(P);
+    gen.P = P;
+    gen.target = t;
+    gen.run = run;
+    renderGenChips();
+    fillGenTargets();
+    renderGenGoalsSum();
+    document.querySelectorAll('#genMeals [data-v]').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.v) === state.genSettings.meals)));
+    const n = state.day.entries.length;
+    if (!n) gen.mode = 'full';
+    $('#genMode').hidden = !n;
+    document.querySelectorAll('#genMode [data-v]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === gen.mode)));
+    const done = html => { box.innerHTML = html; renderGenActions(); };
+    if (!state.productsLoaded) return done('<p class="muted">Chargement des produits…</p>');
+    if (GEN_KEYS.some(k => !(t[k] > 0))) return done('<p class="form-error">Indique des objectifs supérieurs à 0.</p>');
+    const complete = gen.mode === 'complete';
+    // Les repas à préparer : tous, ou ceux qui sont encore vides
+    let mealIds = GEN_MEAL_SETS[P.meals || state.genSettings.meals].filter(m => !P.skip.has(m));
+    const eaten = complete ? dayTotals(state.day) : null;
+    if (complete) {
+      const logged = new Set(state.day.entries.map(e => e.meal));
+      mealIds = mealIds.filter(m => !logged.has(m));
+      if (!mealIds.length) mealIds = ['collation', 'soiree'].filter(m => !logged.has(m) && !P.skip.has(m));
+    }
+    gen.mealIds = mealIds;
+    gen.eaten = eaten;
+    if (complete && t.kcal - eaten.kcal < 120) return done('<p class="sugg-lead">Ton objectif du jour est déjà atteint avec ce que tu as noté.</p><p class="muted">Touche « Refaire toute la journée » pour repartir de zéro.</p>');
+    if (!mealIds.length) return done('<p class="muted">Tous tes repas ont déjà des aliments. Touche « Refaire toute la journée » pour repartir de zéro.</p>');
+    // Les aliments : tes aliments cochés, plus ceux que tu demandes ; les exclusions et maximums du jour s’ajoutent aux tiens
+    const products = proposalProducts().slice();
+    const have = new Set(products.map(p => p.id));
+    P.extra.forEach(id => { if (!have.has(id)) { const p = productById(id); if (p) products.push(p); } });
+    const reqIds = new Set();
+    P.require.forEach(q => q.ids.forEach(id => reqIds.add(id)));
+    const excluded = new Set(state.genSettings.excluded.filter(id => !reqIds.has(id)));
+    P.excl.forEach(id => excluded.add(id));
+    const maxDay = Object.assign({}, state.foods.max);
+    const lower = (id, v) => { maxDay[id] = Math.min(maxDay[id] > 0 ? maxDay[id] : Infinity, v); };
+    Object.keys(P.max).forEach(id => lower(id, P.max[id]));
+    Object.keys(P.exact).forEach(id => lower(id, P.exact[id]));
+    const maxUses = Object.assign({}, P.uses);
+    const mealExcl = {};
+    Object.keys(P.mealExcl).forEach(m => { mealExcl[m] = new Set(P.mealExcl[m]); });
+    // Un aliment voulu pour un repas précis (« du saumon ce soir ») lui est réservé
+    P.require.forEach(q => { if (q.meal && q.single) mealIds.forEach(m => { if (m !== q.meal) q.ids.forEach(id => { (mealExcl[m] = mealExcl[m] || new Set()).add(id); }); }); });
+    let planTarget = t;
+    if (complete) {
+      // Ce qui est déjà noté compte : objectif restant, maximums et nombre de repas restants
+      planTarget = {};
+      for (const k of GEN_KEYS) planTarget[k] = Math.max(t[k] - eaten[k], t[k] * 0.05);
+      Object.keys(maxDay).forEach(id => { const e = eatenOn(state.day, id); if (e > 0) { maxDay[id] -= e; if (maxDay[id] <= 0) excluded.add(id); } });
+      Object.keys(maxUses).forEach(id => { maxUses[id] -= new Set(state.day.entries.filter(e => e.pid === id).map(e => e.meal)).size; });
+    }
+    const prods = products.map(p => (P.exact[p.id] ? Object.assign({}, p, { portion: P.exact[p.id] }) : p));
+    gen.result = buildProposal(prods, { target: planTarget, mealIds, seed: gen.seed, roles: state.genSettings.roles, excluded: [...excluded], pinned: state.genSettings.pinned, maxDay, require: P.require.map(q => ({ ids: q.ids, meal: q.meal })), mealExcl, maxUses });
+    renderGenResult();
     renderGenActions();
   }
   function devChip(v, goal, unit) {
@@ -4424,15 +5049,23 @@ function buildProposal(products, opts) {
   function renderGenResult() {
     const r = gen.result, box = $('#genResult');
     const list = r ? r.notes.slice() : [];
-    const g0 = gen.target;
-    if (g0) {
-      const mk = 4 * g0.protein + 4 * g0.carbs + 9 * g0.fat;
-      if (Math.abs(mk - g0.kcal) > g0.kcal * 0.1) list.unshift('Tes macros font ' + fmt(mk, 0) + ' kcal alors que tu vises ' + fmt(g0.kcal, 0) + ' kcal : l’appli donne la priorité aux calories.');
+    const g = gen.target;
+    if (g) {
+      const mk = 4 * g.protein + 4 * g.carbs + 9 * g.fat;
+      if (Math.abs(mk - g.kcal) > g.kcal * 0.1) list.unshift('Tes macros font ' + fmt(mk, 0) + ' kcal alors que tu vises ' + fmt(g.kcal, 0) + ' kcal : l’appli donne la priorité aux calories.');
     }
+    // Ce qui était demandé mais n’a pas trouvé de place
+    if (r && r.unmet) r.unmet.forEach(q => {
+      const names = [...q.ids].map(id => { const p = productById(id); return p ? shortName(p.name) : ''; }).filter(Boolean);
+      const what = names.length > 2 ? names[0] + ' et ' + (names.length - 1) + ' autres' : listFr(names);
+      list.push(q.meal && !gen.mealIds.includes(q.meal) ? 'Pas de ' + MEAL_LABEL[q.meal].toLowerCase() + ' prévu : ' + what + ' n’a pas été placé.' : 'Je n’ai pas pu placer ' + what + ' (maximum atteint ou repas sans place).');
+    });
     const notes = list.length ? '<ul class="notes">' + list.map(n => '<li>' + esc(n) + '</li>').join('') + '</ul>' : '';
     if (!r || !r.meals.length) { box.innerHTML = notes || '<p class="muted">Aucune proposition possible avec cette sélection.</p>'; return; }
-    const t = r.totals, g = gen.target;
-    let html = '<div class="gen-total"><div class="gen-k"><span class="pv-k">' + fmt(t.kcal, 0) + ' kcal</span><span class="muted">sur ' + fmt(g.kcal, 0) + ' visées</span>' + devChip(t.kcal, g.kcal, 'kcal') + '</div>' +
+    const e = gen.eaten;
+    const t = e ? { kcal: e.kcal + r.totals.kcal, protein: e.protein + r.totals.protein, carbs: e.carbs + r.totals.carbs, fat: e.fat + r.totals.fat } : r.totals;
+    let html = '<div class="gen-total">' + (e ? '<p class="gen-with">Ta journée avec ces repas (' + fmt(e.kcal, 0) + ' kcal déjà notés)</p>' : '') +
+      '<div class="gen-k"><span class="pv-k">' + fmt(t.kcal, 0) + ' kcal</span><span class="muted">sur ' + fmt(g.kcal, 0) + ' visées</span>' + devChip(t.kcal, g.kcal, 'kcal') + '</div>' +
       '<div class="gen-m">' + MACROS.map(m => '<span class="gen-mi"><i class="dot ' + m.cls + '"></i>' + m.label + ' <strong>' + fmt(t[m.k], 0) + '</strong> / ' + fmt(g[m.k], 0) + ' g ' + devChip(t[m.k], g[m.k], 'g') + '</span>').join('') + '</div></div>';
     html += r.meals.map(m => {
       const shake = m.id === 'petitdej' && m.items.some(i => i.role === 'milk') && m.items.some(i => i.role === 'cereal');
@@ -4448,16 +5081,23 @@ function buildProposal(products, opts) {
     if (!r || !r.meals.length) return;
     const entries = [];
     r.meals.forEach(m => m.items.forEach(it => entries.push({ id: uid('e'), pid: it.p.id, name: it.p.name, unit: it.p.unit, ref: it.p.ref, n: normN(it.p), qty: it.qty, meal: m.id })));
-    const prev = state.day.entries.slice();
+    const prev = state.day.entries.slice(), prevRun = state.day.run;
     const date = state.date;
     const ids = new Set(entries.map(e => e.id));
+    const complete = mode !== 'replace' && prev.length > 0;
     state.day.entries = mode === 'replace' ? entries : prev.concat(entries);
+    // « j’ai foot ce soir » coche le cardio du jour (« pas de cardio » le décoche)
+    const runChange = gen.P && gen.P.cardio != null && !!state.day.run !== gen.P.cardio;
+    if (runChange) state.day.run = gen.P.cardio;
     touchDay(true);
     renderDay();
     closeDlg('#genDlg');
-    toast((mode === 'replace' ? 'Journée remplacée : ' : 'Journée ajoutée : ') + fmt(r.totals.kcal, 0) + ' kcal', 'Annuler', () => {
+    const kcal = fmt(r.totals.kcal, 0) + ' kcal';
+    const msg = mode === 'replace' ? 'Journée remplacée : ' + kcal : complete ? listFr(r.meals.map(m => MEAL_LABEL[m.id])) + ' ajoutés : ' + kcal : 'Journée ajoutée : ' + kcal;
+    toast(msg + (runChange ? (state.day.run ? ' · cardio coché' : ' · cardio décoché') : ''), 'Annuler', () => {
       if (state.date !== date) return;
       state.day.entries = mode === 'replace' ? prev : state.day.entries.filter(e => !ids.has(e.id));
+      state.day.run = prevRun;
       touchDay(true);
       renderDay();
     });
@@ -4480,7 +5120,7 @@ function buildProposal(products, opts) {
     const v = parseNum(inp.value);
     if (v == null || v <= 0 || v > 20000) { inp.setAttribute('aria-invalid', 'true'); return; }
     inp.removeAttribute('aria-invalid');
-    gen.target[inp.dataset.gt] = v;
+    gen.manual[inp.dataset.gt] = v;
     clearTimeout(genTimer);
     genTimer = setTimeout(runGenerator, 250);
   }
@@ -6966,9 +7606,12 @@ function buildProposal(products, opts) {
         case 'calc-apply': applyNeeds(); break;
         /* Proposer une journée */
         case 'gen-open': openGenerator(); break;
+        case 'gen-mode': gen.mode = b.dataset.v === 'complete' ? 'complete' : 'full'; runGenerator(); break;
+        case 'cons-del': consRemove(Number(b.dataset.a), Number(b.dataset.b)); break;
+        case 'cons-idea': consInsert(b.dataset.v); break;
         case 'gen-close': closeDlg('#genDlg'); break;
         case 'gen-again': gen.seed += 1; runGenerator(); break;
-        case 'gen-reset-targets': gen.target = goalTarget(); fillGenTargets(); runGenerator(); break;
+        case 'gen-reset-targets': gen.manual = {}; runGenerator(); break;
         case 'gen-meals': state.genSettings.meals = Number(b.dataset.v); touchGenSettings(); renderGenControls(); runGenerator(); break;
         case 'gen-apply': applyProposal(b.dataset.mode); break;
         case 'gen-pin': {
@@ -7001,6 +7644,8 @@ function buildProposal(products, opts) {
       else if (t.id === 'weNotes') { const w = curWorkout(); if (w) { w.notes = t.value.slice(0, 2000); markEdited(w); touchWorkout(w); } }
       else if (t.matches('[data-pf]')) onProfileNum(t);
       else if (t.matches('[data-gt]')) onGenTarget(t);
+      else if (t.id === 'assistText') { setConsText(t.value, 'assist'); autoGrow(t); }
+      else if (t.id === 'genText') { setConsText(t.value, 'gen'); clearTimeout(genTimer); genTimer = setTimeout(runGenerator, 350); }
       else if (t.matches('[data-gportion]')) onGenPortion(t);
       else if (t.matches('[data-fmax]')) onFoodMax(t);
       else if (t.id === 'pf-max') { t.removeAttribute('aria-invalid'); updatePfCheck(); }
@@ -7042,7 +7687,7 @@ function buildProposal(products, opts) {
         if (state.tab === 'produits') renderProdCounts();
         renderExtras();
         renderWelcome();
-        renderDayCta();
+        renderAssist();
         refreshAddIfOpen();
         if (isOpen('#genDlg')) { renderGenSummary(); runGenerator(); }
       } else if (t.matches('[data-grole]')) {
@@ -7061,6 +7706,8 @@ function buildProposal(products, opts) {
       if (e.key !== 'Enter' || e.isComposing) return;
       const t = e.target;
       if (t.id === 'addQty') { e.preventDefault(); confirmAdd(); }
+      else if (t.id === 'assistText' && !e.shiftKey) { e.preventDefault(); submitAssist(); }
+      else if (t.id === 'genText' && !e.shiftKey) { e.preventDefault(); clearTimeout(genTimer); runGenerator(); t.blur(); }
       else if (t.id === 'addSearch') { e.preventDefault(); const first = $('#pickList .pick'); if (first) first.click(); }
       else if (t.id === 'exSearch') { e.preventDefault(); const first = $('#exList .pick'); if (first) first.click(); }
       else if (t.matches && t.matches('[data-sk]')) {
@@ -7074,6 +7721,7 @@ function buildProposal(products, opts) {
       const f = e.target;
       e.preventDefault();
       if (f.id === 'prodForm') saveProductForm();
+      else if (f.id === 'assistForm') submitAssist();
       else if (f.id === 'meForm') saveMe();
       else if (f.id === 'goalsForm') { const g = readGoalsForm(true); if (g) commitGoals(g, 'Objectifs enregistrés'); }
       else if (f.id === 'exNewForm') createCustomExercise();
