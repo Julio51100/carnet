@@ -32,7 +32,7 @@
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin-ext.woff2) format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 </style>
-<script>window.CARNET_VERSION = "2026-10-06.92879f";</script>
+<script>window.CARNET_VERSION = "2026-10-07.cf895c";</script>
 <style>
 /* Carnet de bord calme : fond graphite profond, cartes à filet fin, actions en encre claire (version claire en option).
    Les couleurs des macros (protéines, glucides, lipides) sont les seules teintes vives ; les chiffres clés
@@ -568,6 +568,27 @@ input.we-name:focus-visible { background: var(--surface); }
 .we-more { display: flex; flex-wrap: wrap; gap: 8px; }
 .we-more > .btn { flex: 1 1 auto; }
 .we-del { align-self: center; }
+/* Changer l’ordre des exercices : appui long sur l’en-tête (nom, photo), la liste se replie et l’exercice suit le doigt */
+.exo { transition: background-color .2s ease, scale .2s ease; }
+.exo-head { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.exo.pressing { background: var(--surface-2); scale: .985; transition: background-color .25s ease .12s, scale .28s ease .12s; }
+.exo-grip { display: none; flex: none; align-self: center; place-items: center; width: 30px; height: 30px; margin-right: -4px; color: var(--muted); }
+.exo-grip .ico { width: 20px; height: 20px; }
+.exo-tip { margin: 0; font-size: 12.5px; color: var(--muted); }
+.exos.sorting { gap: 8px; }
+.exos.sorting .exo { padding: 9px 12px 9px 10px; gap: 0; transition: transform .22s cubic-bezier(.2, .7, .2, 1); }
+.exos.sorting .exo > :not(.exo-head), .exos.sorting .tags, .exos.sorting .exo-target { display: none; }
+.exos.sorting .exo-head { align-items: center; }
+.exos.sorting .exo-thumb { pointer-events: none; }
+.exos.sorting .exo-thumb .thumb { width: 50px; }
+.exos.sorting .exo-grip { display: grid; }
+.exos.sorting .exo.lifted { position: relative; z-index: 6; background: var(--surface-2); box-shadow: 0 0 0 1px var(--line-2), var(--shadow); scale: 1.025; transition: scale .18s ease, box-shadow .18s ease; cursor: grabbing; }
+.exos.sorting .exo.lifted .exo-grip { color: var(--fg); }
+.exos.sorting .exo.lifted.dropping { scale: 1; box-shadow: var(--shadow-sm); transition: transform .18s ease, scale .18s ease, box-shadow .18s ease; }
+body.exo-sorting { -webkit-user-select: none; user-select: none; cursor: grabbing; }
+body.exo-sorting .we-head, body.exo-sorting .add-exo, body.exo-sorting .we-notes, body.exo-sorting .we-actions { opacity: .3; pointer-events: none; transition: opacity .2s ease; }
+.exo.moved { animation: exoMoved 1.2s ease; }
+@keyframes exoMoved { from { background-color: var(--surface-3); } }
 .naming { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; width: 100%; }
 .naming input { flex: 1 1 180px; }
 
@@ -2326,7 +2347,8 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
     check: svgIco('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
     edit: svgIco('<path d="M4.5 19.5h4l10-10a2.83 2.83 0 0 0-4-4l-10 10v4z"/><path d="M13 7l4 4"/>'),
     share: svgIco('<path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M8 10.5H7a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1"/>'),
-    dots: svgIco('<circle cx="12" cy="5.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="18.5" r="1.4" fill="currentColor" stroke="none"/>')
+    dots: svgIco('<circle cx="12" cy="5.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="18.5" r="1.4" fill="currentColor" stroke="none"/>'),
+    grip: svgIco([6, 12, 18].map(y => '<circle cx="9" cy="' + y + '" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="' + y + '" r="1.5" fill="currentColor" stroke="none"/>').join(''))
   };
   const NF = [0, 1, 2].map(d => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: d }));
   function fmt(n, d = 1) {
@@ -3713,7 +3735,7 @@ function consFood(t, idx, byId, prev, viaNi) {
         const now = state.workouts.find(w => w.id === state.wOpen);
         const editing = document.activeElement && $('#wEditor').contains(document.activeElement);
         if (!now) { state.wOpen = null; renderSeances(); }
-        else if (now !== openBefore && !editing) renderEditor();
+        else if (now !== openBefore && !editing) { if (exoBusy()) deferExoRender(); else renderEditor(); }
       }
     }
     renderSuivi();
@@ -5644,9 +5666,11 @@ function consFood(t, idx, byId, prev, viaNi) {
     touchWorkout(w, true);
     renderEditor();
     toast(ex.name + ' retiré', 'Annuler', () => {
-      if (curWorkout() !== w) return;
-      w.exercises.splice(Math.min(i, w.exercises.length), 0, ex);
-      touchWorkout(w, true);
+      /* Après l’enregistrement, la séance ouverte est relue depuis la base : on la retrouve par son identifiant */
+      const cw = curWorkout();
+      if (!cw || cw.id !== w.id || cw.exercises.some(x => x.key === ex.key)) return;
+      cw.exercises.splice(Math.min(i, cw.exercises.length), 0, ex);
+      touchWorkout(cw, true);
       renderEditor();
     });
   }
@@ -6051,7 +6075,8 @@ function consFood(t, idx, byId, prev, viaNi) {
       '<header class="exo-head">' + (def ? '<button type="button" class="exo-thumb" data-action="ex-info" data-ex="' + esc(def.id) + '" aria-label="' + esc('Voir l’exécution : ' + ex.name) + '">' + thumbHTML(def) + '</button>' : '') +
       '<div class="exo-title"><h3>' + esc(ex.name) + '</h3><div class="tags"><span class="tag">' + esc(EQUIP[ex.eq] || 'Autre') + '</span>' +
       (def && GROUP_LABEL[def.group] ? '<span class="tag">' + esc(GROUP_LABEL[def.group]) + '</span>' : '') + '</div></div>' +
-      '<button type="button" class="exo-target" data-action="exo-menu" data-key="' + k + '" aria-expanded="' + open + '" aria-label="Objectif ' + esc(tgt) + ', options de ' + esc(ex.name) + '">' + esc(tgt) + ' <span aria-hidden="true">⋯</span></button></header>';
+      '<button type="button" class="exo-target" data-action="exo-menu" data-key="' + k + '" aria-expanded="' + open + '" aria-label="Objectif ' + esc(tgt) + ', options de ' + esc(ex.name) + '">' + esc(tgt) + ' <span aria-hidden="true">⋯</span></button>' +
+      '<span class="exo-grip" aria-hidden="true">' + ICON.grip + '</span></header>';
     if (open) {
       const i = w.exercises.indexOf(ex);
       const unitTxt = ex.kind === 'c' ? 'Minutes' : ex.kind === 't' ? 'Secondes' : 'Reps';
@@ -6062,7 +6087,8 @@ function consFood(t, idx, byId, prev, viaNi) {
         '<div class="row"><button type="button" class="btn small" data-action="ex-picker" data-mode="replace" data-key="' + k + '">Remplacer</button>' +
         (i > 0 ? '<button type="button" class="btn small" data-action="exo-move" data-dir="-1" data-key="' + k + '">Monter</button>' : '') +
         (i < w.exercises.length - 1 ? '<button type="button" class="btn small" data-action="exo-move" data-dir="1" data-key="' + k + '">Descendre</button>' : '') +
-        '<button type="button" class="btn small ghost danger" data-action="exo-remove" data-key="' + k + '">Retirer</button></div></div>';
+        '<button type="button" class="btn small ghost danger" data-action="exo-remove" data-key="' + k + '">Retirer</button></div>' +
+        (w.exercises.length > 1 ? '<p class="exo-tip">Astuce : reste appuyé sur le nom ou la photo d’un exercice, puis fais-le glisser pour changer l’ordre.</p>' : '') + '</div>';
     }
     const tpl = !!w.isTpl;
     html += '<p class="exo-last">' + (last ? 'Dernière fois, ' + esc(dfShort.format(dateOf(last.date))) + ' : <strong>' + esc(setsSummary(last.sets, last.kind)) + '</strong>' : (tpl ? 'Pas encore fait : note la charge que tu prévois.' : 'Première fois sur cet exercice.')) + '</p>';
@@ -6147,6 +6173,246 @@ function consFood(t, idx, byId, prev, viaNi) {
     markEdited(w);
     touchWorkout(w, true);
     renderExo(w, ex);
+  }
+
+  /* ================= Séances : changer l’ordre des exercices au doigt =================
+     Appui long sur l’en-tête d’un exercice (nom, photo) : la liste se replie autour du doigt, l’exercice suit le doigt
+     et les autres s’écartent. Au lâcher, le nouvel ordre est enregistré (« Annuler » dans le message).
+     « Monter » et « Descendre » restent dans le menu de l’exercice, pour le clavier et les lecteurs d’écran. */
+  const HOLD_MS = 400;
+  let press = null, drag = null, clickBlock = 0;
+  function exoPressStart(e) {
+    if (drag) return;
+    if (press) { cancelPress(); return; } /* deuxième doigt : pas de glisser */
+    if (!e.isPrimary || (e.pointerType === 'mouse' && (e.button !== 0 || e.ctrlKey))) return;
+    const t = e.target;
+    const head = t && t.closest ? t.closest('#weExos > .exo > .exo-head') : null;
+    if (!head || t.closest('.exo-target')) return;
+    const w = curWorkout();
+    if (!w || w.exercises.length < 2) return;
+    const card = head.parentElement;
+    press = { id: e.pointerId, x: e.clientX, y: e.clientY, cy: e.clientY, sy: window.scrollY, mouse: e.pointerType === 'mouse', card, timer: setTimeout(dragStart, HOLD_MS) };
+    card.classList.add('pressing');
+  }
+  function cancelPress() {
+    if (!press) return;
+    clearTimeout(press.timer);
+    press.card.classList.remove('pressing');
+    press = null;
+  }
+  /* Partie utile de l’écran : sous l’en-tête collant (ordinateur), au-dessus des onglets et du minuteur de repos */
+  function dragBounds() {
+    let top = 0, bot = window.innerHeight;
+    const tp = $('#top'), sb = document.querySelector('.statusbar'), tabs = document.querySelector('.tabs'), rb = $('#restbar');
+    if (tp && getComputedStyle(tp).position === 'sticky') top = Math.max(top, tp.getBoundingClientRect().bottom);
+    if (sb && getComputedStyle(sb).display !== 'none') top = Math.max(top, sb.getBoundingClientRect().bottom);
+    if (tabs && getComputedStyle(tabs).position === 'fixed') bot = Math.min(bot, tabs.getBoundingClientRect().top);
+    if (rb && !rb.hidden) bot = Math.min(bot, rb.getBoundingClientRect().top);
+    return { top, bot };
+  }
+  function dragStart() {
+    const p = press;
+    if (!p) return;
+    clearTimeout(p.timer);
+    p.card.style.transition = 'none';
+    p.card.classList.remove('pressing');
+    /* D’abord fermer le clavier : la case quittée peut redessiner une carte, on la retrouve ensuite par sa clé */
+    const a = document.activeElement;
+    if (a && a !== document.body && a.blur && $('#wEditor').contains(a)) a.blur();
+    press = null;
+    const list = $('#weExos'), w = curWorkout(), key = p.card.dataset.exo;
+    const card = list ? list.querySelector(':scope > [data-exo="' + key + '"]') : null;
+    p.card.style.transition = '';
+    const cards = list ? Array.prototype.filter.call(list.children, c => c.classList.contains('exo')) : [];
+    const from = card ? cards.indexOf(card) : -1;
+    if (!w || from < 0 || cards.length < 2) return;
+    card.style.transition = 'none';
+    try { const s = window.getSelection(); if (s) s.removeAllRanges(); } catch (err) { /* rien de sélectionné */ }
+    state.wMenu = null;
+    const before = cards.map(c => c.getBoundingClientRect().top);
+    list.classList.add('sorting');
+    document.body.classList.add('exo-sorting');
+    /* L’exercice tenu reste sous le doigt : la page défile, ou la liste repliée descend jusqu’au doigt */
+    const r0 = card.getBoundingClientRect();
+    const off = Math.max(14, Math.min(p.cy - before[from], r0.height - 14));
+    let need = r0.top + window.scrollY - (p.cy - off);
+    if (need < 0) { list.style.marginTop = Math.round(-need) + 'px'; need = 0; }
+    if (need > document.documentElement.scrollHeight - window.innerHeight) document.body.style.minHeight = Math.ceil(need + window.innerHeight) + 'px';
+    window.scrollTo(0, need);
+    const sy = window.scrollY;
+    const items = cards.map(c => { const r = c.getBoundingClientRect(); return { el: c, top: r.top + sy, h: r.height, shift: 0 }; });
+    /* Les autres exercices glissent de leur place d’avant jusqu’à la liste repliée */
+    if (!reduceMotion) {
+      items.forEach((o, k) => {
+        const dy = before[k] - (o.top - sy);
+        if (k !== from && Math.abs(dy) > 1) { o.el.style.transition = 'none'; o.el.style.transform = 'translate3d(0,' + dy.toFixed(1) + 'px,0)'; }
+      });
+      void list.offsetHeight;
+      items.forEach((o, k) => { if (k !== from) { o.el.style.transition = ''; o.el.style.transform = ''; } });
+    }
+    card.style.transition = '';
+    card.classList.add('lifted');
+    drag = { id: p.id, w, key: card.dataset.exo, from, to: from, items, gap: Math.max(0, items[1].top - items[0].top - items[0].h), off, y: p.cy, card, list, raf: 0, bounds: dragBounds(), vw: window.innerWidth, dropping: false };
+    try { card.setPointerCapture(p.id); } catch (err) { /* pointeur déjà relâché */ }
+    try { if (navigator.vibrate) navigator.vibrate(12); } catch (err) { /* vibreur indisponible */ }
+    dragMove();
+    drag.raf = requestAnimationFrame(dragTick);
+  }
+  /* L’exercice suit le doigt (sans sortir de la liste) ; ceux qu’il dépasse se décalent d’une place */
+  function dragMove() {
+    const d = drag;
+    if (!d || d.dropping) return;
+    if (!d.card.isConnected) { dragDrop(true); return; }
+    const sy = window.scrollY, me = d.items[d.from], first = d.items[0], last = d.items[d.items.length - 1];
+    const top = Math.max(first.top - 24, Math.min(d.y + sy - d.off, last.top + last.h - me.h + 24));
+    const c = top + me.h / 2, step = me.h + d.gap;
+    let to = d.from;
+    for (let k = d.from + 1; k < d.items.length; k++) { const o = d.items[k]; if (c > o.top + (o.h - d.gap - me.h) / 2) to = k; else break; }
+    if (to === d.from) for (let k = d.from - 1; k >= 0; k--) { const o = d.items[k]; if (c < o.top + (o.h + d.gap + me.h) / 2) to = k; else break; }
+    d.to = to;
+    d.items.forEach((o, k) => {
+      if (k === d.from) return;
+      const s = k > d.from && k <= to ? -step : k < d.from && k >= to ? step : 0;
+      if (o.shift !== s) { o.shift = s; o.el.style.transform = s ? 'translate3d(0,' + s.toFixed(1) + 'px,0)' : ''; }
+    });
+    d.card.style.transform = 'translate3d(0,' + (top - me.top).toFixed(1) + 'px,0)';
+  }
+  /* Près du haut ou du bas de l’écran, la page défile toute seule tant qu’il reste des exercices à voir */
+  function dragTick() {
+    const d = drag;
+    if (!d || d.dropping) return;
+    if (!d.card.isConnected) { dragDrop(true); return; }
+    const b = d.bounds, zone = 70;
+    let v = 0;
+    if (d.y < b.top + zone) v = -Math.min(18, Math.ceil((b.top + zone - d.y) / 4));
+    else if (d.y > b.bot - zone) v = Math.min(18, Math.ceil((d.y - b.bot + zone) / 4));
+    if (v) {
+      const sy = window.scrollY, first = d.items[0], last = d.items[d.items.length - 1];
+      if ((v < 0 && first.top - sy >= b.top + 12) || (v > 0 && last.top + last.h - sy <= b.bot - 12)) v = 0;
+      if (v) { window.scrollTo(0, sy + v); if (window.scrollY !== sy) dragMove(); }
+    }
+    d.raf = requestAnimationFrame(dragTick);
+  }
+  function dragDrop(cancel) {
+    const d = drag;
+    if (!d || d.dropping) return;
+    d.dropping = true;
+    cancelAnimationFrame(d.raf);
+    clickBlock = Date.now() + 800;
+    if (cancel) {
+      d.to = d.from;
+      d.items.forEach((o, k) => { if (k !== d.from && o.shift) { o.shift = 0; o.el.style.transform = ''; } });
+    }
+    const me = d.items[d.from], t = d.items[d.to];
+    const slot = d.to > d.from ? t.top + t.h - me.h : d.to < d.from ? t.top : me.top;
+    d.card.classList.add('dropping');
+    d.card.style.transform = 'translate3d(0,' + (slot - me.top).toFixed(1) + 'px,0)';
+    setTimeout(() => dragFinish(d), reduceMotion || !d.card.isConnected ? 0 : 200);
+  }
+  function dragFinish(d) {
+    if (drag === d) drag = null;
+    exoQuiet = Date.now() + 1300;
+    const old = new Map();
+    d.items.forEach(o => { if (o.el.isConnected) old.set(o.el.dataset.exo, o.el.getBoundingClientRect().top); });
+    document.body.classList.remove('exo-sorting');
+    document.body.style.minHeight = '';
+    const w = curWorkout();
+    let moved = null, wasEdited, stamp;
+    /* Même séance (relue depuis la base entre-temps, d’où la comparaison par identifiant) */
+    if (w && w.id === d.w.id && d.to !== d.from) {
+      const i = w.exercises.findIndex(x => x.key === d.key);
+      if (i >= 0) {
+        wasEdited = w.edited;
+        moved = w.exercises.splice(i, 1)[0];
+        w.exercises.splice(Math.min(d.to, w.exercises.length), 0, moved);
+        markEdited(w);
+        touchWorkout(w, true);
+        stamp = w.updatedAt;
+      }
+    }
+    if (!w) { renderSeances(); return; }
+    renderEditor();
+    exoDeferred = false;
+    const list = $('#weExos');
+    if (!list) return;
+    const el = list.querySelector('[data-exo="' + d.key + '"]'), vt = old.get(d.key);
+    if (el && vt != null) window.scrollTo(0, window.scrollY + el.getBoundingClientRect().top - vt);
+    /* Les cartes se déplient en partant de leur place dans la liste repliée */
+    if (!reduceMotion) {
+      const moves = [];
+      Array.prototype.forEach.call(list.children, c => {
+        const o = c.classList.contains('exo') ? old.get(c.dataset.exo) : null;
+        const dy = o == null ? 0 : o - c.getBoundingClientRect().top;
+        if (Math.abs(dy) > 1) { c.style.transition = 'none'; c.style.transform = 'translate3d(0,' + dy.toFixed(1) + 'px,0)'; moves.push(c); }
+      });
+      if (moves.length) {
+        void list.offsetHeight;
+        moves.forEach(c => { c.style.transition = 'transform .26s cubic-bezier(.2, .7, .2, 1)'; c.style.transform = ''; });
+        setTimeout(() => moves.forEach(c => { c.style.transition = ''; }), 320);
+      }
+    }
+    if (!moved) return;
+    if (el) el.classList.add('moved');
+    const from = d.from, wid = w.id;
+    toast(moved.name + ' déplacé', 'Annuler', () => {
+      const cw = curWorkout();
+      if (!cw || cw.id !== wid) return;
+      const j = cw.exercises.findIndex(x => x.key === moved.key);
+      if (j < 0) return;
+      const ex = cw.exercises.splice(j, 1)[0];
+      cw.exercises.splice(Math.min(from, cw.exercises.length), 0, ex);
+      /* Rien d’autre n’a changé depuis : la séance prévue suit de nouveau sa séance type */
+      if (!cw.isTpl && wasEdited === false && cw.updatedAt === stamp) cw.edited = false;
+      touchWorkout(cw, true);
+      renderEditor();
+    });
+  }
+  /* Pendant l’appui, le glisser et l’animation qui suit, la séance relue depuis la base attend pour redessiner l’éditeur */
+  let exoQuiet = 0, exoDeferred = false, exoTimer = 0;
+  const exoBusy = () => !!drag || !!press || Date.now() < exoQuiet;
+  function deferExoRender() {
+    exoDeferred = true;
+    clearTimeout(exoTimer);
+    exoTimer = setTimeout(flushExoRender, Math.max(150, exoQuiet - Date.now() + 20));
+  }
+  function flushExoRender() {
+    if (!exoDeferred) return;
+    if (exoBusy()) { deferExoRender(); return; }
+    exoDeferred = false;
+    const editing = document.activeElement && $('#wEditor').contains(document.activeElement);
+    if (state.tab === 'seances' && state.wOpen && !state.tDraft && curWorkout() && !editing) renderEditor();
+  }
+  function exoPointerMove(e) {
+    if (press && e.pointerId === press.id) {
+      press.cy = e.clientY;
+      const tol = press.mouse ? 5 : 10;
+      if (Math.abs(e.clientX - press.x) > tol || Math.abs(e.clientY - press.y) > tol) cancelPress();
+    } else if (drag && e.pointerId === drag.id && !drag.dropping) {
+      drag.y = e.clientY;
+      dragMove();
+    }
+  }
+  function exoPointerEnd(e) {
+    if (press && e.pointerId === press.id) cancelPress();
+    else if (drag && e.pointerId === drag.id) dragDrop(e.type === 'pointercancel');
+  }
+  function bindExoSort() {
+    const ed = $('#wEditor');
+    window.addEventListener('pointerdown', () => { clickBlock = 0; }, true);
+    ed.addEventListener('pointerdown', exoPressStart);
+    window.addEventListener('pointermove', exoPointerMove, { passive: true });
+    window.addEventListener('pointerup', exoPointerEnd);
+    window.addEventListener('pointercancel', exoPointerEnd);
+    /* Pendant le glisser, le doigt ne fait plus défiler la page (écouteur posé d’avance : iOS l’exige) */
+    ed.addEventListener('touchmove', e => { if (drag && e.cancelable) e.preventDefault(); }, { passive: false });
+    /* Android : l’appui long ouvre un menu contextuel, ici il démarre le glisser */
+    ed.addEventListener('contextmenu', e => { if (press || drag) { e.preventDefault(); if (press) dragStart(); } });
+    /* Le lâcher ne compte pas comme un toucher (photo, bouton) */
+    window.addEventListener('click', e => { if (clickBlock && Date.now() < clickBlock) { e.preventDefault(); e.stopPropagation(); } clickBlock = 0; }, true);
+    window.addEventListener('scroll', () => { if (press && Math.abs(window.scrollY - press.sy) > 6) cancelPress(); }, { passive: true });
+    window.addEventListener('resize', () => { if (!drag || drag.dropping) return; if (window.innerWidth !== drag.vw) dragDrop(true); else drag.bounds = dragBounds(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && drag && !drag.dropping) dragDrop(true); });
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') { cancelPress(); if (drag && !drag.dropping) dragDrop(true); } });
   }
 
   /* ================= Choix d’un exercice ================= */
@@ -7736,6 +8002,7 @@ function consFood(t, idx, byId, prev, viaNi) {
     $('#addDlg').addEventListener('close', () => { addState.last = null; });
     $('#prodDlg').addEventListener('close', () => { editing = null; editReturn = false; });
     $('#foodDlg').addEventListener('close', () => { foodOpen = null; });
+    bindExoSort();
 
     if ('ResizeObserver' in window) {
       const ro = new ResizeObserver(entries => {
