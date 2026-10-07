@@ -32,7 +32,7 @@
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin-ext.woff2) format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 </style>
-<script>window.CARNET_VERSION = "2026-10-07.cf895c";</script>
+<script>window.CARNET_VERSION = "2026-10-07.d1610f";</script>
 <style>
 /* Carnet de bord calme : fond graphite profond, cartes à filet fin, actions en encre claire (version claire en option).
    Les couleurs des macros (protéines, glucides, lipides) sont les seules teintes vives ; les chiffres clés
@@ -589,6 +589,28 @@ body.exo-sorting { -webkit-user-select: none; user-select: none; cursor: grabbin
 body.exo-sorting .we-head, body.exo-sorting .add-exo, body.exo-sorting .we-notes, body.exo-sorting .we-actions { opacity: .3; pointer-events: none; transition: opacity .2s ease; }
 .exo.moved { animation: exoMoved 1.2s ease; }
 @keyframes exoMoved { from { background-color: var(--surface-3); } }
+/* Partager une séance type par un lien, et la recevoir */
+.ms-tools { flex: none; display: flex; gap: 6px; margin: -2px -2px 0 0; }
+.ms-tools .ms-edit { margin: 0; }
+.ms-foot { display: flex; flex-wrap: wrap; gap: 4px 8px; }
+.ms-import { margin-top: 2px; }
+.share-lead { margin: 0; font-size: 15.5px; line-height: 1.4; }
+.share-lead strong { font-weight: 600; }
+.share-note { margin: 0; font-size: 13.5px; color: var(--fg-2); }
+.share-warn { margin: 0; font-size: 13.5px; color: var(--fg-2); padding: 10px 12px; border-radius: var(--r-sm); background: var(--surface-2); }
+.share-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.share-list li { display: flex; align-items: center; gap: 12px; padding: 7px 0; border-top: 1px solid var(--line); min-width: 0; }
+.share-list li:first-child { border-top: 0; }
+.share-list .thumb { width: 54px; }
+.sl-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.sl-name { font-weight: 600; font-size: 14.5px; line-height: 1.3; overflow-wrap: anywhere; }
+.sl-meta { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.share-link { width: 100%; font-size: 14px; color: var(--fg-2); }
+.share-ios { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px; border-radius: var(--r-sm); background: var(--surface-2); }
+.share-ios p { margin: 0; font-size: 13.5px; color: var(--fg-2); }
+.share-err { margin: 0; font-size: 13.5px; color: var(--over); }
+.recv-preview { display: flex; flex-direction: column; gap: 14px; }
+.recv-preview:empty { display: none; }
 .naming { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; width: 100%; }
 .naming input { flex: 1 1 180px; }
 
@@ -1513,6 +1535,28 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
     </header>
     <div class="dlg-body" id="planBody"></div>
     <footer class="dlg-foot" id="planFoot"></footer>
+  </div>
+</dialog>
+
+<!-- ===== Fenêtres : partager une séance type, recevoir une séance partagée ===== -->
+<dialog id="shareDlg" aria-labelledby="shareTitle">
+  <div class="dlg">
+    <header class="dlg-head">
+      <h2 id="shareTitle">Partager la séance</h2>
+      <button type="button" class="iconbtn" data-action="share-close" aria-label="Fermer"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
+    </header>
+    <div class="dlg-body" id="shareBody"></div>
+    <footer class="dlg-foot" id="shareFoot"></footer>
+  </div>
+</dialog>
+<dialog id="recvDlg" aria-labelledby="recvTitle">
+  <div class="dlg">
+    <header class="dlg-head">
+      <h2 id="recvTitle">Séance partagée</h2>
+      <button type="button" class="iconbtn" data-action="recv-close" aria-label="Fermer"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
+    </header>
+    <div class="dlg-body" id="recvBody"></div>
+    <footer class="dlg-foot" id="recvFoot"></footer>
   </div>
 </dialog>
 
@@ -3751,6 +3795,7 @@ function consFood(t, idx, byId, prev, viaNi) {
     renderWelcome();
     renderDayWorkout();
     warmMedia();
+    maybeOpenShared();
   }
   function onUi(data) {
     state.ui = { welcomeHidden: !!(data && data.welcomeHidden) };
@@ -5148,7 +5193,7 @@ function consFood(t, idx, byId, prev, viaNi) {
   }
 
   /* ================= Séances : outils ================= */
-  function exById(id) { return EX_MAP[id] || state.customEx.find(e => e.id === id) || null; }
+  function exById(id) { return (typeof id === 'string' && Object.prototype.hasOwnProperty.call(EX_MAP, id) ? EX_MAP[id] : null) || state.customEx.find(e => e.id === id) || null; }
   const allExercises = () => EX_LIB.concat(state.customEx);
   const validSets = ex => ex.sets.filter(s => s.reps != null && s.reps > 0);
   function sortWorkouts(list) { return list.sort((a, b) => (a.date === b.date ? b.createdAt - a.createdAt : (a.date < b.date ? 1 : -1))); }
@@ -5804,6 +5849,7 @@ function consFood(t, idx, byId, prev, viaNi) {
       return '<article class="card ms"><h2>Mes séances</h2>' +
         '<p class="sub">Crée tes séances (Pull, Push, Jambes…) avec tes exercices et tes charges. L’appli s’en souvient : tu les places sur tes jours d’entraînement et tu vois ce que tu soulevais avant.</p>' +
         '<div class="row"><button type="button" class="btn primary" data-action="t-new">' + ICON.plus + 'Créer une séance</button><button type="button" class="btn" data-action="w-start" data-pid="">Séance libre</button></div>' +
+        '<button type="button" class="linkbtn ms-import" data-action="recv-open">Un pote t’a envoyé une séance ? Importe-la</button>' +
         '<details class="paste tp-more"><summary>Ou pars d’un programme tout prêt</summary>' + templateList() + '</details></article>';
     }
     const next = progs.length > 1 ? nextProgram() : null, today = todayISO();
@@ -5815,14 +5861,15 @@ function consFood(t, idx, byId, prev, viaNi) {
           '<div class="ms-head"><button type="button" class="ms-title" data-action="t-edit" data-id="' + pid + '" aria-label="' + esc('Modifier la séance ' + p.name) + '">' +
             (next && next.id === p.id ? '<span class="ms-next">À faire ensuite</span>' : '') +
             '<span class="ms-name">' + esc(p.name) + '</span><span class="ms-meta">' + p.items.length + (p.items.length > 1 ? ' exercices' : ' exercice') + ' · ' + (ld ? 'faite ' + esc(dfShort.format(dateOf(ld))) : 'pas encore faite') + '</span></button>' +
-            '<button type="button" class="iconbtn ms-edit" data-action="t-edit" data-id="' + pid + '" aria-label="' + esc('Modifier ' + p.name) + '">' + ICON.edit + '</button></div>' +
+            '<div class="ms-tools">' + (p.items.length ? '<button type="button" class="iconbtn ms-share" data-action="t-share" data-id="' + pid + '" aria-label="' + esc('Partager la séance ' + p.name) + '">' + ICON.share + '</button>' : '') +
+            '<button type="button" class="iconbtn ms-edit" data-action="t-edit" data-id="' + pid + '" aria-label="' + esc('Modifier ' + p.name) + '">' + ICON.edit + '</button></div></div>' +
           (shown.length ? '<ul class="ms-exos">' + shown.map(it => '<li><span class="ms-ex">' + esc(it.name) + '</span><span class="ms-kg">' + esc(chargeText(it)) + '</span></li>').join('') +
             (p.items.length > shown.length ? '<li class="ms-plus">+ ' + (p.items.length - shown.length) + (p.items.length - shown.length > 1 ? ' autres exercices' : ' autre exercice') + '</li>' : '') + '</ul>'
             : '<p class="muted ms-empty">Aucun exercice pour l’instant.</p>') +
           '<div class="ms-actions"><button type="button" class="btn small primary" data-action="w-start" data-pid="' + pid + '">' + (tw ? (hasActual(tw) ? 'Reprendre' : 'Commencer') : 'Faire aujourd’hui') + '</button>' +
             '<button type="button" class="btn small" data-action="plan-open" data-pid="' + pid + '">Planifier</button></div></li>';
       }).join('') + '</ul>' +
-      '<div class="ms-foot"><button type="button" class="btn small ghost" data-action="w-start" data-pid="">Séance libre</button></div>' +
+      '<div class="ms-foot"><button type="button" class="btn small ghost" data-action="w-start" data-pid="">Séance libre</button><button type="button" class="btn small ghost" data-action="recv-open">Importer une séance</button></div>' +
       '<details class="paste tp-more"><summary>Ajouter un programme tout prêt</summary>' + templateList() + '</details></article>';
   }
   /* Planning : la semaine en un coup d’œil (un jour = une case), puis ses séances */
@@ -6002,7 +6049,8 @@ function consFood(t, idx, byId, prev, viaNi) {
         exos('Ajoute les exercices de cette séance.') +
         '<div class="we-actions">' +
           '<button type="button" class="btn primary we-done" data-action="w-close">Terminer</button>' +
-          (w.pid && w.exercises.length ? '<div class="we-more"><button type="button" class="btn" data-action="plan-open" data-pid="' + esc(w.pid) + '">Planifier</button></div>' : '') +
+          (w.pid && w.exercises.length ? '<div class="we-more"><button type="button" class="btn" data-action="plan-open" data-pid="' + esc(w.pid) + '">Planifier</button>' +
+            '<button type="button" class="btn" data-action="t-share" data-id="' + esc(w.pid) + '">' + ICON.share + 'Partager</button></div>' : '') +
           (w.pid ? '<button type="button" class="btn ghost danger we-del" data-action="t-delete">Supprimer la séance</button>' : '') +
         '</div>' +
       '</div>';
@@ -6413,6 +6461,223 @@ function consFood(t, idx, byId, prev, viaNi) {
     window.addEventListener('resize', () => { if (!drag || drag.dropping) return; if (window.innerWidth !== drag.vw) dragDrop(true); else drag.bounds = dragBounds(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && drag && !drag.dropping) dragDrop(true); });
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') { cancelPress(); if (drag && !drag.dropping) dragDrop(true); } });
+  }
+
+  /* ================= Mes séances : partager une séance type par un lien =================
+     La séance voyage dans l’adresse, après « #seance= » (cette partie n’est jamais envoyée au site) :
+     JSON en base64url { v: 1, n: nom, b: pseudo, x: [[exId, nom, kind, eq, séries, min, max, groupe si exercice perso], …] }.
+     Jamais de charges ni d’autre donnée. À l’ouverture, elle s’ajoute comme nouvelle séance type, et les exercices perso
+     inconnus sont créés. Sur iPhone, l’appli installée ne reçoit pas les liens : « Importer une séance » (coller le lien).
+     Le format v1 doit rester lisible par les versions suivantes. */
+  const PUBLIC_APP_URL = 'https://julio51100.github.io/carnet/';
+  const SHARE_MAX = 30;
+  const hasKey = (o, k) => typeof k === 'string' && Object.prototype.hasOwnProperty.call(o, k);
+  const tgtText = (t, kind) => t.sets + ' × ' + t.min + (t.max !== t.min ? '–' + t.max : '') + (kind === 't' ? ' s' : kind === 'c' ? ' min' : '');
+  function b64urlEncode(str) {
+    const bytes = new TextEncoder().encode(str);
+    let bin = '';
+    for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function b64urlDecode(s) {
+    s = s.replace(/-/g, '+').replace(/_/g, '/');
+    while (s.length % 4) s += '=';
+    const bin = atob(s), bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  }
+  function shareURL(p) {
+    const x = p.items.slice(0, SHARE_MAX).map(it => {
+      const def = exById(it.exId);
+      const a = [it.exId, it.name, it.kind, it.eq, it.target.sets, it.target.min, it.target.max];
+      if (def && def.custom) a.push(def.group);
+      return a;
+    });
+    const d = { v: 1, n: p.name, x };
+    const by = (state.me.name || '').trim().slice(0, 30);
+    if (by) d.b = by;
+    /* Depuis Claude (ou un fichier ouvert sur l’appareil), le lien mène à l’appli publique */
+    const base = inClaude() || !/^https?:$/.test(location.protocol) ? PUBLIC_APP_URL : appURL();
+    return base + '#seance=' + b64urlEncode(JSON.stringify(d));
+  }
+  /* Lit un lien (ou le code seul) : ce qui n’est pas propre est écarté, rien n’est deviné */
+  function parseShare(text) {
+    const s = String(text || '').trim();
+    const m = /[#&?]seance=([A-Za-z0-9_-]+)/.exec(s) || /^seance=([A-Za-z0-9_-]+)$/.exec(s) || /^([A-Za-z0-9_-]{16,})$/.exec(s);
+    if (!m || m[1].length > 12000) return null;
+    let d;
+    try { d = JSON.parse(b64urlDecode(m[1])); } catch (e) { return null; }
+    if (!d || typeof d !== 'object' || d.v !== 1 || !Array.isArray(d.x)) return null;
+    const items = [];
+    for (const a of d.x.slice(0, SHARE_MAX)) {
+      if (!Array.isArray(a) || typeof a[0] !== 'string' || !/^[\w-]{1,60}$/.test(a[0]) || a[0] in Object.prototype) continue;
+      const known = exById(a[0]);
+      const kind = known ? known.kind : KINDS.includes(a[2]) ? a[2] : 'w';
+      const name = known ? known.name : (typeof a[1] === 'string' ? a[1] : '').trim().slice(0, 80);
+      if (!name) continue;
+      items.push({
+        exId: a[0], name, kind,
+        eq: known ? known.eq : hasKey(EQUIP, a[3]) ? a[3] : 'autre',
+        target: normTarget({ sets: a[4], min: a[5], max: a[6] }, kind),
+        group: !known && hasKey(GROUP_LABEL, a[7]) ? a[7] : null
+      });
+    }
+    if (!items.length) return null;
+    const name = typeof d.n === 'string' ? d.n.trim().slice(0, 40) : '';
+    const by = typeof d.b === 'string' ? d.b.trim().slice(0, 30) : '';
+    return { name: name || 'Séance partagée', by, items, code: m[1] };
+  }
+  function shareItemsHTML(items) {
+    return '<ul class="share-list">' + items.map(it => {
+      const def = exById(it.exId);
+      return '<li>' + thumbHTML(def) + '<span class="sl-main"><span class="sl-name">' + esc(it.name) + '</span><span class="sl-meta">' + esc(tgtText(it.target, it.kind)) +
+        (def ? '' : ' · ' + esc(EQUIP[it.eq] || 'Autre')) + '</span></span></li>';
+    }).join('') + '</ul>';
+  }
+  async function copyText(text, inputSel) {
+    try { await navigator.clipboard.writeText(text); return true; } catch (e) { /* presse-papiers refusé : on passe par la sélection */ }
+    const inp = inputSel && $(inputSel);
+    if (inp) { inp.focus(); inp.select(); try { if (document.execCommand('copy')) return true; } catch (e) { /* copie non prise en charge */ } }
+    return false;
+  }
+
+  /* ----- Envoyer ----- */
+  const shareOut = { pid: null, url: '' };
+  function openShare(pid) {
+    if (state.tDraft && state.tDraft.pid === pid) flushTemplate();
+    const p = state.programs.find(x => x.id === pid);
+    if (!p || !p.items.length) return;
+    shareOut.pid = pid;
+    shareOut.url = shareURL(p);
+    $('#shareTitle').textContent = 'Partager « ' + p.name + ' »';
+    $('#shareBody').innerHTML =
+      '<p class="share-note">Ton pote ouvre le lien et la séance s’ajoute à ses séances. Le lien ne contient que les exercices, avec leurs séries et répétitions' +
+        (state.me.name ? ', et ton pseudo' : '') + ' : tes charges et le reste de tes données restent sur ton téléphone.</p>' +
+      shareItemsHTML(p.items.slice(0, SHARE_MAX)) +
+      '<label class="field" for="shareLink">Lien de la séance<input type="text" id="shareLink" class="share-link" readonly value="' + esc(shareOut.url) + '"></label>';
+    $('#shareFoot').innerHTML = '<div class="foot-btns"><button type="button" class="btn' + (navigator.share ? '' : ' primary') + '" data-action="share-copy">Copier le lien</button>' +
+      (navigator.share ? '<button type="button" class="btn primary" data-action="share-send">' + ICON.share + 'Envoyer</button>' : '') + '</div>';
+    openDlg('#shareDlg');
+  }
+  async function shareCopy() {
+    const ok = await copyText(shareOut.url, '#shareLink');
+    toast(ok ? 'Lien copié : colle-le dans un message à ton pote' : 'Sélectionne le lien et copie-le');
+  }
+  async function shareSend() {
+    const p = state.programs.find(x => x.id === shareOut.pid);
+    if (!p) return;
+    const n = p.items.length;
+    try {
+      await navigator.share({ title: 'Séance ' + p.name, text: 'Ma séance « ' + p.name + ' » sur Nutrisport (' + n + (n > 1 ? ' exercices' : ' exercice') + ') : ouvre le lien pour l’ajouter à tes séances.', url: shareOut.url });
+      closeDlg('#shareDlg');
+    } catch (e) {
+      if (e && e.name === 'AbortError') return;
+      shareCopy();
+    }
+  }
+
+  /* ----- Recevoir : par le lien ouvert, ou en collant le lien ----- */
+  const recv = { data: null, pending: null, from: 'link', text: '', error: '' };
+  function clearShareHash() {
+    if (!/^#seance=/.test(location.hash || '')) return;
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* adresse inchangée */ }
+  }
+  function checkSharedHash() {
+    if (!/^#seance=/.test(location.hash || '')) return;
+    const data = parseShare(location.hash);
+    clearShareHash();
+    if (!data) { toast('Ce lien de séance est incomplet : demande à ton pote de te le renvoyer'); return; }
+    recv.pending = data;
+    maybeOpenShared();
+  }
+  /* La fenêtre attend que tes séances soient chargées (nom déjà pris, séance déjà là) */
+  function maybeOpenShared() {
+    if (!recv.pending || !state.store || !state.programsLoaded) return;
+    const data = recv.pending;
+    recv.pending = null;
+    if (!state.wOpen && !state.tDraft && state.tab !== 'seances') setTab('seances');
+    openRecv(data, 'link');
+  }
+  function freeProgramName(name, by) {
+    const taken = n => state.programs.some(p => norm(p.name) === norm(n));
+    if (!taken(name)) return name;
+    const withBy = by ? (name + ' (' + by + ')').slice(0, 40) : '';
+    if (withBy && !taken(withBy)) return withBy;
+    for (let i = 2; i < 100; i++) { const c = name.slice(0, 36) + ' ' + i; if (!taken(c)) return c; }
+    return name;
+  }
+  function openRecv(data, from) {
+    recv.data = data || null;
+    recv.from = from === 'paste' ? 'paste' : 'link';
+    recv.text = '';
+    recv.error = '';
+    $('#recvTitle').textContent = recv.from === 'paste' ? 'Importer une séance' : 'Séance partagée';
+    $('#recvBody').innerHTML = (recv.from === 'paste'
+      ? '<label class="field" for="recvPaste">Colle le lien que ton pote t’a envoyé<input type="text" id="recvPaste" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://…#seance=…"></label>'
+      : '') + '<div class="recv-preview" id="recvPreview">' + recvPreviewHTML() + '</div>';
+    renderRecvFoot();
+    openDlg('#recvDlg');
+    if (recv.from === 'paste' && !coarse) requestAnimationFrame(() => { const i = $('#recvPaste'); if (i) i.focus(); });
+  }
+  function recvPreviewHTML() {
+    const d = recv.data;
+    if (!d) return recv.error ? '<p class="share-err" role="alert">' + esc(recv.error) + '</p>' : '';
+    const n = d.items.length;
+    const same = state.programs.find(p => p.items.length === n && p.items.every((it, i) => it.exId === d.items[i].exId));
+    let h = '<p class="share-lead">' + (d.by ? '<strong>' + esc(d.by) + '</strong> te partage sa séance' : 'On te partage la séance') + ' « ' + esc(d.name) + ' » : ' + n + (n > 1 ? ' exercices' : ' exercice') + '.</p>' +
+      shareItemsHTML(d.items) +
+      '<p class="share-note">Tu reçois les exercices, les séries et les répétitions : tu noteras tes propres charges à ta première séance.</p>';
+    if (same) h += '<p class="share-warn">Tu as déjà ces exercices dans « ' + esc(same.name) + ' ». Tu peux quand même l’ajouter.</p>';
+    h += '<label class="field" for="recvName">Nom dans tes séances<input type="text" id="recvName" maxlength="40" autocomplete="off" value="' + esc(freeProgramName(d.name, d.by)) + '"></label>';
+    if (recv.from === 'link' && PLATFORM.ios && !isStandalone() && !inClaude()) {
+      h += '<div class="share-ios"><p>Nutrisport est installé sur ton écran d’accueil ? Sur iPhone, ce lien s’ouvre dans Safari, à part de l’appli. Pour y mettre la séance : copie le lien, ouvre Nutrisport, puis Séances › Importer une séance.</p>' +
+        '<button type="button" class="btn small" data-action="recv-copy">Copier le lien</button></div>';
+    }
+    return h;
+  }
+  function renderRecvFoot() {
+    $('#recvFoot').innerHTML = '<button type="button" class="btn ghost" data-action="recv-close">' + (recv.from === 'paste' ? 'Annuler' : 'Non merci') + '</button>' +
+      '<div class="foot-btns"><button type="button" class="btn primary" data-action="recv-add"' + (recv.data ? (recv.from === 'link' ? ' autofocus' : '') : ' disabled') + '>Ajouter à mes séances</button></div>';
+  }
+  function onRecvPaste(inp) {
+    recv.text = inp.value;
+    const t = inp.value.trim();
+    recv.data = t ? parseShare(t) : null;
+    recv.error = t && !recv.data ? 'Ce lien ne contient pas de séance complète. Vérifie qu’il est entier, ou demande à ton pote de te le renvoyer.' : '';
+    $('#recvPreview').innerHTML = recvPreviewHTML();
+    renderRecvFoot();
+  }
+  async function recvCopy() {
+    const d = recv.data;
+    if (!d) return;
+    const ok = await copyText(appURL() + '#seance=' + d.code);
+    toast(ok ? 'Lien copié : ouvre Nutrisport, puis Séances › Importer une séance' : 'Le lien n’a pas pu être copié');
+  }
+  /* Ajout : une nouvelle séance type (rien d’existant n’est modifié) et les exercices perso qui manquent */
+  function addShared() {
+    const d = recv.data;
+    if (!d || !state.store) return;
+    const inp = $('#recvName');
+    const name = ((inp && inp.value) || '').trim().slice(0, 40) || d.name;
+    const now = Date.now();
+    for (const it of d.items) {
+      if (!it.group || exById(it.exId)) continue;
+      const def = normCustomEx(it.exId, { name: it.name, group: it.group, eq: it.eq, kind: it.kind });
+      state.customEx.push(def);
+      save('exercises/' + def.id, { name: def.name, group: def.group, eq: def.eq, kind: def.kind, createdAt: now });
+    }
+    const p = {
+      id: uid('pg'), name, order: state.programs.reduce((m, x) => Math.max(m, x.order || 0), -1) + 1, createdAt: now, updatedAt: now,
+      items: d.items.map(it => ({ exId: it.exId, name: it.name, kind: it.kind, eq: it.eq, target: Object.assign({}, it.target), sets: [] }))
+    };
+    state.programs.push(p);
+    save('programs/' + p.id, programBody(p));
+    recv.data = null;
+    closeDlg('#recvDlg');
+    if (!state.wOpen && !state.tDraft) { setTab('seances'); window.scrollTo(0, 0); }
+    renderSeances();
+    renderWelcome();
+    toast('« ' + name + ' » ajoutée à Mes séances');
   }
 
   /* ================= Choix d’un exercice ================= */
@@ -7764,6 +8029,14 @@ function consFood(t, idx, byId, prev, viaNi) {
         case 'w-start': startWorkout(b.dataset.pid || null); break;
         case 't-new': openTemplate(null); break;
         case 't-edit': openTemplate(b.dataset.id); break;
+        case 't-share': openShare(b.dataset.id || (state.tDraft && state.tDraft.pid)); break;
+        case 'share-close': closeDlg('#shareDlg'); break;
+        case 'share-copy': shareCopy(); break;
+        case 'share-send': shareSend(); break;
+        case 'recv-open': openRecv(null, 'paste'); break;
+        case 'recv-close': closeDlg('#recvDlg'); break;
+        case 'recv-add': addShared(); break;
+        case 'recv-copy': recvCopy(); break;
         case 't-delete': { const d = state.tDraft; if (d && d.pid) deleteProgram(d.pid); else { clearTimeout(tplTimer); state.tDraft = null; renderSeances(); } break; }
         case 'plan-open': { if (state.tDraft) flushTemplate(); const pid = b.dataset.pid || (state.tDraft && state.tDraft.pid); if (pid) openPlan('tpl', { pid }); break; }
         case 'plan-day': openPlan('day', { date: b.dataset.date }); break;
@@ -7905,6 +8178,7 @@ function consFood(t, idx, byId, prev, viaNi) {
       else if (t.closest('#prodForm')) updatePfCheck();
       else if (t.id === 'importText') renderImportPreview();
       else if (t.id === 'exSearch') { picker.q = t.value; renderPicker(); }
+      else if (t.id === 'recvPaste') onRecvPaste(t);
       else if (t.id === 'me-name') { meDraft.name = t.value; renderMeDraft(); }
       else if (t.id === 'weName') { const w = curWorkout(); if (w) { w.name = t.value.slice(0, 40); touchWorkout(w); } }
       else if (t.id === 'weNotes') { const w = curWorkout(); if (w) { w.notes = t.value.slice(0, 2000); markEdited(w); touchWorkout(w); } }
@@ -7976,6 +8250,8 @@ function consFood(t, idx, byId, prev, viaNi) {
       else if (t.id === 'genText' && !e.shiftKey) { e.preventDefault(); clearTimeout(genTimer); runGenerator(); t.blur(); }
       else if (t.id === 'addSearch') { e.preventDefault(); const first = $('#pickList .pick'); if (first) first.click(); }
       else if (t.id === 'exSearch') { e.preventDefault(); const first = $('#exList .pick'); if (first) first.click(); }
+      else if (t.id === 'recvName') { e.preventDefault(); addShared(); }
+      else if (t.id === 'recvPaste') { e.preventDefault(); const n = $('#recvName'); if (n) n.focus(); else t.blur(); }
       else if (t.matches && t.matches('[data-sk]')) {
         e.preventDefault();
         if (t.dataset.sf === 'kg') { const r = document.querySelector('[data-sk="' + t.dataset.sk + '"][data-si="' + t.dataset.si + '"][data-sf="reps"]'); if (r) { r.focus(); r.select(); } }
@@ -8002,6 +8278,9 @@ function consFood(t, idx, byId, prev, viaNi) {
     $('#addDlg').addEventListener('close', () => { addState.last = null; });
     $('#prodDlg').addEventListener('close', () => { editing = null; editReturn = false; });
     $('#foodDlg').addEventListener('close', () => { foodOpen = null; });
+    $('#recvDlg').addEventListener('close', () => { recv.data = null; recv.text = ''; recv.error = ''; });
+    document.addEventListener('focusin', e => { if (e.target && e.target.id === 'shareLink') e.target.select(); });
+    window.addEventListener('hashchange', checkSharedHash);
     bindExoSort();
 
     if ('ResizeObserver' in window) {
@@ -8084,7 +8363,9 @@ function consFood(t, idx, byId, prev, viaNi) {
     renderCalcForm();
     fillGoalsForm();
     let tab = (location.hash || '').slice(1);
-    if (!TABS.includes(tab)) { try { tab = localStorage.getItem('cpm.tab') || 'jour'; } catch (e) { tab = 'jour'; } }
+    /* Lien d’une séance partagée : on ouvre sur Séances */
+    if (/^seance=/.test(tab)) tab = 'seances';
+    else if (!TABS.includes(tab)) { try { tab = localStorage.getItem('cpm.tab') || 'jour'; } catch (e) { tab = 'jour'; } }
     setTab(tab);
     renderDay();
     renderProducts();
@@ -8144,6 +8425,7 @@ function consFood(t, idx, byId, prev, viaNi) {
     watchCurrentDay();
     renderDay();
     if (state.dayDirty) flushDay();
+    checkSharedHash();
     if (!inClaude()) {
       startSite();
       /* Raccourci « Ajouter un aliment » de l’icône (appui long sur Android) */
