@@ -32,7 +32,7 @@
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin-ext.woff2) format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 </style>
-<script>window.CARNET_VERSION = "2026-10-07.d1610f";</script>
+<script>window.CARNET_VERSION = "2026-10-16.208cf8";</script>
 <style>
 /* Carnet de bord calme : fond graphite profond, cartes à filet fin, actions en encre claire (version claire en option).
    Les couleurs des macros (protéines, glucides, lipides) sont les seules teintes vives ; les chiffres clés
@@ -546,10 +546,31 @@ input.we-name:focus-visible { background: var(--surface); }
 .tgt label { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
 .tgt input { width: 100%; text-align: center; font-variant-numeric: tabular-nums; }
 .sets { display: flex; flex-direction: column; gap: 6px; }
-.set-row { display: grid; grid-template-columns: 2em minmax(0, 1fr) minmax(0, 1fr) 46px; align-items: center; gap: 8px; padding: 3px; border-radius: 14px; transition: background-color .2s ease; }
+.set-row { display: grid; grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1fr) 46px; align-items: center; gap: 8px; padding: 3px; border-radius: 14px; transition: background-color .2s ease; }
 .set-row.head { font-size: 12px; font-weight: 600; color: var(--muted); padding-block: 0; }
 .set-row.head span { text-align: center; }
-.set-n { font-weight: 600; color: var(--muted); text-align: center; font-variant-numeric: tabular-nums; }
+/* Repère de la série : numéro, E (échauffement, en pointillé) ou S (superset, plein), à toucher pour changer */
+.set-n { display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border: 1px solid var(--line); border-radius: 10px; background: transparent; font-weight: 600; font-size: 15px; line-height: 1; color: var(--fg-2); font-variant-numeric: tabular-nums; transition: background-color .15s ease, border-color .15s ease, color .15s ease; }
+button.set-n:hover { border-color: var(--line-2); background: var(--surface-2); }
+.set-n[aria-expanded="true"] { border-color: var(--fg-2); box-shadow: 0 0 0 1px var(--fg-2); }
+.set-n.is-e { border: 1.5px dashed var(--muted); background: var(--surface-2); color: var(--fg); }
+.set-n.is-s { border-color: var(--fg); background: var(--fg); color: var(--on-fg); }
+button.set-n.is-s:hover { background: var(--fg-2); border-color: var(--fg-2); }
+.set-row.is-e input { font-weight: 500; color: var(--fg-2); }
+.set-type { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 8px; margin-block: -1px 3px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line); }
+.set-opt { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; padding: 8px 3px 7px; border: 1px solid var(--line-2); border-radius: 12px; background: var(--surface); color: var(--fg); font-weight: 600; font-size: 12.5px; line-height: 1.2; -webkit-hyphens: auto; hyphens: auto; transition: border-color .15s ease, box-shadow .15s ease; }
+.set-opt:hover { border-color: var(--muted); }
+.set-opt .set-n { width: 30px; height: 30px; border-radius: 9px; font-size: 14px; }
+.set-opt-txt { max-width: 100%; text-align: center; overflow-wrap: break-word; }
+.set-opt[aria-pressed="true"] { border-color: var(--fg); box-shadow: inset 0 0 0 1px var(--fg); }
+.set-type-help { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 2px; margin: 2px 3px 0; font-size: 12.5px; line-height: 1.4; color: var(--muted); }
+/* Petit écran : les trois choix l’un sous l’autre, pour que « Échauffement » tienne sur une ligne */
+@media (max-width: 374px) {
+  .set-type { grid-template-columns: minmax(0, 1fr); }
+  .set-opt { flex-direction: row; justify-content: flex-start; gap: 10px; padding: 5px 10px 5px 5px; font-size: 13.5px; }
+  .set-opt-txt { text-align: left; }
+}
+.set-type-help strong { color: var(--fg-2); font-weight: 600; }
 .set-row input { width: 100%; height: 46px; text-align: center; font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; padding: 6px; border-radius: 12px; background: var(--surface-2); border-color: transparent; }
 .set-row input:hover { border-color: var(--line-2); }
 .set-row input:focus-visible { background: var(--surface); }
@@ -611,8 +632,16 @@ body.exo-sorting .we-head, body.exo-sorting .add-exo, body.exo-sorting .we-notes
 .share-err { margin: 0; font-size: 13.5px; color: var(--over); }
 .recv-preview { display: flex; flex-direction: column; gap: 14px; }
 .recv-preview:empty { display: none; }
-.naming { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; width: 100%; }
-.naming input { flex: 1 1 180px; }
+/* Nom d’une nouvelle séance : un vrai champ avec son libellé, puis des idées de noms */
+.we-title { margin: 0; font-family: var(--font-display); font-stretch: var(--narrow); font-weight: 600; font-size: 34px; line-height: 1.1; letter-spacing: -.012em; }
+.name-pick { display: flex; flex-direction: column; gap: 10px; }
+.name-pick .name-field > span { font-size: 13.5px; color: var(--fg-2); }
+.name-pick .name-field input { width: 100%; min-height: 52px; padding: 10px 14px; font-size: 20px; font-weight: 600; border-radius: 13px; }
+.name-pick .name-field input::placeholder { font-weight: 400; }
+.name-ideas .chip { padding: 9px 13px; }
+.naming { display: flex; flex-direction: column; gap: 12px; width: 100%; padding: 14px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-2); }
+.naming .name-field input { background: var(--surface-2); }
+.naming-btns { display: flex; flex-wrap: wrap; gap: 8px; }
 
 /* ---------- Mes séances, planning, historique ---------- */
 .card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
@@ -669,7 +698,8 @@ body.exo-sorting .we-head, body.exo-sorting .add-exo, body.exo-sorting .we-notes
 .exo-now { margin: 0; font-size: 13px; color: var(--fg-2); font-variant-numeric: tabular-nums; }
 .exo-now strong { font-weight: 600; color: var(--fg); }
 .exo-now strong.up { color: var(--good); }
-.set-row.tpl { grid-template-columns: 2em minmax(0, 1fr) minmax(0, 1fr); }
+/* Séance type : pas de case à valider (classe distincte de .tpl, la carte d’un repas type) */
+.set-row.is-plan { grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1fr); }
 .plan-other { max-width: 260px; }
 
 /* ---------- Programmes tout prêts ---------- */
@@ -3229,6 +3259,9 @@ function consFood(t, idx, byId, prev, viaNi) {
     if (max < min) max = min;
     return { sets, min, max };
   }
+  /* Type d’une série (champ t, absent pour une série normale) : 'e' échauffement, 's' superset.
+     Les versions précédentes ignorent ce champ ; une série sans t reste une série normale. */
+  const setType = s => (s && (s.t === 'e' || s.t === 's') ? s.t : '');
   /* Une série : ce qui a été fait (kg, reps, done) et, pour une séance prévue, ce qui est prévu (pk, pr) */
   function normSet(s) {
     s = s || {};
@@ -3236,20 +3269,25 @@ function consFood(t, idx, byId, prev, viaNi) {
     const o = { kg: kg != null && kg >= 0 && kg <= 1000 ? kg : null, reps: reps != null && reps > 0 && reps <= 999 ? Math.round(reps) : null, done: !!s.done };
     if (pk != null && pk >= 0 && pk <= 1000) o.pk = pk;
     if (pr != null && pr > 0 && pr <= 999) o.pr = Math.round(pr);
+    if (setType(s)) o.t = s.t;
     return o;
   }
   function setBody(s) {
     const o = { kg: s.kg, reps: s.reps, done: s.done };
     if (s.pk != null) o.pk = s.pk;
     if (s.pr != null) o.pr = s.pr;
+    if (setType(s)) o.t = s.t;
     return o;
   }
-  /* Charge prévue dans une séance type */
+  /* Charge prévue dans une séance type (et le type de la série) */
   function normPlanSet(s) {
     s = s || {};
     const kg = parseNum(s.kg), reps = parseNum(s.reps);
-    return { kg: kg != null && kg >= 0 && kg <= 1000 ? kg : null, reps: reps != null && reps > 0 && reps <= 999 ? Math.round(reps) : null };
+    const o = { kg: kg != null && kg >= 0 && kg <= 1000 ? kg : null, reps: reps != null && reps > 0 && reps <= 999 ? Math.round(reps) : null };
+    if (setType(s)) o.t = s.t;
+    return o;
   }
+  const planSetBody = s => (setType(s) ? { kg: s.kg, reps: s.reps, t: s.t } : { kg: s.kg, reps: s.reps });
   const KEY_RE = /^[A-Za-z0-9_-]{1,40}$/;
   function normWEx(e) {
     if (!e || typeof e !== 'object' || !e.exId) return null;
@@ -3292,7 +3330,7 @@ function consFood(t, idx, byId, prev, viaNi) {
   function programBody(p) {
     return {
       name: p.name, order: p.order, createdAt: p.createdAt || Date.now(), updatedAt: p.updatedAt || 0,
-      items: p.items.map(it => ({ exId: it.exId, name: it.name, kind: it.kind, eq: it.eq, target: Object.assign({}, it.target), sets: (it.sets || []).map(s => ({ kg: s.kg, reps: s.reps })) }))
+      items: p.items.map(it => ({ exId: it.exId, name: it.name, kind: it.kind, eq: it.eq, target: Object.assign({}, it.target), sets: (it.sets || []).map(planSetBody) }))
     };
   }
   function normCustomEx(id, d) {
@@ -3339,7 +3377,7 @@ function consFood(t, idx, byId, prev, viaNi) {
     programs: [], programsLoaded: false,
     customEx: [],
     profile: normProfile(null),
-    wOpen: null, wMenu: null, wNaming: false, progEx: null,
+    wOpen: null, wMenu: null, setMenu: null, wNaming: false, progEx: null,
     tDraft: null, planWeek: null, histFilter: 'all', histN: 10,
     genSettings: null,
     foods: null, prodView: lsGet('cpm.prodView') === 'catalog' ? 'catalog' : 'mine', catFilter: 'all',
@@ -5196,13 +5234,31 @@ function consFood(t, idx, byId, prev, viaNi) {
   function exById(id) { return (typeof id === 'string' && Object.prototype.hasOwnProperty.call(EX_MAP, id) ? EX_MAP[id] : null) || state.customEx.find(e => e.id === id) || null; }
   const allExercises = () => EX_LIB.concat(state.customEx);
   const validSets = ex => ex.sets.filter(s => s.reps != null && s.reps > 0);
+  /* Séries d’échauffement (E) et de travail : les échauffements ne comptent ni dans les records, ni dans la progression,
+     ni dans le total des séries et des kilos. Une série en superset (S) est une série de travail. */
+  const isWarm = s => setType(s) === 'e';
+  const workSets = sets => sets.filter(s => !isWarm(s));
+  const shownSets = sets => { const ws = workSets(sets); return ws.length ? ws : sets; };
+  const lastWorkSet = ex => { for (let j = ex.sets.length - 1; j >= 0; j--) if (!isWarm(ex.sets[j])) return ex.sets[j]; return null; };
+  /* Pour chaque place d’un plan (son type), la série de la source du même genre (échauffement ou travail), à son rang.
+     Sans échauffement, c’est simplement la série de même rang, sinon la dernière. */
+  function alignByKind(types, src) {
+    const pool = { e: src.filter(isWarm), w: workSets(src) }, rank = { e: 0, w: 0 };
+    return types.map(t => { const c = t === 'e' ? 'e' : 'w', p = pool[c]; return p[rank[c]++] || p[p.length - 1] || null; });
+  }
   function sortWorkouts(list) { return list.sort((a, b) => (a.date === b.date ? b.createdAt - a.createdAt : (a.date < b.date ? 1 : -1))); }
   /* Une séance faite : au moins une série notée, et datée d’aujourd’hui ou avant (une séance à venir est seulement prévue) */
-  const isDone = w => !w._new && w.date <= todayISO() && workoutStats(w).sets > 0;
+  const isDone = w => !w._new && w.date <= todayISO() && workoutStats(w).all > 0;
+  /* sets et vol : séries de travail ; all : toutes les séries notées, échauffements compris */
   function workoutStats(w) {
-    let sets = 0, vol = 0;
-    for (const ex of w.exercises) for (const s of validSets(ex)) { sets++; if (ex.kind === 'w' && s.kg > 0) vol += s.kg * s.reps; }
-    return { sets, vol };
+    let sets = 0, vol = 0, all = 0;
+    for (const ex of w.exercises) for (const s of validSets(ex)) {
+      all++;
+      if (isWarm(s)) continue;
+      sets++;
+      if (ex.kind === 'w' && s.kg > 0) vol += s.kg * s.reps;
+    }
+    return { sets, vol, all };
   }
   const hasData = w => !!w.notes || w.exercises.some(ex => ex.sets.some(s => s.reps != null || s.kg != null));
   /* La séance ouverte : séance type en cours de modification, sinon séance d’un jour */
@@ -5258,7 +5314,7 @@ function consFood(t, idx, byId, prev, viaNi) {
     let best = 0;
     for (const e of exHistory().get(exId) || []) {
       if (e.wid === w.id || e.kind !== 'w' || !(e.date < w.date || (e.date === w.date && e.created < w.createdAt))) continue;
-      for (const st of e.sets) if (st.kg > 0) best = Math.max(best, e1rm(st.kg, st.reps));
+      for (const st of e.sets) if (st.kg > 0 && !isWarm(st)) best = Math.max(best, e1rm(st.kg, st.reps));
     }
     return best;
   }
@@ -5267,13 +5323,15 @@ function consFood(t, idx, byId, prev, viaNi) {
     const prev = bestBefore(ex.exId, w);
     if (!(prev > 0)) return null;
     let top = null;
-    for (const st of validSets(ex)) if (st.kg > 0) { const v = e1rm(st.kg, st.reps); if (v > prev + 0.05 && (!top || v > top.v)) top = { v, s: st }; }
+    for (const st of validSets(ex)) if (st.kg > 0 && !isWarm(st)) { const v = e1rm(st.kg, st.reps); if (v > prev + 0.05 && (!top || v > top.v)) top = { v, s: st }; }
     return top && top.s;
   }
   function progressHint(ex, last) {
     if (!last) return null;
-    const t = ex.target;
-    if (last.sets.length < t.sets || !last.sets.every(s => s.reps >= t.max)) return null;
+    const t = ex.target, ws = workSets(last.sets);
+    /* Toutes les séries de travail prévues, au maximum de reps (les échauffements ne comptent pas) */
+    const need = Math.max(1, t.sets - ex.sets.filter(isWarm).length);
+    if (ws.length < need || !ws.every(s => s.reps >= t.max)) return null;
     if (ex.kind === 'w') return ex.eq === 'halteres' ? 'prends les haltères suivants' : (ex.eq === 'machine' || ex.eq === 'poulie') ? 'monte d’un cran' : 'ajoute 2,5 kg';
     if (ex.kind === 'as') return 'baisse l’assistance d’un cran';
     if (ex.kind === 't') return 'ajoute 10 secondes';
@@ -5284,25 +5342,33 @@ function consFood(t, idx, byId, prev, viaNi) {
     /* Séance prévue : les charges prévues pour cette série */
     const own = ex.sets[i];
     if (own && (own.pk != null || own.pr != null)) return { kg: own.pk != null ? own.pk : null, reps: own.pr != null ? own.pr : null };
-    const src = last ? (last.sets[i] || last.sets[last.sets.length - 1]) : null;
-    const prev = i > 0 ? ex.sets[i - 1] : null;
+    /* Sinon : la série de même rang la dernière fois et la série d’avant, parmi celles du même genre
+       (un échauffement reprend un échauffement, une série de travail une série de travail) */
+    const warm = isWarm(own), same = s => isWarm(s) === warm;
+    const rank = ex.sets.slice(0, i).filter(same).length;
+    const pool = last ? last.sets.filter(same) : [];
+    const src = pool[rank] || pool[pool.length - 1] || null;
+    let prev = null;
+    for (let j = i - 1; j >= 0 && !prev; j--) if (same(ex.sets[j])) prev = ex.sets[j];
     const kg = prev && prev.kg != null ? prev.kg : (src && src.kg != null ? src.kg : null);
     const reps = src ? src.reps : (prev && prev.reps != null ? prev.reps : null);
     return { kg, reps };
   }
   const e1rm = (kg, reps) => kg * (1 + reps / 30);
+  /* Valeur d’une séance pour la courbe de progression (séries de travail seulement) */
   function entryMetric(e) {
     let best = null;
+    const sets = workSets(e.sets);
     if (e.kind === 'w') {
-      for (const s of e.sets) if (s.kg > 0) { const v = e1rm(s.kg, s.reps); if (!best || v > best.v) best = { v, s }; }
+      for (const s of sets) if (s.kg > 0) { const v = e1rm(s.kg, s.reps); if (!best || v > best.v) best = { v, s }; }
       return best;
     }
     if (e.kind === 'as') {
-      const pool = e.sets.filter(s => s.reps >= 5);
-      for (const s of (pool.length ? pool : e.sets)) { const v = s.kg != null ? s.kg : 0; if (!best || v < best.v) best = { v, s }; }
+      const pool = sets.filter(s => s.reps >= 5);
+      for (const s of (pool.length ? pool : sets)) { const v = s.kg != null ? s.kg : 0; if (!best || v < best.v) best = { v, s }; }
       return best;
     }
-    for (const s of e.sets) if (!best || s.reps > best.v) best = { v: s.reps, s };
+    for (const s of sets) if (!best || s.reps > best.v) best = { v: s.reps, s };
     return best;
   }
   function lastDone(pid) {
@@ -5333,17 +5399,17 @@ function consFood(t, idx, byId, prev, viaNi) {
   const programVersion = p => p.updatedAt || p.createdAt || 0;
   const followsProgram = (w, p) => !!p && w.programId === p.id && !w.edited && !hasActual(w);
   const markEdited = w => { if (w && !w.isTpl) w.edited = true; };
-  /* Charges prévues pour n séries : celles retenues dans la séance type, sinon la dernière fois sur cet exercice */
+  /* Charges prévues pour n séries : celles retenues dans la séance type, sinon la dernière fois sur cet exercice.
+     Un échauffement prévu reprend un échauffement, une série de travail une série de travail. */
+  const planTypes = (it, n) => Array.from({ length: n }, (_, i) => setType((it.sets || [])[i]));
   function planFor(it, n) {
     let src = (it.sets || []).filter(s => s.kg != null || s.reps != null);
     if (!src.length) { const lp = lastPerfAny(it.exId); src = lp ? lp.sets : []; }
-    return Array.from({ length: n }, (_, i) => {
-      const s = src[i] || src[src.length - 1];
-      return s ? { kg: s.kg != null ? s.kg : null, reps: s.reps != null ? s.reps : null } : { kg: null, reps: null };
-    });
+    return alignByKind(planTypes(it, n), src).map(s => (s ? { kg: s.kg != null ? s.kg : null, reps: s.reps != null ? s.reps : null } : { kg: null, reps: null }));
   }
   function exFromItem(it) {
     const ex = makeWEx(it, it.target);
+    planTypes(it, ex.sets.length).forEach((t, i) => { if (t) ex.sets[i].t = t; });
     const plan = planFor(it, ex.sets.length);
     ex.sets.forEach((s, i) => { if (plan[i].kg != null) s.pk = plan[i].kg; if (plan[i].reps != null) s.pr = plan[i].reps; });
     return ex;
@@ -5379,7 +5445,15 @@ function consFood(t, idx, byId, prev, viaNi) {
       const ex = w.exercises.find(e => e.exId === it.exId);
       const vs = ex ? validSets(ex) : [];
       if (!vs.length) return;
-      const next = Array.from({ length: Math.max(1, it.target.sets) }, (_, i) => { const s = vs[i] || vs[vs.length - 1]; return { kg: s.kg != null ? s.kg : (s.pk != null ? s.pk : null), reps: s.reps }; });
+      /* Chaque série de la séance type garde son type ; elle reprend la série faite du même genre et du même rang
+         (sans série de ce genre faite, elle garde sa charge) */
+      const types = planTypes(it, Math.max(1, it.target.sets)), done = alignByKind(types, vs);
+      const next = types.map((t, i) => {
+        const s = done[i], old = (it.sets || [])[i];
+        const o = s ? { kg: s.kg != null ? s.kg : (s.pk != null ? s.pk : null), reps: s.reps } : { kg: old ? old.kg : null, reps: old ? old.reps : null };
+        if (t) o.t = t;
+        return o;
+      });
       if (JSON.stringify(next) !== JSON.stringify(it.sets || [])) { it.sets = next; changed = true; }
     });
     if (!changed) return null;
@@ -5396,8 +5470,10 @@ function consFood(t, idx, byId, prev, viaNi) {
   }
   /* Résumé des charges d’un exercice de séance type : « 4 × 10 · 60 kg » */
   function chargeText(it) {
-    const n = Math.max(1, it.target.sets);
-    const plan = planFor(it, n).filter(s => s.kg != null || s.reps != null);
+    /* Les séries de travail seulement : « 4 × 10 · 60 kg » même avec deux échauffements avant */
+    const all = Math.max(1, it.target.sets), types = planTypes(it, all);
+    const n = Math.max(1, types.filter(t => t !== 'e').length);
+    const plan = planFor(it, all).filter((s, i) => types[i] !== 'e' && (s.kg != null || s.reps != null));
     const range = it.target.min + (it.target.max !== it.target.min ? '–' + it.target.max : '');
     if (!plan.length) return n + ' × ' + range + (it.kind === 't' ? ' s' : it.kind === 'c' ? ' min' : '');
     const reps = plan[0].reps != null ? plan[0].reps : it.target.min;
@@ -5493,6 +5569,7 @@ function consFood(t, idx, byId, prev, viaNi) {
           const k = did ? s.kg : (s.pk != null ? s.pk : s.kg), r = did ? s.reps : s.pr;
           if (k != null) o.pk = k;
           if (r != null) o.pr = r;
+          if (setType(s)) o.t = s.t;
           return o;
         })
       }))
@@ -5518,6 +5595,7 @@ function consFood(t, idx, byId, prev, viaNi) {
     }
     state.wOpen = id;
     state.wMenu = null;
+    state.setMenu = null;
     state.wNaming = false;
     renderSeances();
     window.scrollTo(0, 0);
@@ -5531,16 +5609,20 @@ function consFood(t, idx, byId, prev, viaNi) {
       id: 'tpl', isTpl: true, pid: p ? p.id : null, name: p ? p.name : '', date: '9999-12-31', createdAt: Number.MAX_SAFE_INTEGER, notes: '', _dirty: false,
       exercises: p ? p.items.map(it => {
         const ex = makeWEx(it, it.target);
-        (it.sets || []).forEach((s, i) => { if (ex.sets[i]) { ex.sets[i].kg = s.kg; ex.sets[i].reps = s.reps; } });
+        (it.sets || []).forEach((s, i) => { if (ex.sets[i]) { ex.sets[i].kg = s.kg; ex.sets[i].reps = s.reps; if (setType(s)) ex.sets[i].t = s.t; } });
         return ex;
-      }) : []
+      }) : [],
+      /* Nouvelle séance : le nom se donne dans un vrai champ, avec des idées de noms (jusqu’à la fermeture de l’éditeur) */
+      fresh: !p
     };
     state.wOpen = null;
     state.wMenu = null;
+    state.setMenu = null;
     state.wNaming = false;
     renderSeances();
     window.scrollTo(0, 0);
-    if (!p && !coarse) { const i = $('#weName'); if (i) i.focus(); }
+    /* Nouvelle séance : le champ du nom est prêt à écrire (le clavier s’ouvre aussi sur téléphone) */
+    if (!p) { const i = $('#weName'); if (i) i.focus({ preventScroll: true }); }
   }
   function flushTemplate() {
     clearTimeout(tplTimer);
@@ -5560,7 +5642,7 @@ function consFood(t, idx, byId, prev, viaNi) {
     p.items = d.exercises.map(ex => ({
       exId: ex.exId, name: ex.name, kind: ex.kind, eq: ex.eq,
       target: normTarget({ sets: Math.max(1, ex.sets.length), min: ex.target.min, max: ex.target.max }, ex.kind),
-      sets: ex.sets.map(s => ({ kg: s.kg, reps: s.reps }))
+      sets: ex.sets.map(planSetBody)
     }));
     p.updatedAt = now;
     save('programs/' + p.id, programBody(p));
@@ -5571,6 +5653,7 @@ function consFood(t, idx, byId, prev, viaNi) {
     flushTemplate();
     state.tDraft = null;
     state.wMenu = null;
+    state.setMenu = null;
     renderSeances();
     renderWelcome();
     window.scrollTo(0, 0);
@@ -5584,7 +5667,7 @@ function consFood(t, idx, byId, prev, viaNi) {
       flushWorkout(w.id);
       if (w._new && !hasData(w)) { state.workouts = state.workouts.filter(x => x !== w); state.wVer++; }
       else {
-        const n = workoutStats(w).sets;
+        const st = workoutStats(w), n = st.sets || st.all;
         const recs = w.exercises.filter(ex => recordSet(ex, w)).length;
         const undo = rememberCharges(w);
         const p = undo ? state.programs.find(x => x.id === w.programId) : null;
@@ -5592,6 +5675,7 @@ function consFood(t, idx, byId, prev, viaNi) {
       }
     }
     state.wOpen = null;
+    state.setMenu = null;
     stopRest();
     renderSeances();
     renderSuivi();
@@ -5624,8 +5708,12 @@ function consFood(t, idx, byId, prev, viaNi) {
   function programItemsFrom(w) {
     return w.exercises.map(ex => {
       const vs = validSets(ex);
-      const sets = vs.length ? vs.map(s => ({ kg: s.kg, reps: s.reps }))
-        : ex.sets.filter(s => s.pk != null || s.pr != null).map(s => ({ kg: s.pk != null ? s.pk : null, reps: s.pr != null ? s.pr : null }));
+      const planned = ex.sets.filter(s => s.pk != null || s.pr != null).map(s => ({ kg: s.pk != null ? s.pk : null, reps: s.pr != null ? s.pr : null, t: s.t }));
+      const types = ex.sets.map(setType);
+      let sets;
+      if (!types.some(Boolean)) sets = (vs.length ? vs : planned).map(s => ({ kg: s.kg, reps: s.reps }));
+      /* Séries typées (échauffement, superset) : une série par place, avec son type et la charge du même genre */
+      else sets = alignByKind(types, vs.length ? vs : planned).map((s, i) => planSetBody({ kg: s && s.kg != null ? s.kg : null, reps: s && s.reps != null ? s.reps : null, t: types[i] }));
       return { exId: ex.exId, name: ex.name, kind: ex.kind, eq: ex.eq, target: { sets: Math.max(1, ex.sets.length), min: ex.target.min, max: ex.target.max }, sets };
     });
   }
@@ -5694,7 +5782,9 @@ function consFood(t, idx, byId, prev, viaNi) {
     ex.eq = def.eq;
     ex.kind = def.kind;
     if (!sameKind) ex.target = normTarget(Object.assign({}, DEFAULT_TARGET[def.kind], { sets: ex.target.sets }), def.kind);
-    ex.sets = ex.sets.map(() => ({ kg: null, reps: null, done: false }));
+    /* Les séries repartent à vide mais gardent leur type (échauffement, superset) */
+    ex.sets = ex.sets.map(s => (setType(s) ? { kg: null, reps: null, done: false, t: s.t } : { kg: null, reps: null, done: false }));
+    state.setMenu = null;
     state.wMenu = null;
     markEdited(w);
     touchWorkout(w, true);
@@ -5754,7 +5844,13 @@ function consFood(t, idx, byId, prev, viaNi) {
     touchWorkout(w);
     renderExo(w, ex);
     updateEditorStats();
-    if (ex.kind !== 'c') startRest(ex.kind === 'w' && ex.target.max <= 8 ? 120 : 90);
+    if (ex.kind !== 'c') {
+      /* Superset : on enchaîne avec l’exercice suivant s’il est aussi en superset ; le repos vient après le dernier.
+         Après un échauffement, repos court. */
+      const next = w.exercises[w.exercises.indexOf(ex) + 1];
+      if (setType(s) === 's' && next && next.sets.some(x => setType(x) === 's')) stopRest();
+      else startRest(isWarm(s) ? 60 : ex.kind === 'w' && ex.target.max <= 8 ? 120 : 90);
+    }
   }
 
   /* ================= Séances : rendu ================= */
@@ -5941,7 +6037,7 @@ function consFood(t, idx, byId, prev, viaNi) {
     let best = null;
     entries.forEach(e => { const m = entryMetric(e); if (!m) return; if (!best || (M.down ? m.v < best.m.v : m.v > best.m.v)) best = { e, m }; });
     let heavy = null;
-    if (kind === 'w') entries.forEach(e => e.sets.forEach(s => { if (s.kg > 0 && (!heavy || s.kg > heavy.s.kg || (s.kg === heavy.s.kg && s.reps > heavy.s.reps))) heavy = { s, e }; }));
+    if (kind === 'w') entries.forEach(e => workSets(e.sets).forEach(s => { if (s.kg > 0 && (!heavy || s.kg > heavy.s.kg || (s.kg === heavy.s.kg && s.reps > heavy.s.reps))) heavy = { s, e }; }));
     const sorted = opts.slice().sort(byName);
     return '<article class="card" id="pCard"><h2>Progression</h2>' +
       '<label class="sr" for="progSelect">Exercice</label><select id="progSelect" class="prog-select">' + sorted.map(o => '<option value="' + esc(o.id) + '"' + (o.id === state.progEx ? ' selected' : '') + '>' + esc(o.name) + '</option>').join('') + '</select>' +
@@ -5951,7 +6047,7 @@ function consFood(t, idx, byId, prev, viaNi) {
         (best ? '<div class="stat"><span class="stat-lbl">Record</span><span class="stat-val">' + fmt(best.m.v, kind === 'w' ? 1 : 0) + '<small> ' + M.unit + '</small></span><span class="stat-sub">' + esc(dfDM.format(dateOf(best.e.date))) + '</span></div>' : '') +
         (heavy ? '<div class="stat"><span class="stat-lbl">Série la plus lourde</span><span class="stat-val">' + fmt(heavy.s.kg, 2) + '<small> kg × ' + heavy.s.reps + '</small></span><span class="stat-sub">' + esc(dfDM.format(dateOf(heavy.e.date))) + '</span></div>' : '') +
       '</div>' +
-      '<ul class="rowlist p-hist">' + entries.slice(0, 6).map(e => '<li><span class="rl-main"><span class="rl-title">' + esc(cap1(dfShort.format(dateOf(e.date)))) + '</span><span class="muted">' + esc(e.sets.map(s => fmtSet(s, e.kind)).join(' · ')) + '</span></span></li>').join('') + '</ul></article>';
+      '<ul class="rowlist p-hist">' + entries.slice(0, 6).map(e => '<li><span class="rl-main"><span class="rl-title">' + esc(cap1(dfShort.format(dateOf(e.date)))) + '</span><span class="muted">' + esc(shownSets(e.sets).map(s => fmtSet(s, e.kind)).join(' · ')) + '</span></span></li>').join('') + '</ul></article>';
   }
   function niceStep(range, target) {
     const raw = range / Math.max(1, target);
@@ -6003,7 +6099,7 @@ function consFood(t, idx, byId, prev, viaNi) {
       const p = pts[i], x = X(i), y = Y(p.y);
       xh.setAttribute('x1', x); xh.setAttribute('x2', x); xh.setAttribute('visibility', 'visible');
       hl.setAttribute('cx', x); hl.setAttribute('cy', y); hl.setAttribute('visibility', 'visible');
-      tip.innerHTML = '<strong>' + fmt(p.y, dec) + ' ' + esc(M.unit) + '</strong><span>' + esc(cap1(dfShort.format(dateOf(p.date)))) + '</span><span>' + esc(p.sets.map(s => fmtSet(s, kind)).join(' · ')) + '</span>';
+      tip.innerHTML = '<strong>' + fmt(p.y, dec) + ' ' + esc(M.unit) + '</strong><span>' + esc(cap1(dfShort.format(dateOf(p.date)))) + '</span><span>' + esc(shownSets(p.sets).map(s => fmtSet(s, kind)).join(' · ')) + '</span>';
       const scale = box.clientWidth / W;
       placeTip(box, tip, x * scale, y * scale);
     };
@@ -6032,6 +6128,22 @@ function consFood(t, idx, byId, prev, viaNi) {
     if (sel) sel.focus();
   }
 
+  /* Nom d’une nouvelle séance : un champ avec son libellé, et des idées de noms à toucher (celles déjà prises sont cachées) */
+  const NAME_IDEAS = ['Push', 'Pull', 'Jambes', 'Haut du corps', 'Bas du corps', 'Full body', 'Bras', 'Pecs – Dos'];
+  const nameKey = s => String(s || '').trim().toLocaleLowerCase('fr');
+  function nameBlock(id, value, pid) {
+    const used = new Set(state.programs.filter(p => p.id !== pid).map(p => nameKey(p.name)));
+    const ideas = NAME_IDEAS.filter(n => !used.has(nameKey(n))).slice(0, 6);
+    return '<div class="name-pick">' +
+      '<label class="field name-field" for="' + id + '"><span>Nom de la séance</span>' +
+      '<input type="text" id="' + id + '" maxlength="40" autocomplete="off" autocapitalize="sentences" enterkeyhint="done" placeholder="Ex. : Push, Pull, Jambes" value="' + esc(value) + '"></label>' +
+      (ideas.length ? '<div class="chips name-ideas" role="group" aria-label="Idées de noms">' + ideas.map(n =>
+        '<button type="button" class="chip" data-action="name-idea" data-for="' + id + '" data-v="' + esc(n) + '" aria-pressed="' + (nameKey(value) === nameKey(n)) + '">' + esc(n) + '</button>').join('') + '</div>' : '') +
+      '</div>';
+  }
+  function syncNameIdeas(inp) {
+    document.querySelectorAll('[data-action="name-idea"]').forEach(c => { if (c.dataset.for === inp.id) c.setAttribute('aria-pressed', String(nameKey(inp.value) === nameKey(c.dataset.v))); });
+  }
   function renderEditor() {
     const w = curWorkout(), box = $('#wEditor');
     if (!w) { state.wOpen = null; renderSeances(); return; }
@@ -6039,11 +6151,15 @@ function consFood(t, idx, byId, prev, viaNi) {
     const exos = (empty) => '<div class="exos" id="weExos">' + (w.exercises.length ? w.exercises.map(ex => exoCard(w, ex)).join('') : '<p class="card muted we-empty">' + empty + '</p>') + '</div>' +
       '<button type="button" class="btn add-exo" data-action="ex-picker" data-mode="add">' + ICON.plus + 'Ajouter un exercice</button>';
     if (w.isTpl) {
+      /* Nouvelle séance : un titre, puis le nom dans un vrai champ avec des idées de noms. Séance existante : son nom en titre, à toucher pour le changer. */
+      const name = w.fresh
+        ? '<h2 class="we-title">Nouvelle séance</h2>' + nameBlock('weName', w.name, w.pid)
+        : '<p class="we-kicker">Ta séance</p>' +
+          '<label class="sr" for="weName">Nom de la séance</label><input type="text" id="weName" class="we-name" maxlength="40" autocomplete="off" enterkeyhint="done" placeholder="Pull, Push, Jambes…" value="' + esc(w.name) + '">';
       box.innerHTML = '<div class="we tpl-ed">' +
         '<div class="we-head">' +
           '<div class="we-top">' + back + '<span class="we-count" id="weStats"></span></div>' +
-          '<p class="we-kicker">' + (w.pid ? 'Ta séance' : 'Nouvelle séance') + '</p>' +
-          '<label class="sr" for="weName">Nom de la séance</label><input type="text" id="weName" class="we-name" maxlength="40" autocomplete="off" placeholder="Pull, Push, Jambes…" value="' + esc(w.name) + '">' +
+          name +
           '<p class="we-note">Note tes exercices et les charges que tu fais. Après chaque séance, l’appli retient tes dernières charges ici ; les séances déjà faites gardent les leurs.</p>' +
         '</div>' +
         exos('Ajoute les exercices de cette séance.') +
@@ -6060,7 +6176,8 @@ function consFood(t, idx, byId, prev, viaNi) {
     const p = w.programId ? state.programs.find(x => x.id === w.programId) : null;
     let prog = '';
     if (state.wNaming) {
-      prog = '<form class="naming" data-wnaming="1"><label class="sr" for="wpName">Nom de la séance</label><input type="text" id="wpName" maxlength="40" autocomplete="off" value="' + esc(w.name !== 'Séance libre' ? w.name : 'Ma séance') + '"><button type="submit" class="btn small primary">Ajouter à Mes séances</button><button type="button" class="btn small ghost" data-action="wp-cancel">Annuler</button></form>';
+      prog = '<form class="naming" data-wnaming="1">' + nameBlock('wpName', w.name !== 'Séance libre' ? w.name : '', null) +
+        '<div class="naming-btns"><button type="submit" class="btn small primary">Ajouter à Mes séances</button><button type="button" class="btn small ghost" data-action="wp-cancel">Annuler</button></div></form>';
     } else if (p) {
       prog = '<button type="button" class="btn" data-action="wp-update">Mettre à jour « ' + esc(p.name) + ' »</button>';
     } else if (w.exercises.length) {
@@ -6092,7 +6209,7 @@ function consFood(t, idx, byId, prev, viaNi) {
         (followsProgram(w, p) ? 'Elle suit « ' + p.name + ' » tant que tu ne l’as pas commencée. ' : '') +
         'Les charges en gris sont celles prévues : touche ✓ pour valider chaque série, ou écris ce que tu as fait.';
     }
-    if (w.date < today && workoutStats(w).sets) return 'Séance du ' + dfLong.format(dateOf(w.date)) + ' : ce que tu changes ici reste sur ce jour.';
+    if (w.date < today && workoutStats(w).all) return 'Séance du ' + dfLong.format(dateOf(w.date)) + ' : ce que tu changes ici reste sur ce jour.';
     return '';
   }
   function updateEditorStats() {
@@ -6101,13 +6218,14 @@ function consFood(t, idx, byId, prev, viaNi) {
     const nt = $('#weNote');
     if (nt && !w.isTpl) { const t = editorNote(w); nt.textContent = t; nt.hidden = !t; }
     if (w.isTpl) { const n = w.exercises.length; el.innerHTML = '<strong>' + n + '</strong> ' + (n > 1 ? 'exercices' : 'exercice'); return; }
+    /* La barre suit toutes les séries de la séance, échauffements compris ; les kilos, les séries de travail */
     const st = workoutStats(w);
     const total = w.exercises.reduce((n, ex) => n + ex.sets.length, 0);
-    const done = st.sets, n = Math.max(total, done);
+    const done = st.all, n = Math.max(total, done);
     const bar = !n ? '' : n <= 30
       ? '<div class="we-segs" aria-hidden="true">' + Array.from({ length: n }, (_, i) => '<i' + (i < done ? ' class="on"' : '') + '></i>').join('') + '</div>'
       : '<div class="we-line" aria-hidden="true"><i style="width:' + (done / n * 100).toFixed(1) + '%"></i></div>';
-    el.innerHTML = bar + '<p class="we-prog-txt"><span><strong>' + st.sets + '</strong> ' + (st.sets > 1 ? 'séries faites' : 'série faite') + (total ? ' sur ' + total : '') + '</span>' +
+    el.innerHTML = bar + '<p class="we-prog-txt"><span><strong>' + done + '</strong> ' + (done > 1 ? 'séries faites' : 'série faite') + (total ? ' sur ' + total : '') + '</span>' +
       (st.vol ? '<span><strong>' + fmt(st.vol, 0) + '</strong> kg soulevés</span>' : '') + '</p>';
   }
   function exoCard(w, ex) {
@@ -6136,10 +6254,11 @@ function consFood(t, idx, byId, prev, viaNi) {
         (i > 0 ? '<button type="button" class="btn small" data-action="exo-move" data-dir="-1" data-key="' + k + '">Monter</button>' : '') +
         (i < w.exercises.length - 1 ? '<button type="button" class="btn small" data-action="exo-move" data-dir="1" data-key="' + k + '">Descendre</button>' : '') +
         '<button type="button" class="btn small ghost danger" data-action="exo-remove" data-key="' + k + '">Retirer</button></div>' +
-        (w.exercises.length > 1 ? '<p class="exo-tip">Astuce : reste appuyé sur le nom ou la photo d’un exercice, puis fais-le glisser pour changer l’ordre.</p>' : '') + '</div>';
+        (w.exercises.length > 1 ? '<p class="exo-tip">Astuce : reste appuyé sur le nom ou la photo d’un exercice, puis fais-le glisser pour changer l’ordre.</p>' : '') +
+        '<p class="exo-tip">Touche le numéro d’une série pour la marquer en échauffement (E) ou en superset (S).</p></div>';
     }
     const tpl = !!w.isTpl;
-    html += '<p class="exo-last">' + (last ? 'Dernière fois, ' + esc(dfShort.format(dateOf(last.date))) + ' : <strong>' + esc(setsSummary(last.sets, last.kind)) + '</strong>' : (tpl ? 'Pas encore fait : note la charge que tu prévois.' : 'Première fois sur cet exercice.')) + '</p>';
+    html += '<p class="exo-last">' + (last ? 'Dernière fois, ' + esc(dfShort.format(dateOf(last.date))) + ' : <strong>' + esc(setsSummary(shownSets(last.sets), last.kind)) + '</strong>' : (tpl ? 'Pas encore fait : note la charge que tu prévois.' : 'Première fois sur cet exercice.')) + '</p>';
     const rec = recordSet(ex, w);
     if (rec) html += '<p class="exo-pr">' + svgIco('<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>') + 'Nouveau record : ' + esc(fmt(rec.kg, 2) + ' kg × ' + rec.reps) + '</p>';
     if (!tpl) {
@@ -6151,22 +6270,44 @@ function consFood(t, idx, byId, prev, viaNi) {
           const a = Math.max.apply(null, mine.map(s => s.kg || 0)), b = Math.max.apply(null, latest.sets.map(s => s.kg || 0));
           if (a > 0 && b > 0) delta = b === a ? 'même charge' : fmtSigned(b - a, 2) + ' kg';
         }
-        html += '<p class="exo-now">Maintenant (' + esc(dfShort.format(dateOf(latest.date))) + ') : ' + esc(setsSummary(latest.sets, latest.kind)) + (delta ? ' <strong class="' + (delta.startsWith('+') ? 'up' : delta.startsWith('−') ? 'down' : '') + '">' + esc(delta) + '</strong>' : '') + '</p>';
+        html += '<p class="exo-now">Maintenant (' + esc(dfShort.format(dateOf(latest.date))) + ') : ' + esc(setsSummary(shownSets(latest.sets), latest.kind)) + (delta ? ' <strong class="' + (delta.startsWith('+') ? 'up' : delta.startsWith('−') ? 'down' : '') + '">' + esc(delta) + '</strong>' : '') + '</p>';
       }
     }
     if (hint) html += '<p class="hint-up">' + stateChip({ cls: 'ok', icon: '↑', text: 'Toutes tes séries au max la dernière fois : ' + hint }) + '</p>';
-    html += '<div class="sets"><div class="set-row head' + (tpl ? ' tpl' : '') + '" aria-hidden="true"><span>Série</span><span>' + esc(kgLbl) + '</span><span>' + esc(repLbl) + '</span>' + (tpl ? '' : '<span></span>') + '</div>' +
+    html += '<div class="sets"><div class="set-row head' + (tpl ? ' is-plan' : '') + '" aria-hidden="true"><span>Série</span><span>' + esc(kgLbl) + '</span><span>' + esc(repLbl) + '</span>' + (tpl ? '' : '<span></span>') + '</div>' +
       ex.sets.map((s, i) => setRow(ex, s, i, setPlaceholder(ex, i, last), kgLbl, repLbl, tpl)).join('') + '</div>';
     html += '<div class="exo-foot"><button type="button" class="btn small" data-action="set-add" data-key="' + k + '">+ Série</button>' +
       (ex.sets.length ? '<button type="button" class="btn small ghost" data-action="set-remove" data-key="' + k + '">− Série</button>' : '') + '</div></section>';
     return html;
   }
+  /* Repère d’une série, à gauche : son numéro (les séries de travail sont numérotées), E pour un échauffement,
+     S pour une série en superset. Le toucher ouvre le choix du type juste en dessous. */
+  function setLabel(ex, i) {
+    const t = setType(ex.sets[i]), before = ex.sets.slice(0, i);
+    const n = before.filter(x => !isWarm(x)).length + 1, e = before.filter(isWarm).length + 1;
+    return {
+      t, n, mark: t === 'e' ? 'E' : t === 's' ? 'S' : String(n),
+      name: t === 'e' ? 'échauffement ' + e : 'série ' + n + (t === 's' ? ' en superset' : ''),
+      check: t === 'e' ? 'Valider l’échauffement ' + e : 'Valider la série ' + n + (t === 's' ? ' en superset' : '')
+    };
+  }
   function setRow(ex, s, i, ph, kgLbl, repLbl, tpl) {
-    const k = esc(ex.key), n = i + 1;
-    return '<div class="set-row' + (s.done ? ' done' : '') + (tpl ? ' tpl' : '') + '"><span class="set-n">' + n + '</span>' +
-      '<input type="text" inputmode="decimal" autocomplete="off" data-sk="' + k + '" data-si="' + i + '" data-sf="kg" value="' + (s.kg != null ? esc(fmtInput(s.kg)) : '') + '" placeholder="' + esc(ph.kg != null ? fmtInput(ph.kg) : (ex.kind === 'w' ? 'kg' : ex.kind === 'c' ? 'niv.' : '0')) + '" aria-label="' + esc(kgLbl) + ', série ' + n + '">' +
-      '<input type="text" inputmode="numeric" autocomplete="off" data-sk="' + k + '" data-si="' + i + '" data-sf="reps" value="' + (s.reps != null ? s.reps : '') + '" placeholder="' + (ph.reps != null ? ph.reps : '—') + '" aria-label="' + esc(repLbl) + ', série ' + n + '">' +
-      (tpl ? '' : '<button type="button" class="set-check" data-action="set-done" data-key="' + k + '" data-i="' + i + '" aria-pressed="' + !!s.done + '" aria-label="Valider la série ' + n + '">' + ICON.check + '</button>') + '</div>';
+    const k = esc(ex.key), L = setLabel(ex, i), open = state.setMenu === ex.key + ':' + i;
+    return '<div class="set-row' + (s.done ? ' done' : '') + (tpl ? ' is-plan' : '') + (L.t ? ' is-' + L.t : '') + '">' +
+      '<button type="button" class="set-n' + (L.t ? ' is-' + L.t : '') + '" data-action="set-type-menu" data-key="' + k + '" data-i="' + i + '" aria-expanded="' + open + '" aria-label="' + esc(cap1(L.name) + ' : changer le type de série') + '">' + L.mark + '</button>' +
+      '<input type="text" inputmode="decimal" autocomplete="off" data-sk="' + k + '" data-si="' + i + '" data-sf="kg" value="' + (s.kg != null ? esc(fmtInput(s.kg)) : '') + '" placeholder="' + esc(ph.kg != null ? fmtInput(ph.kg) : (ex.kind === 'w' ? 'kg' : ex.kind === 'c' ? 'niv.' : '0')) + '" aria-label="' + esc(kgLbl + ', ' + L.name) + '">' +
+      '<input type="text" inputmode="numeric" autocomplete="off" data-sk="' + k + '" data-si="' + i + '" data-sf="reps" value="' + (s.reps != null ? s.reps : '') + '" placeholder="' + (ph.reps != null ? ph.reps : '—') + '" aria-label="' + esc(repLbl + ', ' + L.name) + '">' +
+      (tpl ? '' : '<button type="button" class="set-check" data-action="set-done" data-key="' + k + '" data-i="' + i + '" aria-pressed="' + !!s.done + '" aria-label="' + esc(L.check) + '">' + ICON.check + '</button>') + '</div>' +
+      (open ? setTypeMenu(ex, i, L) : '');
+  }
+  function setTypeMenu(ex, i, L) {
+    const k = esc(ex.key);
+    const opt = (v, mark, txt) => '<button type="button" class="set-opt" data-action="set-type" data-key="' + k + '" data-i="' + i + '" data-t="' + v + '" aria-pressed="' + (L.t === v) + '">' +
+      '<span class="set-n' + (v ? ' is-' + v : '') + '" aria-hidden="true">' + mark + '</span><span class="set-opt-txt">' + txt + '</span></button>';
+    return '<div class="set-type" role="group" aria-label="' + esc('Type de la ' + (L.t === 'e' ? 'série d’' + L.name : L.name)) + '">' +
+      opt('', String(L.n), 'Normale') + opt('e', 'E', 'Échauffement') + opt('s', 'S', 'Superset') +
+      '<p class="set-type-help"><span><strong>E</strong>&nbsp;: ne compte ni dans tes records ni dans tes séries.</span>' +
+      '<span><strong>S</strong>&nbsp;: s’enchaîne avec l’exercice suivant, le repos vient après.</span></p></div>';
   }
   function renderExo(w, ex) {
     const card = document.querySelector('[data-exo="' + ex.key + '"]');
@@ -6213,9 +6354,10 @@ function consFood(t, idx, byId, prev, viaNi) {
     const t = Object.assign({}, ex.target, { [inp.dataset.tf]: parseNum(inp.value) });
     ex.target = normTarget(t, ex.kind);
     while (ex.sets.length < ex.target.sets) {
-      const prevSet = ex.sets[ex.sets.length - 1], ns = { kg: null, reps: null, done: false };
+      const prevSet = lastWorkSet(ex), ns = { kg: null, reps: null, done: false };
       if (prevSet && prevSet.pk != null) ns.pk = prevSet.pk;
       if (prevSet && prevSet.pr != null) ns.pr = prevSet.pr;
+      if (setType(prevSet) === 's') ns.t = 's';
       ex.sets.push(ns);
     }
     markEdited(w);
@@ -8072,6 +8214,16 @@ function consFood(t, idx, byId, prev, viaNi) {
         case 'wp-update': updateProgram(curWorkout()); break;
         case 'wp-new': { state.wNaming = true; renderEditor(); const i = $('#wpName'); if (i) { i.focus(); i.select(); } break; }
         case 'wp-cancel': state.wNaming = false; renderEditor(); break;
+        /* Idée de nom touchée : elle remplit le champ du nom */
+        case 'name-idea': {
+          const inp = document.getElementById(b.dataset.for);
+          if (!inp) break;
+          inp.value = String(b.dataset.v || '').slice(0, 40);
+          inp.removeAttribute('aria-invalid');
+          if (inp.id === 'weName') { const w = curWorkout(); if (w) { w.name = inp.value; touchWorkout(w); } }
+          syncNameIdeas(inp);
+          break;
+        }
         case 'wp-delete': deleteProgram(b.dataset.id); break;
         case 'exo-menu': {
           const w = curWorkout();
@@ -8089,12 +8241,15 @@ function consFood(t, idx, byId, prev, viaNi) {
         case 'set-add': {
           const w = curWorkout(), ex = w && findEx(w, b.dataset.key);
           if (!ex) break;
-          const prevSet = ex.sets[ex.sets.length - 1];
+          /* La nouvelle série reprend la dernière série de travail (un superset reste un superset) */
+          const prevSet = lastWorkSet(ex);
           const ns = { kg: null, reps: null, done: false };
           if (prevSet && prevSet.pk != null) ns.pk = prevSet.pk;
           if (prevSet && prevSet.pr != null) ns.pr = prevSet.pr;
           if (w.isTpl && prevSet) { ns.kg = prevSet.kg; ns.reps = prevSet.reps; }
+          if (setType(prevSet) === 's') ns.t = 's';
           ex.sets.push(ns);
+          if (state.setMenu && state.setMenu.split(':')[0] === ex.key) state.setMenu = null;
           markEdited(w);
           touchWorkout(w, true);
           renderExo(w, ex);
@@ -8105,10 +8260,39 @@ function consFood(t, idx, byId, prev, viaNi) {
           const w = curWorkout(), ex = w && findEx(w, b.dataset.key);
           if (!ex || !ex.sets.length) break;
           ex.sets.pop();
+          if (state.setMenu && state.setMenu.split(':')[0] === ex.key) state.setMenu = null;
           markEdited(w);
           touchWorkout(w, true);
           renderExo(w, ex);
           updateEditorStats();
+          break;
+        }
+        /* Type d’une série : toucher son numéro ouvre le choix (normale, échauffement, superset) juste en dessous */
+        case 'set-type-menu': {
+          const w = curWorkout(), ex = w && findEx(w, b.dataset.key);
+          if (!ex || !ex.sets[Number(b.dataset.i)]) break;
+          const id = ex.key + ':' + Number(b.dataset.i), prev = state.setMenu;
+          state.setMenu = prev === id ? null : id;
+          const pe = prev && prev !== id ? findEx(w, prev.split(':')[0]) : null;
+          if (pe && pe !== ex) renderExo(w, pe);
+          renderExo(w, ex);
+          break;
+        }
+        case 'set-type': {
+          const w = curWorkout(), ex = w && findEx(w, b.dataset.key), i = Number(b.dataset.i), s = ex && ex.sets[i];
+          if (!s) break;
+          const v = b.dataset.t === 'e' || b.dataset.t === 's' ? b.dataset.t : '';
+          if (setType(s) !== v) {
+            if (v) s.t = v; else delete s.t;
+            markEdited(w);
+            touchWorkout(w, true);
+          }
+          state.setMenu = null;
+          const cw = curWorkout(), cex = cw && findEx(cw, ex.key);
+          if (cex) renderExo(cw, cex);
+          updateEditorStats();
+          const f = document.querySelector('[data-action="set-type-menu"][data-key="' + ex.key + '"][data-i="' + i + '"]');
+          if (f) f.focus();
           break;
         }
         case 'set-done': toggleDone(b.dataset.key, Number(b.dataset.i)); break;
@@ -8180,7 +8364,8 @@ function consFood(t, idx, byId, prev, viaNi) {
       else if (t.id === 'exSearch') { picker.q = t.value; renderPicker(); }
       else if (t.id === 'recvPaste') onRecvPaste(t);
       else if (t.id === 'me-name') { meDraft.name = t.value; renderMeDraft(); }
-      else if (t.id === 'weName') { const w = curWorkout(); if (w) { w.name = t.value.slice(0, 40); touchWorkout(w); } }
+      else if (t.id === 'weName') { const w = curWorkout(); if (w) { w.name = t.value.slice(0, 40); touchWorkout(w); } syncNameIdeas(t); }
+      else if (t.id === 'wpName') syncNameIdeas(t);
       else if (t.id === 'weNotes') { const w = curWorkout(); if (w) { w.notes = t.value.slice(0, 2000); markEdited(w); touchWorkout(w); } }
       else if (t.matches('[data-pf]')) onProfileNum(t);
       else if (t.matches('[data-gt]')) onGenTarget(t);
@@ -8251,6 +8436,7 @@ function consFood(t, idx, byId, prev, viaNi) {
       else if (t.id === 'addSearch') { e.preventDefault(); const first = $('#pickList .pick'); if (first) first.click(); }
       else if (t.id === 'exSearch') { e.preventDefault(); const first = $('#exList .pick'); if (first) first.click(); }
       else if (t.id === 'recvName') { e.preventDefault(); addShared(); }
+      else if (t.id === 'weName') { e.preventDefault(); t.blur(); }
       else if (t.id === 'recvPaste') { e.preventDefault(); const n = $('#recvName'); if (n) n.focus(); else t.blur(); }
       else if (t.matches && t.matches('[data-sk]')) {
         e.preventDefault();
