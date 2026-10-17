@@ -32,7 +32,7 @@
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin-ext.woff2) format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 </style>
-<script>window.CARNET_VERSION = "2026-10-16.208cf8";</script>
+<script>window.CARNET_VERSION = "2026-10-17.b39d7f";</script>
 <style>
 /* Carnet de bord calme : fond graphite profond, cartes à filet fin, actions en encre claire (version claire en option).
    Les couleurs des macros (protéines, glucides, lipides) sont les seules teintes vives ; les chiffres clés
@@ -575,6 +575,8 @@ button.set-n.is-s:hover { background: var(--fg-2); border-color: var(--fg-2); }
 .set-row input:hover { border-color: var(--line-2); }
 .set-row input:focus-visible { background: var(--surface); }
 .set-row input::placeholder { color: var(--muted); font-weight: 400; opacity: .75; }
+/* Valeur proposée (la dernière fois, ou la séance type) : lisible comme une vraie valeur, un ton en dessous de ce qui est validé */
+.set-row input.def::placeholder { color: var(--fg-2); font-weight: 600; opacity: 1; }
 .set-row.done { background: var(--surface-2); background: color-mix(in srgb, var(--good) 10%, var(--surface)); }
 .set-row.done input { background: transparent; }
 .set-check { width: 46px; height: 46px; border-radius: 14px; border: 1.5px solid var(--line-2); background: var(--surface); color: var(--muted); display: grid; place-items: center; padding: 0; transition: background-color .15s ease, border-color .15s ease, color .15s ease; }
@@ -3324,14 +3326,18 @@ function consFood(t, idx, byId, prev, viaNi) {
         const kind = KINDS.includes(it.kind) ? it.kind : 'w';
         /* sets : les charges retenues pour cet exercice (série par série) */
         return { exId: String(it.exId), name: String(it.name || 'Exercice').slice(0, 80), kind, eq: EQUIP[it.eq] ? it.eq : 'autre', target: normTarget(it.target, kind), sets: Array.isArray(it.sets) ? it.sets.slice(0, 12).map(normPlanSet) : [] };
-      }).filter(Boolean) : []
+      }).filter(Boolean) : [],
+      /* Moment où les charges de la séance type ont été notées (à la main ou après une séance) ; absent avant cette version */
+      chargesAt: Number(d.chargesAt) > 0 ? Number(d.chargesAt) : 0
     };
   }
   function programBody(p) {
-    return {
+    const o = {
       name: p.name, order: p.order, createdAt: p.createdAt || Date.now(), updatedAt: p.updatedAt || 0,
       items: p.items.map(it => ({ exId: it.exId, name: it.name, kind: it.kind, eq: it.eq, target: Object.assign({}, it.target), sets: (it.sets || []).map(planSetBody) }))
     };
+    if (p.chargesAt > 0) o.chargesAt = p.chargesAt;
+    return o;
   }
   function normCustomEx(id, d) {
     d = d || {};
@@ -5399,26 +5405,47 @@ function consFood(t, idx, byId, prev, viaNi) {
   const programVersion = p => p.updatedAt || p.createdAt || 0;
   const followsProgram = (w, p) => !!p && w.programId === p.id && !w.edited && !hasActual(w);
   const markEdited = w => { if (w && !w.isTpl) w.edited = true; };
-  /* Charges prévues pour n séries : celles retenues dans la séance type, sinon la dernière fois sur cet exercice.
+  /* Charges proposées pour un exercice de séance type, par ordre de priorité :
+     1. ce que tu as fait la dernière fois sur cet exercice dans cette séance type, si c’est plus récent que les charges
+        notées dans la séance type (séance quittée sans « Terminer », ou corrigée après coup) ;
+     2. les charges notées dans la séance type ;
+     3. ce que tu as fait la dernière fois sur cet exercice, dans n’importe quelle séance.
      Un échauffement prévu reprend un échauffement, une série de travail une série de travail. */
   const planTypes = (it, n) => Array.from({ length: n }, (_, i) => setType((it.sets || [])[i]));
-  function planFor(it, n) {
-    let src = (it.sets || []).filter(s => s.kg != null || s.reps != null);
-    if (!src.length) { const lp = lastPerfAny(it.exId); src = lp ? lp.sets : []; }
-    return alignByKind(planTypes(it, n), src).map(s => (s ? { kg: s.kg != null ? s.kg : null, reps: s.reps != null ? s.reps : null } : { kg: null, reps: null }));
+  const wById = id => state.workouts.find(w => w.id === id) || null;
+  const perfTime = e => { const w = wById(e.wid); return w ? (w.updatedAt || w.createdAt || 0) : 0; };
+  function lastPerfIn(exId, pid) {
+    if (!pid) return null;
+    return (exHistory().get(exId) || []).find(e => { const w = wById(e.wid); return !!w && w.programId === pid; }) || null;
   }
-  function exFromItem(it) {
+  function planSource(it, p) {
+    const stored = (it.sets || []).filter(s => s.kg != null || s.reps != null);
+    const own = p ? lastPerfIn(it.exId, p.id) : null;
+    if (own && (!stored.length || perfTime(own) > (p.chargesAt || 0))) return { from: 'own', src: own.sets };
+    if (stored.length) return { from: 'stored', src: stored };
+    const any = lastPerfAny(it.exId);
+    return any ? { from: 'any', src: any.sets } : { from: 'none', src: [] };
+  }
+  function planOf(types, src) {
+    return alignByKind(types, src).map(s => (s ? { kg: s.kg != null ? s.kg : null, reps: s.reps != null ? s.reps : null } : { kg: null, reps: null }));
+  }
+  function planFor(it, n, p) { return planOf(planTypes(it, n), planSource(it, p).src); }
+  function exFromItem(it, p) {
     const ex = makeWEx(it, it.target);
     planTypes(it, ex.sets.length).forEach((t, i) => { if (t) ex.sets[i].t = t; });
-    const plan = planFor(it, ex.sets.length);
+    const plan = planFor(it, ex.sets.length, p);
     ex.sets.forEach((s, i) => { if (plan[i].kg != null) s.pk = plan[i].kg; if (plan[i].reps != null) s.pr = plan[i].reps; });
     return ex;
   }
   function refreshFromProgram(w, p) {
-    w.exercises = p.items.map(exFromItem);
+    w.exercises = p.items.map(it => exFromItem(it, p));
     w.name = p.name;
     w.syncedAt = programVersion(p);
   }
+  /* Ce qu’une séance prévue propose (exercices, objectifs, charges prévues, types) : pour savoir s’il faut la remettre à jour */
+  const planSig = exs => JSON.stringify(exs.map(e => [e.exId, e.target.sets, e.target.min, e.target.max, e.sets.map(s => [s.pk != null ? s.pk : null, s.pr != null ? s.pr : null, setType(s)])]));
+  /* Les charges notées d’une séance type (pour savoir si elles ont changé) */
+  const chargesSig = items => JSON.stringify(items.map(it => [it.exId, (it.sets || []).map(s => [s.kg != null ? s.kg : null, s.reps != null ? s.reps : null])]));
   function syncPlannedFrom(p) {
     let n = 0;
     for (const w of state.workouts) {
@@ -5457,23 +5484,23 @@ function consFood(t, idx, byId, prev, viaNi) {
       if (JSON.stringify(next) !== JSON.stringify(it.sets || [])) { it.sets = next; changed = true; }
     });
     if (!changed) return null;
-    p.updatedAt = Date.now();
+    p.updatedAt = p.chargesAt = Date.now();
     save('programs/' + p.id, programBody(p));
     syncPlannedFrom(p);
     return () => {
       p.items.forEach((it, i) => { it.sets = before[i] || []; });
-      p.updatedAt = Date.now();
+      p.updatedAt = p.chargesAt = Date.now();
       save('programs/' + p.id, programBody(p));
       syncPlannedFrom(p);
       renderSeances();
     };
   }
   /* Résumé des charges d’un exercice de séance type : « 4 × 10 · 60 kg » */
-  function chargeText(it) {
-    /* Les séries de travail seulement : « 4 × 10 · 60 kg » même avec deux échauffements avant */
+  function chargeText(it, p) {
+    /* Ce que la prochaine séance proposera, séries de travail seulement : « 4 × 10 · 60 kg » même avec deux échauffements avant */
     const all = Math.max(1, it.target.sets), types = planTypes(it, all);
     const n = Math.max(1, types.filter(t => t !== 'e').length);
-    const plan = planFor(it, all).filter((s, i) => types[i] !== 'e' && (s.kg != null || s.reps != null));
+    const plan = planFor(it, all, p).filter((s, i) => types[i] !== 'e' && (s.kg != null || s.reps != null));
     const range = it.target.min + (it.target.max !== it.target.min ? '–' + it.target.max : '');
     if (!plan.length) return n + ' × ' + range + (it.kind === 't' ? ' s' : it.kind === 'c' ? ' min' : '');
     const reps = plan[0].reps != null ? plan[0].reps : it.target.min;
@@ -5534,7 +5561,7 @@ function consFood(t, idx, byId, prev, viaNi) {
       if (same) { openWorkout(same.id); return; }
     }
     const now = Date.now();
-    const w = { id: uid('w'), date, programId: p ? p.id : null, name: p ? p.name : 'Séance libre', exercises: p ? p.items.map(exFromItem) : [], notes: '', createdAt: now, updatedAt: now, syncedAt: p ? programVersion(p) : 0, edited: false, _new: true, _dirty: false };
+    const w = { id: uid('w'), date, programId: p ? p.id : null, name: p ? p.name : 'Séance libre', exercises: p ? p.items.map(it => exFromItem(it, p)) : [], notes: '', createdAt: now, updatedAt: now, syncedAt: p ? programVersion(p) : 0, edited: false, _new: true, _dirty: false };
     state.workouts.unshift(w);
     sortWorkouts(state.workouts);
     state.wVer++;
@@ -5545,7 +5572,7 @@ function consFood(t, idx, byId, prev, viaNi) {
     if (!isISO(date)) return;
     const p = pid ? state.programs.find(x => x.id === pid) : null;
     const now = Date.now();
-    const w = { id: uid('w'), date, programId: p ? p.id : null, name: p ? p.name : 'Séance libre', exercises: p ? p.items.map(exFromItem) : [], notes: '', createdAt: now, updatedAt: now, syncedAt: p ? programVersion(p) : 0, edited: false, _new: false, _dirty: true };
+    const w = { id: uid('w'), date, programId: p ? p.id : null, name: p ? p.name : 'Séance libre', exercises: p ? p.items.map(it => exFromItem(it, p)) : [], notes: '', createdAt: now, updatedAt: now, syncedAt: p ? programVersion(p) : 0, edited: false, _new: false, _dirty: true };
     state.workouts.push(w);
     sortWorkouts(state.workouts);
     state.wVer++;
@@ -5586,12 +5613,18 @@ function consFood(t, idx, byId, prev, viaNi) {
     if (state.tDraft) { flushTemplate(); state.tDraft = null; }
     const w = state.workouts.find(x => x.id === id);
     const p = w && w.programId ? state.programs.find(x => x.id === w.programId) : null;
-    /* Séance prévue pas encore commencée : elle reprend la dernière version de sa séance type */
-    if (w && !w._new && followsProgram(w, p) && (w.syncedAt || 0) < programVersion(p)) {
-      refreshFromProgram(w, p);
-      w.updatedAt = Date.now();
-      save('workouts/' + w.id, workoutBody(w));
-      state.wVer++;
+    /* Séance prévue pas encore commencée : elle reprend la dernière version de sa séance type,
+       et les charges de ta dernière séance si tu en as fait une depuis qu’elle a été prévue */
+    if (w && !w._new && followsProgram(w, p)) {
+      const fresh = p.items.map(it => exFromItem(it, p));
+      if ((w.syncedAt || 0) < programVersion(p) || planSig(fresh) !== planSig(w.exercises)) {
+        w.exercises = fresh;
+        w.name = p.name;
+        w.syncedAt = programVersion(p);
+        w.updatedAt = Date.now();
+        save('workouts/' + w.id, workoutBody(w));
+        state.wVer++;
+      }
     }
     state.wOpen = id;
     state.wMenu = null;
@@ -5608,8 +5641,13 @@ function consFood(t, idx, byId, prev, viaNi) {
     state.tDraft = {
       id: 'tpl', isTpl: true, pid: p ? p.id : null, name: p ? p.name : '', date: '9999-12-31', createdAt: Number.MAX_SAFE_INTEGER, notes: '', _dirty: false,
       exercises: p ? p.items.map(it => {
-        const ex = makeWEx(it, it.target);
-        (it.sets || []).forEach((s, i) => { if (ex.sets[i]) { ex.sets[i].kg = s.kg; ex.sets[i].reps = s.reps; if (setType(s)) ex.sets[i].t = s.t; } });
+        const ex = makeWEx(it, it.target), types = planTypes(it, ex.sets.length);
+        types.forEach((t, i) => { if (t) ex.sets[i].t = t; });
+        /* Les charges notées dans la séance type ; ou, si tu as fait cette séance depuis, ce que tu y as fait :
+           l’éditeur montre ce que la prochaine séance proposera */
+        const ps = planSource(it, p);
+        if (ps.from === 'own') planOf(types, ps.src).forEach((v, i) => { ex.sets[i].kg = v.kg; ex.sets[i].reps = v.reps; });
+        else (it.sets || []).forEach((s, i) => { if (ex.sets[i]) { ex.sets[i].kg = s.kg; ex.sets[i].reps = s.reps; } });
         return ex;
       }) : [],
       /* Nouvelle séance : le nom se donne dans un vrai champ, avec des idées de noms (jusqu’à la fermeture de l’éditeur) */
@@ -5639,11 +5677,14 @@ function consFood(t, idx, byId, prev, viaNi) {
       d.pid = p.id;
     }
     p.name = (d.name || '').trim().slice(0, 40) || 'Ma séance';
+    const before = chargesSig(p.items);
     p.items = d.exercises.map(ex => ({
       exId: ex.exId, name: ex.name, kind: ex.kind, eq: ex.eq,
       target: normTarget({ sets: Math.max(1, ex.sets.length), min: ex.target.min, max: ex.target.max }, ex.kind),
       sets: ex.sets.map(planSetBody)
     }));
+    /* Charges changées dans l’éditeur : elles passent avant ce que tu as fait jusqu’ici */
+    if (chargesSig(p.items) !== before) p.chargesAt = now;
     p.updatedAt = now;
     save('programs/' + p.id, programBody(p));
     syncPlannedFrom(p);
@@ -5722,7 +5763,7 @@ function consFood(t, idx, byId, prev, viaNi) {
     if (!p) return;
     const prev = p.items;
     p.items = programItemsFrom(w);
-    p.updatedAt = Date.now();
+    p.updatedAt = p.chargesAt = Date.now();
     w.syncedAt = p.updatedAt;
     save('programs/' + p.id, programBody(p));
     syncPlannedFrom(p);
@@ -5733,7 +5774,7 @@ function consFood(t, idx, byId, prev, viaNi) {
     if (!w) return;
     const order = state.programs.reduce((m, p) => Math.max(m, p.order), -1) + 1;
     const now = Date.now();
-    const p = { id: uid('pg'), name: (name || '').trim().slice(0, 40) || 'Ma séance', order, createdAt: now, updatedAt: now, items: programItemsFrom(w) };
+    const p = { id: uid('pg'), name: (name || '').trim().slice(0, 40) || 'Ma séance', order, createdAt: now, updatedAt: now, chargesAt: now, items: programItemsFrom(w) };
     state.programs.push(p);
     save('programs/' + p.id, programBody(p));
     w.programId = p.id;
@@ -5959,7 +6000,7 @@ function consFood(t, idx, byId, prev, viaNi) {
             '<span class="ms-name">' + esc(p.name) + '</span><span class="ms-meta">' + p.items.length + (p.items.length > 1 ? ' exercices' : ' exercice') + ' · ' + (ld ? 'faite ' + esc(dfShort.format(dateOf(ld))) : 'pas encore faite') + '</span></button>' +
             '<div class="ms-tools">' + (p.items.length ? '<button type="button" class="iconbtn ms-share" data-action="t-share" data-id="' + pid + '" aria-label="' + esc('Partager la séance ' + p.name) + '">' + ICON.share + '</button>' : '') +
             '<button type="button" class="iconbtn ms-edit" data-action="t-edit" data-id="' + pid + '" aria-label="' + esc('Modifier ' + p.name) + '">' + ICON.edit + '</button></div></div>' +
-          (shown.length ? '<ul class="ms-exos">' + shown.map(it => '<li><span class="ms-ex">' + esc(it.name) + '</span><span class="ms-kg">' + esc(chargeText(it)) + '</span></li>').join('') +
+          (shown.length ? '<ul class="ms-exos">' + shown.map(it => '<li><span class="ms-ex">' + esc(it.name) + '</span><span class="ms-kg">' + esc(chargeText(it, p)) + '</span></li>').join('') +
             (p.items.length > shown.length ? '<li class="ms-plus">+ ' + (p.items.length - shown.length) + (p.items.length - shown.length > 1 ? ' autres exercices' : ' autre exercice') + '</li>' : '') + '</ul>'
             : '<p class="muted ms-empty">Aucun exercice pour l’instant.</p>') +
           '<div class="ms-actions"><button type="button" class="btn small primary" data-action="w-start" data-pid="' + pid + '">' + (tw ? (hasActual(tw) ? 'Reprendre' : 'Commencer') : 'Faire aujourd’hui') + '</button>' +
@@ -6207,7 +6248,7 @@ function consFood(t, idx, byId, prev, viaNi) {
     if (!hasActual(w) && w.exercises.length) {
       return (w.date > today ? 'Séance prévue ' + dayLabel(w.date) + '. ' : '') +
         (followsProgram(w, p) ? 'Elle suit « ' + p.name + ' » tant que tu ne l’as pas commencée. ' : '') +
-        'Les charges en gris sont celles prévues : touche ✓ pour valider chaque série, ou écris ce que tu as fait.';
+        'Chaque série est pré-remplie : touche ✓ pour la valider telle quelle, ou écris ce que tu as fait.';
     }
     if (w.date < today && workoutStats(w).all) return 'Séance du ' + dfLong.format(dateOf(w.date)) + ' : ce que tu changes ici reste sur ce jour.';
     return '';
@@ -6258,7 +6299,11 @@ function consFood(t, idx, byId, prev, viaNi) {
         '<p class="exo-tip">Touche le numéro d’une série pour la marquer en échauffement (E) ou en superset (S).</p></div>';
     }
     const tpl = !!w.isTpl;
-    html += '<p class="exo-last">' + (last ? 'Dernière fois, ' + esc(dfShort.format(dateOf(last.date))) + ' : <strong>' + esc(setsSummary(shownSets(last.sets), last.kind)) + '</strong>' : (tpl ? 'Pas encore fait : note la charge que tu prévois.' : 'Première fois sur cet exercice.')) + '</p>';
+    /* Séries pré-remplies avec la dernière fois : les chiffres sont dans les séries, la ligne dit seulement d’où ils viennent */
+    const lastDay = last ? esc(dfShort.format(dateOf(last.date))) : '';
+    html += '<p class="exo-last">' + (!tpl && planMatchesLast(ex, last) ? 'Pré-rempli avec ta séance du ' + lastDay
+      : last ? 'Dernière fois, ' + lastDay + ' : <strong>' + esc(setsSummary(shownSets(last.sets), last.kind)) + '</strong>'
+      : (tpl ? 'Pas encore fait : note la charge que tu prévois.' : 'Première fois sur cet exercice.')) + '</p>';
     const rec = recordSet(ex, w);
     if (rec) html += '<p class="exo-pr">' + svgIco('<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>') + 'Nouveau record : ' + esc(fmt(rec.kg, 2) + ' kg × ' + rec.reps) + '</p>';
     if (!tpl) {
@@ -6291,12 +6336,18 @@ function consFood(t, idx, byId, prev, viaNi) {
       check: t === 'e' ? 'Valider l’échauffement ' + e : 'Valider la série ' + n + (t === 's' ? ' en superset' : '')
     };
   }
+  /* Les charges prévues d’une séance sont celles de la dernière fois (même genre de série, même rang) */
+  function planMatchesLast(ex, last) {
+    if (!last || !ex.sets.some(s => s.pk != null || s.pr != null)) return false;
+    const al = alignByKind(ex.sets.map(setType), last.sets), v = x => (x != null ? x : null);
+    return ex.sets.every((s, i) => (al[i] ? v(s.pk) === v(al[i].kg) && v(s.pr) === v(al[i].reps) : s.pk == null && s.pr == null));
+  }
   function setRow(ex, s, i, ph, kgLbl, repLbl, tpl) {
     const k = esc(ex.key), L = setLabel(ex, i), open = state.setMenu === ex.key + ':' + i;
     return '<div class="set-row' + (s.done ? ' done' : '') + (tpl ? ' is-plan' : '') + (L.t ? ' is-' + L.t : '') + '">' +
       '<button type="button" class="set-n' + (L.t ? ' is-' + L.t : '') + '" data-action="set-type-menu" data-key="' + k + '" data-i="' + i + '" aria-expanded="' + open + '" aria-label="' + esc(cap1(L.name) + ' : changer le type de série') + '">' + L.mark + '</button>' +
-      '<input type="text" inputmode="decimal" autocomplete="off" data-sk="' + k + '" data-si="' + i + '" data-sf="kg" value="' + (s.kg != null ? esc(fmtInput(s.kg)) : '') + '" placeholder="' + esc(ph.kg != null ? fmtInput(ph.kg) : (ex.kind === 'w' ? 'kg' : ex.kind === 'c' ? 'niv.' : '0')) + '" aria-label="' + esc(kgLbl + ', ' + L.name) + '">' +
-      '<input type="text" inputmode="numeric" autocomplete="off" data-sk="' + k + '" data-si="' + i + '" data-sf="reps" value="' + (s.reps != null ? s.reps : '') + '" placeholder="' + (ph.reps != null ? ph.reps : '—') + '" aria-label="' + esc(repLbl + ', ' + L.name) + '">' +
+      '<input type="text" inputmode="decimal" autocomplete="off"' + (ph.kg != null ? ' class="def"' : '') + ' data-sk="' + k + '" data-si="' + i + '" data-sf="kg" value="' + (s.kg != null ? esc(fmtInput(s.kg)) : '') + '" placeholder="' + esc(ph.kg != null ? fmtInput(ph.kg) : (ex.kind === 'w' ? 'kg' : ex.kind === 'c' ? 'niv.' : '0')) + '" aria-label="' + esc(kgLbl + ', ' + L.name) + '">' +
+      '<input type="text" inputmode="numeric" autocomplete="off"' + (ph.reps != null ? ' class="def"' : '') + ' data-sk="' + k + '" data-si="' + i + '" data-sf="reps" value="' + (s.reps != null ? s.reps : '') + '" placeholder="' + (ph.reps != null ? ph.reps : '—') + '" aria-label="' + esc(repLbl + ', ' + L.name) + '">' +
       (tpl ? '' : '<button type="button" class="set-check" data-action="set-done" data-key="' + k + '" data-i="' + i + '" aria-pressed="' + !!s.done + '" aria-label="' + esc(L.check) + '">' + ICON.check + '</button>') + '</div>' +
       (open ? setTypeMenu(ex, i, L) : '');
   }
