@@ -32,7 +32,7 @@
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin-ext.woff2) format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 </style>
-<script>window.CARNET_VERSION = "2026-10-24.cb41fc";</script>
+<script>window.CARNET_VERSION = "2026-10-24.34f092";</script>
 <style>
 /* Carnet de bord calme : fond graphite profond, cartes à filet fin, actions en encre claire (version claire en option).
    Les couleurs des macros (protéines, glucides, lipides) sont les seules teintes vives ; les chiffres clés
@@ -819,8 +819,10 @@ body.exo-sorting .we-head, body.exo-sorting .add-exo, body.exo-sorting .we-notes
 .card .wc-sub { margin: 6px 0 0; font-size: 13px; line-height: 1.4; color: var(--muted); }
 .wc-legend { margin-top: 8px; }
 .wc-legend .lg-dot { opacity: .65; }
-.chart .wt-svg { color: var(--fg); }
 .chart .wt-line { fill: none; stroke: var(--fg); stroke-width: 2.25; stroke-linejoin: round; stroke-linecap: round; }
+.chart .wt-gap { stroke-width: 2; stroke-dasharray: 0.5 5.5; stroke-opacity: .55; }
+.legend span[hidden] { display: none; }
+.lg-gap { width: 18px; height: 2px; background: radial-gradient(circle, var(--fg) 0 1px, transparent 1.4px) 0 50% / 6px 2px repeat-x; opacity: .6; }
 .chart .wt-dot { fill: var(--muted); fill-opacity: .65; stroke: var(--surface); stroke-width: 1.5; }
 .chart .wt-end, .chart .wt-hl { fill: var(--fg); stroke: var(--surface); stroke-width: 2.5; }
 .chart .wt-hlw { fill: var(--surface); stroke: var(--fg); stroke-width: 2; }
@@ -1269,7 +1271,7 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
           <header class="wc-head"><h2>Poids du matin</h2><div class="wc-range" id="wRange"></div></header>
           <div class="wc-sum" id="wSum" aria-live="polite"></div>
           <div class="chart" id="wChart"></div>
-          <div class="legend wc-legend" id="wLegend" hidden><span><i class="lg-dot"></i>Pesée</span><span><i class="lg-line"></i>Moyenne sur 7 jours</span></div>
+          <div class="legend wc-legend" id="wLegend" hidden><span><i class="lg-dot"></i>Pesée</span><span><i class="lg-line"></i>Moyenne sur 7 jours</span><span class="wc-lg-gap" hidden><i class="lg-gap"></i>Jours sans pesée</span></div>
         </article>
         <article class="card wide">
           <header class="card-head">
@@ -7515,6 +7517,9 @@ function consFood(t, idx, byId, prev, viaNi) {
   const NF1 = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const kg1 = v => NF1.format(Math.round(v * 10) / 10 || 0);
   const kg1s = v => (Math.round(v * 10) < 0 ? '−' : '+') + kg1(Math.abs(v));
+  /* Espaces insécables : « 81,9 kg » et « le 22 oct. » ne se coupent pas en fin de ligne */
+  const nb = s => String(s).replace(/ /g, '\u00a0');
+  const kgU = v => kg1(v) + '\u00a0kg';
   /* Courbe monotone par des points d’abscisses croissantes : lisse, sans bosse qui dépasse les valeurs */
   function smoothPath(p) {
     const f = v => v.toFixed(1);
@@ -7594,30 +7599,30 @@ function consFood(t, idx, byId, prev, viaNi) {
     let start = days === Infinity ? all[0].date : addDays(end, 1 - days);
     if (start < all[0].date) start = all[0].date;
     if (dayGap(start, end) < 13) start = addDays(end, -13);
-    /* Un poids par jour : la pesée, sinon la valeur entre les deux pesées qui l’encadrent (7 jours d’écart au plus),
-       pour que la moyenne ne saute pas quand un jour manque */
+    /* Un poids par jour : la pesée, sinon la valeur sur la droite entre les deux pesées qui l’encadrent quand elles
+       sont à 7 jours au plus, pour que la moyenne ne saute pas quand un jour manque. Plus d’une semaine sans pesée :
+       rien n’est inventé, la courbe s’arrête et un pointillé relie ses deux bords */
     const byDate = new Map(all.map(p => [p.date, p.w]));
     const daily = new Map();
     all.forEach((a, i) => {
       daily.set(a.date, a.w);
       const b = all[i + 1], gap = b ? dayGap(a.date, b.date) : 0;
-      if (gap > 1 && gap <= 7) for (let k = 1; k < gap; k++) daily.set(addDays(a.date, k), a.w + (b.w - a.w) * k / gap);
+      if (gap <= 7) for (let k = 1; k < gap; k++) daily.set(addDays(a.date, k), a.w + (b.w - a.w) * k / gap);
     });
-    /* Pour chaque jour : la pesée du jour et la moyenne des 7 derniers jours, jusqu’à la dernière pesée,
-       dès qu’il y a 3 jours de valeurs (moins seulement pour qui débute) */
+    /* Moyenne des 7 derniers jours, pour chaque jour qui a une valeur (dès la première) */
+    const avgAt = d => {
+      const v = [];
+      for (let k = 0; k < 7; k++) { const x = daily.get(addDays(d, -k)); if (x != null) v.push(x); }
+      return mean(v);
+    };
     const lastW = all[all.length - 1];
-    const need = Math.min(3, daily.size);
     const series = [];
-    for (let d = start; d <= end; d = addDays(d, 1)) {
-      const vals = [];
-      if (d <= lastW.date) for (let k = 0; k < 7; k++) { const v = daily.get(addDays(d, -k)); if (v != null) vals.push(v); }
-      series.push({ date: d, w: byDate.has(d) ? byDate.get(d) : null, avg: vals.length && vals.length >= need ? mean(vals) : null });
-    }
+    for (let d = start; d <= end; d = addDays(d, 1)) series.push({ date: d, w: byDate.has(d) ? byDate.get(d) : null, avg: daily.has(d) ? avgAt(d) : null });
     const pts = series.filter(s => s.avg != null), raw = series.filter(s => s.w != null);
-    const whenTxt = iso => (iso === end ? 'aujourd’hui' : iso === addDays(end, -1) ? 'hier' : 'le ' + dfDM.format(dateOf(iso)));
+    const whenTxt = iso => (iso === end ? 'aujourd’hui' : iso === addDays(end, -1) ? 'hier' : nb('le ' + dfDM.format(dateOf(iso))));
     if (!pts.length) {
       legend.hidden = true;
-      sum.innerHTML = '<p class="wc-sub">Dernière pesée : ' + kg1(lastW.w) + ' kg, ' + esc(whenTxt(lastW.date)) + '.</p>';
+      sum.innerHTML = '<p class="wc-sub">Dernière pesée : ' + kgU(lastW.w) + ', ' + esc(whenTxt(lastW.date)) + '.</p>';
       box.innerHTML = '<p class="chart-empty">Aucune pesée sur cette période.</p>';
       return;
     }
@@ -7625,24 +7630,36 @@ function consFood(t, idx, byId, prev, viaNi) {
     const W = Math.max(280, Math.floor(box.clientWidth || 640)), H = 220;
     const m = { l: 36, r: 12, t: 12, b: 28 };
     const t0 = dateOf(start).getTime(), t1 = dateOf(end).getTime();
-    const plotW = W - m.l - m.r, yb = H - m.b;
-    const X = iso => m.l + (dateOf(iso).getTime() - t0) / (t1 - t0) * plotW;
-    /* Échelle des kilos : 3 à 5 graduations rondes */
-    const vals = raw.map(p => p.w).concat(pts.map(p => p.avg));
+    const plotW = W - m.l - m.r, yb = H - m.b, padX = 8;
+    /* Un peu d’air à gauche et à droite : la première et la dernière pesée ne collent ni aux kilos ni au bord */
+    const X = iso => m.l + padX + (dateOf(iso).getTime() - t0) / (t1 - t0) * (plotW - 2 * padX);
+    /* Tronçons de jours qui se suivent ; entre deux tronçons (plus d’une semaine sans pesée), un pointillé droit.
+       Si la période commence au milieu d’un tel trou, le pointillé part du bord gauche */
+    const runs = [];
+    pts.forEach((s, i) => { if (i && dayGap(pts[i - 1].date, s.date) === 1) runs[runs.length - 1].push(s); else runs.push([s]); });
+    const gaps = runs.slice(1).map((r, i) => [runs[i][runs[i].length - 1], r[0]]);
+    const before = all.filter(p => p.date < start).pop();
+    if (before && pts[0].date > start) {
+      const a = { date: before.date, avg: avgAt(before.date) }, b = pts[0];
+      gaps.unshift([{ date: start, avg: a.avg + (b.avg - a.avg) * dayGap(a.date, start) / dayGap(a.date, b.date) }, b]);
+    }
+    /* Échelle des kilos : graduations rondes (au plus 6), sur au moins 2 kg de haut pour que les petites
+       variations d’un jour à l’autre ne prennent pas toute la hauteur */
+    const vals = raw.map(p => p.w).concat(pts.map(p => p.avg), gaps.map(g => g[0].avg));
     let lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
-    const rng = Math.max(hi - lo, 0.8);
-    const step = [0.2, 0.5, 1, 2, 5, 10].find(s => rng / s <= 4) || 20;
-    lo = Math.floor((lo - rng * 0.06) / step) * step;
-    hi = Math.ceil((hi + rng * 0.06) / step) * step;
+    if (hi - lo < 2) { const c = (hi + lo) / 2; lo = c - 1; hi = c + 1; }
+    const pad = (hi - lo) * 0.06;
+    const step = [1, 2, 5, 10, 20, 50].find(s => Math.ceil((hi + pad) / s) - Math.floor((lo - pad) / s) <= 5) || 100;
+    lo = Math.floor((lo - pad) / step) * step;
+    hi = Math.ceil((hi + pad) / step) * step;
     const Y = v => m.t + (hi - v) / (hi - lo) * (yb - m.t);
-    const dec = step < 1 ? 1 : 0;
     let grid = '';
     for (let i = 0, nT = Math.round((hi - lo) / step); i <= nT; i++) {
       const v = lo + i * step, y = Y(v).toFixed(1);
-      grid += '<line class="grid" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + y + '" y2="' + y + '"/><text class="ax" x="' + (m.l - 7) + '" y="' + (Y(v) + 4).toFixed(1) + '" text-anchor="end">' + (dec ? kg1(v) : fmt(v, 0)) + '</text>';
+      grid += '<line class="grid" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + y + '" y2="' + y + '"/><text class="ax" x="' + (m.l - 7) + '" y="' + (Y(v) + 4).toFixed(1) + '" text-anchor="end">' + fmt(v, 0) + '</text>';
     }
     /* Dates : les lundis sur une courte période, le 1er du mois sur une longue ; la plus récente toujours gardée */
-    const spanDays = (t1 - t0) / 864e5, pxDay = plotW / spanDays;
+    const spanDays = (t1 - t0) / 864e5, pxDay = (plotW - 2 * padX) / spanDays;
     let ticks = [], every = 1;
     if (spanDays <= 75) {
       let d = mondayOf(start);
@@ -7663,35 +7680,30 @@ function consFood(t, idx, byId, prev, viaNi) {
       const x = X(t.d), anchor = x < m.l + 18 ? 'start' : x > W - m.r - 18 ? 'end' : 'middle';
       return '<text class="ax" x="' + x.toFixed(1) + '" y="' + (H - 8) + '" text-anchor="' + anchor + '">' + esc(t.label) + '</text>';
     }).join('');
-    /* La courbe s’interrompt quand une semaine entière n’a aucune pesée */
-    const segs = [];
-    let cur = [];
-    for (const s of series) {
-      if (s.avg == null) { if (cur.length) segs.push(cur); cur = []; continue; }
-      cur.push([X(s.date), Y(s.avg)]);
-    }
-    if (cur.length) segs.push(cur);
-    const long = segs.filter(g => g.length > 1);
-    const line = long.map(smoothPath).join('');
-    const area = long.map(g => smoothPath(g) + 'L' + g[g.length - 1][0].toFixed(1) + ',' + yb + 'L' + g[0][0].toFixed(1) + ',' + yb + 'Z').join('');
-    const dots = raw.map(p => '<circle class="wt-dot" cx="' + X(p.date).toFixed(1) + '" cy="' + Y(p.w).toFixed(1) + '" r="3.25"/>').join('');
+    /* La moyenne : trait plein et lissé sur les jours qui se suivent, pointillé droit sur les trous */
+    const solid = runs.filter(r => r.length > 1).map(r => smoothPath(r.map(s => [X(s.date), Y(s.avg)]))).join('');
+    const dashed = gaps.map(([a, b]) => 'M' + X(a.date).toFixed(1) + ',' + Y(a.avg).toFixed(1) + 'L' + X(b.date).toFixed(1) + ',' + Y(b.avg).toFixed(1)).join('');
+    const lineSvg = (dashed ? '<path class="wt-line wt-gap" d="' + dashed + '"/>' : '') + (solid ? '<path class="wt-line" d="' + solid + '"/>' : '');
+    legend.querySelector('.wc-lg-gap').hidden = !dashed;
+    /* Pesées : des points un peu plus gros quand il y a de la place entre eux */
+    const dotR = pxDay >= 7 ? 3.75 : pxDay >= 2.5 ? 3.25 : 2.6;
+    const dots = raw.map(p => '<circle class="wt-dot" cx="' + X(p.date).toFixed(1) + '" cy="' + Y(p.w).toFixed(1) + '" r="' + dotR + '"/>').join('');
     const last = pts[pts.length - 1], first = pts[0];
     const moved = first.date !== last.date, delta = last.avg - first.avg;
     const sumDefault = () => {
       sum.innerHTML = '<div class="wc-now"><span class="wc-val">' + kg1(last.avg) + '<small>kg</small></span>' +
-        (moved ? '<span class="wc-delta">' + kg1s(delta) + ' kg depuis le ' + esc(dfDM.format(dateOf(first.date))) + '</span>' : '') + '</div>' +
+        (moved ? '<span class="wc-delta">' + kg1s(delta) + '\u00a0kg depuis le ' + esc(nb(dfDM.format(dateOf(first.date)))) + '</span>' : '') + '</div>' +
         '<p class="wc-sub">Moyenne sur 7 jours · ' +
-        (lastW.date === end ? 'pesée du jour ' + kg1(lastW.w) + ' kg' : 'dernière pesée ' + kg1(lastW.w) + ' kg ' + esc(whenTxt(lastW.date))) + '</p>';
+        (lastW.date === end ? 'pesée du jour ' + kgU(lastW.w) : 'dernière pesée ' + kgU(lastW.w) + ' ' + esc(whenTxt(lastW.date))) + '</p>';
     };
     const sumAt = s => {
       sum.innerHTML = '<div class="wc-now"><span class="wc-val">' + kg1(s.avg) + '<small>kg</small></span><span class="wc-delta">' + esc(cap1(dfShort.format(dateOf(s.date)))) + '</span></div>' +
-        '<p class="wc-sub">Moyenne sur 7 jours · ' + (s.w != null ? 'pesée du jour ' + kg1(s.w) + ' kg' : 'pas de pesée ce jour-là') + '</p>';
+        '<p class="wc-sub">Moyenne sur 7 jours · ' + (s.w != null ? 'pesée du jour ' + kgU(s.w) : 'pas de pesée ce jour-là') + '</p>';
     };
     const aria = 'Poids du matin, moyenne sur 7 jours : ' + kg1(last.avg) + ' kg' + (moved ? ', ' + kg1s(delta) + ' kg depuis le ' + dfDM.format(dateOf(first.date)) : '') + '. ' + raw.length + (raw.length > 1 ? ' pesées' : ' pesée') + ' sur la période. Flèches gauche et droite pour parcourir les jours.';
     box.innerHTML = '<svg class="wt-svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" tabindex="0" role="img" aria-label="' + esc(aria) + '">' +
-      '<defs><linearGradient id="wtGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".16"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs>' +
       grid + '<line class="base" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + yb + '" y2="' + yb + '"/>' + xl +
-      (area ? '<path d="' + area + '" fill="url(#wtGrad)"/>' : '') + dots + (line ? '<path class="wt-line" d="' + line + '"/>' : '') +
+      dots + lineSvg +
       '<circle class="wt-end" cx="' + X(last.date).toFixed(1) + '" cy="' + Y(last.avg).toFixed(1) + '" r="4.5"/>' +
       '<line class="xhair" x1="0" x2="0" y1="' + m.t + '" y2="' + yb + '" visibility="hidden"/><circle class="wt-hlw" r="4.5" cx="0" cy="0" visibility="hidden"/><circle class="wt-hl" r="5.5" cx="0" cy="0" visibility="hidden"/>' +
       '<rect class="hit" x="' + m.l + '" y="0" width="' + plotW + '" height="' + H + '"/></svg>';
