@@ -736,7 +736,7 @@ body.exo-sorting .we-head, body.exo-sorting .add-exo, body.exo-sorting .we-notes
 @media (min-width: 920px) { .restbar { bottom: calc(24px + env(safe-area-inset-bottom, 0px)); } }
 
 /* ---------- Suivi ---------- */
-.suivi { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); padding-block: 18px; }
+.suivi { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); align-items: start; padding-block: 18px; }
 @media (min-width: 920px) {
   .suivi { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
   .suivi .wide { grid-column: 1 / -1; }
@@ -760,6 +760,8 @@ body.exo-sorting .we-head, body.exo-sorting .add-exo, body.exo-sorting .we-notes
 .chart { position: relative; min-height: 96px; }
 .chart svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
 .chart svg:focus-visible { outline-offset: 4px; border-radius: 4px; }
+/* Touché au doigt ou à la souris : pas de cadre de focus (il reste pour le clavier) */
+.chart svg.ptr:focus, .chart svg.ptr:focus-visible { outline: none; }
 .chart .grid { stroke: var(--line); stroke-width: 1; }
 .chart .base { stroke: var(--line-2); stroke-width: 1; }
 .chart .ax { fill: var(--muted); font-family: var(--font-body); font-size: 12px; font-variant-numeric: tabular-nums; }
@@ -774,27 +776,59 @@ body.exo-sorting .we-head, body.exo-sorting .add-exo, body.exo-sorting .we-notes
 .chart .goal { stroke: var(--fg); stroke-width: 2; stroke-linecap: round; }
 .chart .hit { fill: transparent; }
 .chart-empty { margin: 0; padding: 22px 0; color: var(--muted); }
-/* Poids du matin : chiffre du jour en grand, période au choix, courbe lisse de la moyenne sur 7 jours */
+/* Poids du matin : la dernière pesée en grand, la moyenne sur 7 jours et l’écart sur la période à côté ;
+   la courbe : pesées en points, moyenne sur 7 jours en trait */
 .wc-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 12px; }
 .card .wc-head h2 { margin: 0; }
 .wc-range:empty, .wc-sum:empty { display: none; }
 .wc-range .seg { min-width: 172px; }
 .wc-range .seg-btn { min-height: 32px; padding: 6px 10px; font-size: 12.5px; }
-.wc-sum { margin: 12px 0 12px; }
+.wc-sum { margin: 12px 0 14px; }
 .wc-now { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; }
-.wc-val { font-family: var(--font-display); font-stretch: var(--narrow); font-weight: 500; font-size: 50px; line-height: 1; letter-spacing: -.012em; font-variant-numeric: tabular-nums; }
-.wc-val small { margin-left: 5px; font-family: var(--font-body); font-stretch: 100%; font-size: 17px; font-weight: 600; letter-spacing: 0; color: var(--fg-2); }
-.wc-delta { font-size: 14.5px; font-weight: 600; color: var(--fg-2); font-variant-numeric: tabular-nums; }
-.card .wc-sub { margin: 6px 0 0; font-size: 13px; line-height: 1.4; color: var(--muted); }
+.wc-val { font-family: var(--font-display); font-stretch: var(--narrow); font-weight: 500; font-size: 54px; line-height: 1; letter-spacing: -.012em; font-variant-numeric: tabular-nums; }
+.wc-val small, .pace-num .big small { margin-left: 5px; font-family: var(--font-body); font-stretch: 100%; font-size: 17px; font-weight: 600; letter-spacing: 0; color: var(--fg-2); }
+.wc-when { font-size: 15px; font-weight: 600; color: var(--fg-2); }
+.wc-stats { display: flex; flex-wrap: wrap; gap: 8px 30px; margin-top: 12px; }
+.wc-stat { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.wc-sl { font-size: 12.5px; color: var(--muted); }
+.wc-sv { font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .wc-legend { margin-top: 8px; }
-.wc-legend .lg-dot { opacity: .65; }
-.chart .wt-line { fill: none; stroke: var(--fg); stroke-width: 2.25; stroke-linejoin: round; stroke-linecap: round; }
-.chart .wt-gap { stroke-width: 2; stroke-dasharray: 0.5 5.5; stroke-opacity: .55; }
-.legend span[hidden] { display: none; }
-.lg-gap { width: 18px; height: 2px; background: radial-gradient(circle, var(--fg) 0 1px, transparent 1.4px) 0 50% / 6px 2px repeat-x; opacity: .6; }
-.chart .wt-dot { fill: var(--muted); fill-opacity: .65; stroke: var(--surface); stroke-width: 1.5; }
-.chart .wt-end, .chart .wt-hl { fill: var(--fg); stroke: var(--surface); stroke-width: 2.5; }
-.chart .wt-hlw { fill: var(--surface); stroke: var(--fg); stroke-width: 2; }
+.lg-line.wt { opacity: .55; }
+.chart .wt-line { fill: none; stroke: var(--fg); stroke-opacity: .55; stroke-width: 2.25; stroke-linejoin: round; stroke-linecap: round; }
+.chart .wt-gap { stroke-width: 2; stroke-dasharray: 0.5 5.5; stroke-opacity: .45; }
+.lg-gap { width: 18px; height: 2px; background: radial-gradient(circle, var(--fg) 0 1px, transparent 1.4px) 0 50% / 6px 2px repeat-x; opacity: .55; }
+.wc-legend .lg-dot { background: var(--fg); }
+.chart .wt-dot { fill: var(--fg); stroke: var(--surface); stroke-width: 1.5; }
+.chart .wt-last { stroke-width: 2.5; }
+.chart .wt-hl { fill: none; stroke: var(--fg); stroke-width: 2; }
+.chart .wt-ht { fill: var(--surface); stroke: var(--fg); stroke-opacity: .7; stroke-width: 2; }
+/* Rythme de prise */
+.pace-note { font-size: 13px; }
+.card p.pace-note { margin-top: 10px; }
+/* Pesées : la liste à corriger */
+.card-head.wl-head { align-items: center; margin-bottom: 2px; }
+.wl-head h2 { margin: 0; }
+.card .wl-sub { margin-bottom: 4px; }
+.wl-val { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.wt-inp input { width: 5.5em; font-size: 20px; font-weight: 600; }
+/* Calories : moyenne des 7 jours avant aujourd’hui */
+.k-sum:empty { display: none; }
+.k-sum { margin: 2px 0 16px; }
+.card .k-period { margin: 0 0 10px; font-size: 13px; color: var(--muted); }
+.chart .kbar.today { opacity: .55; }
+.chart svg.hovering .kbar.today.on { opacity: .8; }
+/* Semaine par semaine */
+.weeks { list-style: none; margin: 6px 0 0; padding: 0; }
+.weeks > li { padding-block: 12px; border-top: 1px solid var(--line); }
+.weeks > li:first-child { border-top: 0; padding-top: 6px; }
+.weeks > li:last-child { padding-bottom: 0; }
+.wk-top { display: flex; align-items: baseline; justify-content: space-between; gap: 6px 12px; flex-wrap: wrap; }
+.wk-name { font-weight: 600; }
+.wk-name em { font-style: normal; font-weight: 500; font-size: 13px; color: var(--muted); }
+.wk-w { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.wk-w strong { font-size: 16px; font-weight: 600; }
+.wk-w span { margin-left: 10px; font-size: 13px; color: var(--muted); }
+.card .wk-sub { margin: 3px 0 0; font-size: 13px; line-height: 1.45; color: var(--muted); }
 .tip { position: absolute; z-index: 5; transform: translate(-50%, calc(-100% - 12px)); display: flex; flex-direction: column; gap: 1px; background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); padding: 8px 12px; font-size: 13px; line-height: 1.35; white-space: nowrap; pointer-events: none; }
 .tip strong { font-size: 15px; font-weight: 600; }
 .tip span { color: var(--muted); }
@@ -1232,25 +1266,26 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
     <!-- ===== Suivi ===== -->
     <section class="panel" id="p-suivi" role="tabpanel" aria-labelledby="t-suivi" hidden>
       <div class="suivi">
-        <article class="card" id="paceCard"></article>
-        <article class="card" id="avgCard"></article>
         <article class="card wide" id="wCard">
           <header class="wc-head"><h2>Poids du matin</h2><div class="wc-range" id="wRange"></div></header>
           <div class="wc-sum" id="wSum" aria-live="polite"></div>
           <div class="chart" id="wChart"></div>
-          <div class="legend wc-legend" id="wLegend" hidden><span><i class="lg-dot"></i>Pesée</span><span><i class="lg-line"></i>Moyenne sur 7 jours</span><span class="wc-lg-gap" hidden><i class="lg-gap"></i>Jours sans pesée</span></div>
+          <div class="legend wc-legend" id="wLegend" hidden><span><i class="lg-dot"></i>Pesée</span><span><i class="lg-line wt"></i>Moyenne sur 7 jours</span><span class="wc-lg-gap" hidden><i class="lg-gap"></i>Jours sans pesée</span></div>
         </article>
-        <article class="card wide">
+        <article class="card" id="paceCard"></article>
+        <article class="card" id="wlCard"></article>
+        <article class="card wide" id="kCard">
           <header class="card-head">
             <div><h2>Calories</h2><p class="sub">14 derniers jours</p></div>
             <div class="legend"><span><i class="lg-bar"></i>Calories notées</span><span><i class="lg-line"></i>Objectif du jour</span></div>
           </header>
+          <div class="k-sum" id="kSum"></div>
           <div class="chart" id="kChart"></div>
         </article>
         <article class="card wide">
           <h2>Semaine par semaine</h2>
-          <p class="sub">Moyennes des jours où tu as noté ton poids ou tes repas.</p>
-          <div class="table-wrap plain" id="weekTable"></div>
+          <p class="sub">Du lundi au dimanche : poids moyen, puis calories et protéines par jour. La journée en cours ne compte pas dans les calories.</p>
+          <div id="weekTable"></div>
         </article>
       </div>
     </section>
@@ -1465,6 +1500,29 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
     <footer class="dlg-foot">
       <div class="foot-btns">
         <button type="button" class="btn" data-action="me-close">Annuler</button>
+        <button type="submit" class="btn primary">Enregistrer</button>
+      </div>
+    </footer>
+  </form>
+</dialog>
+
+<!-- ===== Fenêtre : une pesée (onglet Suivi) ===== -->
+<dialog id="wtDlg" aria-labelledby="wtTitle">
+  <form class="dlg" id="wtForm" novalidate>
+    <header class="dlg-head">
+      <h2 id="wtTitle">Nouvelle pesée</h2>
+      <button type="button" class="iconbtn" data-action="wt-close" aria-label="Fermer"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
+    </header>
+    <div class="dlg-body wt-body">
+      <label class="field" for="wt-date" id="wtDateField"><span>Jour</span><input type="date" id="wt-date"></label>
+      <label class="field" for="wt-val"><span>Poids du matin</span><span class="inp wt-inp"><input type="text" id="wt-val" inputmode="decimal" autocomplete="off" enterkeyhint="done" placeholder="83,9"><em>kg</em></span></label>
+      <p class="hint" id="wtHint" hidden></p>
+      <p class="form-error" id="wtError" role="alert"></p>
+    </div>
+    <footer class="dlg-foot">
+      <button type="button" class="btn ghost danger" id="wtDel" data-action="wt-delete" hidden>Supprimer</button>
+      <div class="foot-btns">
+        <button type="button" class="btn" data-action="wt-close">Annuler</button>
         <button type="submit" class="btn primary">Enregistrer</button>
       </div>
     </footer>
@@ -7371,99 +7429,262 @@ function consFood(t, idx, byId, prev, viaNi) {
   }
 
   /* ================= Suivi ================= */
-  function weeklyRows() {
-    const weeks = new Map();
-    const get = wk => { let w = weeks.get(wk); if (!w) { w = { week: wk, weights: [], kcal: [], protein: [], sessions: 0, crea: 0 }; weeks.set(wk, w); } return w; };
-    for (const d of allDays()) {
-      const w = get(mondayOf(d.date));
-      if (d.weight != null) w.weights.push(d.weight);
-      if (d.entries.length) { const t = dayTotals(d); w.kcal.push(t.kcal); w.protein.push(t.protein); }
-      if (d.creatine) w.crea++;
+  /* Ce que Jules note fait foi : le gros chiffre du poids est sa dernière pesée, jamais une valeur calculée.
+     La moyenne sur 7 jours (moyenne des pesées des 7 derniers jours) et le rythme viennent à côté, nommés comme tels. */
+  const dayGap = (a, b) => Math.round((dateOf(b) - dateOf(a)) / 864e5);
+  /* Kilos toujours avec une décimale (83,0 et pas 83), signe + ou − pour un écart */
+  const NF1 = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const kg1 = v => NF1.format(Math.round(v * 10 + 1e-9) / 10 || 0);
+  const kg1s = v => { const r = Math.round(v * 10 + 1e-9); return r === 0 ? kg1(0) : (r < 0 ? '−' : '+') + kg1(Math.abs(v)); };
+  /* Espaces insécables : « 81,9 kg » et « le 22 oct. » ne se coupent pas en fin de ligne */
+  const nb = s => String(s).replace(/ /g, '\u00a0');
+  const kgU = v => kg1(v) + '\u00a0kg';
+  const wDayLabel = iso => cap1(dfShort.format(dateOf(iso))).replace(/ 1 /, ' 1er ');
+  /* « 3 oct. », « 1er nov. » */
+  const dmFr = iso => nb(dfDM.format(dateOf(iso)).replace(/^1 /, '1er '));
+  const whenTxt = iso => { const t = todayISO(); return iso === t ? 'aujourd’hui' : iso === addDays(t, -1) ? 'hier' : 'le\u00a0' + dmFr(iso); };
+  /* Point final, sauf après une abréviation qui en a déjà un (« oct. ») */
+  const endDot = t => (/\.$/.test(t) ? t : t + '.');
+
+  /* Toutes les pesées connues, de la plus ancienne à la plus récente. Les journées suivies en continu font foi ;
+     les pesées plus anciennes, lues une fois à part, complètent avant elles */
+  function allWeights() {
+    const end = todayISO();
+    if (state.historyCapped && !state.wOld) wantOldWeights();
+    const recent = allDays(), wmap = new Map();
+    if (state.wOld) {
+      const loaded = new Set(recent.map(d => d.date));
+      for (const [date, w] of state.wOld) if (!loaded.has(date)) wmap.set(date, w);
     }
-    for (const x of state.workouts) if (isDone(x)) get(mondayOf(x.date)).sessions++;
-    const rows = [...weeks.values()].filter(w => w.weights.length || w.kcal.length || w.sessions || w.crea).sort((a, b) => (a.week < b.week ? 1 : -1)).slice(0, 8);
-    rows.forEach(r => { r.avgW = mean(r.weights); r.avgK = mean(r.kcal); r.avgP = mean(r.protein); r.logged = r.kcal.length; });
-    rows.forEach((r, i) => { const prev = rows[i + 1]; r.delta = r.avgW != null && prev && prev.avgW != null ? r.avgW - prev.avgW : null; });
-    return rows;
+    for (const d of recent) if (d.weight != null) wmap.set(d.date, d.weight);
+    return [...wmap].filter(e => e[0] <= end).sort((a, b) => (a[0] < b[0] ? -1 : 1)).map(e => ({ date: e[0], w: e[1] }));
+  }
+  const weightOn = date => { const p = allWeights().find(x => x.date === date); return p ? p.w : null; };
+  /* Moyenne sur 7 jours d’un jour : la moyenne des pesées de ce jour et des 6 précédents, rien d’inventé.
+     Sur la courbe, elle est placée à chaque pesée ; deux pesées à plus de 7 jours d’écart ne sont pas reliées en trait plein */
+  function weightModel(all) {
+    const byDate = new Map(all.map(p => [p.date, p.w]));
+    const avgAt = d => {
+      const v = [];
+      for (let k = 0; k < 7; k++) { const x = byDate.get(addDays(d, -k)); if (x != null) v.push(x); }
+      return mean(v);
+    };
+    const nAt = d => { let n = 0; for (let k = 0; k < 7; k++) if (byDate.has(addDays(d, -k))) n++; return n; };
+    return { byDate, avgAt, nAt };
+  }
+  /* Rythme : la pente des pesées des 4 dernières semaines (droite la plus proche de tous les points), en kg par semaine.
+     Il faut au moins 5 pesées étalées sur 2 semaines ; l’objectif ne se change qu’à partir de 3 semaines */
+  const PACE_DAYS = 28, PACE_MIN_N = 5, PACE_MIN_SPAN = 13, PACE_SURE_SPAN = 20;
+  function weightPace(all) {
+    const from = addDays(todayISO(), 1 - PACE_DAYS);
+    const pts = all.filter(p => p.date >= from);
+    const span = pts.length > 1 ? dayGap(pts[0].date, pts[pts.length - 1].date) : 0;
+    const out = { n: pts.length, span, first: pts[0] || null, ok: false };
+    if (pts.length < PACE_MIN_N || span < PACE_MIN_SPAN) return out;
+    const x = pts.map(p => dayGap(pts[0].date, p.date)), mx = mean(x), my = mean(pts.map(p => p.w));
+    let sxy = 0, sxx = 0;
+    pts.forEach((p, i) => { sxy += (x[i] - mx) * (p.w - my); sxx += (x[i] - mx) * (x[i] - mx); });
+    return Object.assign(out, { ok: true, rate: sxy / sxx * 7 });
   }
   function paceTarget() {
     const n = computeNeeds(state.profile);
     if (n.ok && n.blocked !== 'age') return { goal: n.goal, range: n.range };
     return { goal: 'masse', range: [0.2, 0.4] };
   }
-  function paceVerdict(rows) {
-    const ok = rows.filter(r => r.weights.length >= 3);
-    const t = paceTarget();
-    if (ok.length < 2) return { state: 'wait', t };
-    const a = ok[0], b = ok[1];
-    const weeks = Math.max(1, Math.round((dateOf(a.week) - dateOf(b.week)) / (7 * 864e5)));
-    const rate = (a.avgW - b.avgW) / weeks;
-    const lo = t.range[0] - 0.075, hi = t.range[1] + 0.075;
-    return { state: rate < lo ? 'under' : rate > hi ? 'over' : 'good', rate, a, b, t };
+  /* Semaines du lundi au dimanche : poids moyen (écart avec la semaine d’avant, si elle a des pesées),
+     calories et protéines par jour sans la journée en cours, séances, créatine */
+  function weeklyRows() {
+    const today = todayISO(), cur = mondayOf(today), weeks = new Map();
+    const get = wk => { let w = weeks.get(wk); if (!w) { w = { week: wk, weights: [], kcal: [], protein: [], sessions: 0, crea: 0 }; weeks.set(wk, w); } return w; };
+    for (const p of allWeights()) get(mondayOf(p.date)).weights.push(p.w);
+    for (const d of allDays()) {
+      if (d.date > today) continue;
+      const w = get(mondayOf(d.date));
+      if (d.entries.length && d.date < today) { const t = dayTotals(d); w.kcal.push(t.kcal); w.protein.push(t.protein); }
+      if (d.creatine) w.crea++;
+    }
+    for (const x of state.workouts) if (isDone(x)) get(mondayOf(x.date)).sessions++;
+    const rows = [...weeks.values()].filter(w => w.weights.length || w.kcal.length || w.sessions || w.crea).sort((a, b) => (a.week < b.week ? 1 : -1)).slice(0, 8);
+    rows.forEach(r => {
+      r.avgW = mean(r.weights); r.avgK = mean(r.kcal); r.avgP = mean(r.protein);
+      const prev = weeks.get(addDays(r.week, -7)), pw = prev ? mean(prev.weights) : null;
+      r.delta = r.avgW != null && pw != null ? r.avgW - pw : null;
+      r.days = r.week === cur ? dayGap(cur, today) + 1 : 7;
+    });
+    return rows;
   }
   function renderSuivi() {
     if (state.tab !== 'suivi') return;
-    renderPace();
-    renderAvg();
     renderWeightChart();
+    renderPace();
+    renderWeightList();
+    renderKcalSummary();
     renderKcalChart();
-    renderWeekTable();
+    renderWeeks();
   }
   function renderPace() {
     const el = $('#paceCard');
-    const v = paceVerdict(weeklyRows());
-    const goal = v.t.goal;
+    const t = paceTarget(), goal = t.goal;
+    const p = weightPace(allWeights());
     const title = goal === 'perte' ? 'Rythme de perte' : goal === 'maintien' ? 'Stabilité du poids' : 'Rythme de prise';
-    const target = goal === 'maintien' ? 'Cible : poids stable, à 0,1 kg près par semaine' : 'Cible : ' + fmtRangeKg(v.t.range[0], v.t.range[1]) + ' par semaine';
+    const target = goal === 'maintien' ? 'Cible : poids stable, à 0,1 kg près par semaine' : 'Cible : ' + fmtRangeKg(t.range[0], t.range[1]) + ' par semaine';
     let html = '<h2>' + title + '</h2><p class="sub">' + esc(target) + '</p>';
-    if (v.state === 'wait') {
-      html += '<p>Pèse-toi le matin à jeun, au moins 3 fois par semaine, dans l’onglet Jour. Ton rythme s’affiche après 2 semaines de pesées.</p>';
-    } else {
-      html += '<div class="pace-num"><span class="big">' + fmtSigned(v.rate, 1) + ' kg</span><span class="of">par semaine</span></div>';
-      const g = state.goals;
-      if (v.state === 'good') {
-        html += '<p>' + stateChip({ cls: 'ok', icon: '✓', text: 'Dans la cible' }) + '</p><p>Garde ton objectif actuel de ' + fmt(g.kcal, 0) + ' kcal.</p>';
-      } else if (v.state === 'under') {
-        const label = goal === 'perte' ? 'Trop rapide' : goal === 'maintien' ? 'Tu perds du poids' : 'Trop lent';
-        const msg = goal === 'perte' ? 'Tu perds plus vite que prévu. Si ça dure depuis 2 à 3 semaines, ajoute environ 150 kcal par jour pour garder ton muscle.' : 'Si ça dure depuis 2 à 3 semaines, ajoute environ 150 kcal par jour.';
-        html += '<p>' + stateChip({ cls: goal === 'perte' ? 'over' : 'todo', icon: goal === 'perte' ? '▲' : '', text: label }) + '</p><p>' + msg + '</p>' +
-          '<button type="button" class="btn" data-action="pace-apply" data-delta="150">Passer à ' + fmt(g.kcal + 150, 0) + ' kcal</button>';
-      } else {
-        const label = goal === 'perte' ? 'Trop lent' : goal === 'maintien' ? 'Tu prends du poids' : 'Trop rapide';
-        const msg = goal === 'masse' ? 'Au-delà du rythme prévu, une bonne partie de la prise est du gras. Si ça dure depuis 2 à 3 semaines, retire environ 150 kcal par jour.' : 'Si ça dure depuis 2 à 3 semaines, retire environ 150 kcal par jour.';
-        html += '<p>' + stateChip({ cls: goal === 'masse' ? 'over' : 'todo', icon: goal === 'masse' ? '▲' : '', text: label }) + '</p><p>' + msg + '</p>' +
-          '<button type="button" class="btn" data-action="pace-apply" data-delta="-150">Passer à ' + fmt(g.kcal - 150, 0) + ' kcal</button>';
+    if (!p.ok) {
+      html += '<p>Pèse-toi le matin, à jeun, au moins 3 fois par semaine. Ton rythme s’affiche dès que tu as 5 pesées sur 2 semaines.</p>';
+      if (p.n) {
+        const left = [], dl = PACE_MIN_SPAN - p.span, nl = PACE_MIN_N - p.n;
+        if (dl > 0) left.push(dl + (dl > 1 ? ' jours' : ' jour'));
+        if (nl > 0) left.push(nl + (nl > 1 ? ' pesées' : ' pesée'));
+        html += '<p class="muted pace-note">' + p.n + (p.n > 1 ? ' pesées' : ' pesée') + ' depuis le ' + esc(dmFr(p.first.date)) + ' : encore ' + esc(listFr(left)) + '.</p>';
       }
-      html += '<p class="muted" style="font-size:13px;margin-top:10px">Moyenne de la semaine du ' + esc(dfDM.format(dateOf(v.a.week))) + ', comparée à la semaine du ' + esc(dfDM.format(dateOf(v.b.week))) + '</p>';
+      el.innerHTML = html;
+      return;
     }
+    const lo = t.range[0] - 0.075, hi = t.range[1] + 0.075;
+    const st = p.rate < lo ? 'under' : p.rate > hi ? 'over' : 'good';
+    const g = state.goals;
+    html += '<div class="pace-num"><span class="big">' + kg1s(p.rate) + '<small>kg</small></span><span class="of">par semaine</span></div>';
+    if (st === 'good') {
+      html += '<p>' + stateChip({ cls: 'ok', icon: '✓', text: 'Dans la cible' }) + '</p><p>Garde ton objectif actuel de ' + fmt(g.kcal, 0) + ' kcal.</p>';
+    } else {
+      /* under : le poids monte moins vite (ou descend plus vite) que prévu → plus de calories ; over : l’inverse */
+      const more = st === 'under';
+      const label = more ? (goal === 'perte' ? 'Trop rapide' : goal === 'maintien' ? 'Tu perds du poids' : 'Trop lent') : (goal === 'perte' ? 'Trop lent' : goal === 'maintien' ? 'Tu prends du poids' : 'Trop rapide');
+      const alarm = (more && goal === 'perte') || (!more && goal === 'masse');
+      const msg = more
+        ? (goal === 'perte' ? 'Tu perds plus vite que prévu. Si ça continue, ajoute environ 150\u00a0kcal par jour pour garder ton muscle.' : goal === 'maintien' ? 'Si ça continue, ajoute environ 150\u00a0kcal par jour.' : 'Tu prends moins vite que prévu. Si ça continue, ajoute environ 150\u00a0kcal par jour.')
+        : (goal === 'masse' ? 'Au-delà du rythme prévu, une bonne partie de la prise est du gras. En début de prise de masse, la balance monte souvent vite pendant 1 à 2 semaines (eau et glucides stockés dans les muscles) : si ça continue, retire environ 150\u00a0kcal par jour.' : 'Si ça continue, retire environ 150\u00a0kcal par jour.');
+      html += '<p>' + stateChip({ cls: alarm ? 'over' : 'todo', icon: alarm ? '▲' : '', text: label }) + '</p><p>' + esc(msg) + '</p>';
+      if (p.span >= PACE_SURE_SPAN) html += '<button type="button" class="btn" data-action="pace-apply" data-delta="' + (more ? 150 : -150) + '">Passer à ' + fmt(g.kcal + (more ? 150 : -150), 0) + ' kcal</button>';
+      else html += '<p class="muted pace-note">À confirmer : ton rythme sera plus sûr avec 3 semaines de pesées.</p>';
+    }
+    html += '<p class="muted pace-note">' + esc(endDot('Tendance de tes ' + p.n + ' pesées depuis le ' + dmFr(p.first.date))) + '</p>';
     el.innerHTML = html;
   }
-  function renderAvg() {
-    const el = $('#avgCard');
-    const end = todayISO(), from = addDays(end, -6);
-    const days = allDays().filter(d => d.date >= from && d.date <= end && d.entries.length);
-    if (!days.length) { el.innerHTML = '<h2>Ces 7 derniers jours</h2><p class="muted">Aucun repas noté sur les 7 derniers jours.</p>'; return; }
+  /* Pesées : la liste, à toucher pour corriger ou supprimer ; « Ajouter » pour un autre jour */
+  const WL_SHORT = 7;
+  function renderWeightList() {
+    const el = $('#wlCard');
+    const all = allWeights();
+    let html = '<header class="card-head wl-head"><h2>Pesées</h2><button type="button" class="btn small" data-action="wt-add">' + svgIco('<path d="M12 5v14M5 12h14"/>') + 'Ajouter</button></header>';
+    if (!all.length) {
+      el.innerHTML = html + '<p class="muted">Aucune pesée pour l’instant. Pèse-toi le matin, à jeun, après être passé aux toilettes : c’est le moment où ton poids varie le moins.</p>';
+      return;
+    }
+    const desc = all.slice().reverse(), n = state.wlAll ? desc.length : Math.min(WL_SHORT, desc.length);
+    html += '<p class="sub wl-sub">Touche une pesée pour la corriger.</p><ul class="rowlist wlist">' + desc.slice(0, n).map((p, i) => {
+      const prev = desc[i + 1];
+      const diff = !prev ? 'Première pesée' : kg1s(p.w - prev.w) + '\u00a0kg ' + (dayGap(prev.date, p.date) === 1 ? 'depuis la veille' : 'depuis le\u00a0' + dmFr(prev.date));
+      return '<li><button type="button" class="rowbtn" data-action="wt-edit" data-date="' + p.date + '" aria-label="' + esc(cap1(dfLong.format(dateOf(p.date))) + ' : ' + kg1(p.w) + ' kg. Modifier') + '">' +
+        '<span class="rl-main"><span class="rl-title">' + esc(wDayLabel(p.date)) + '</span><span class="muted">' + esc(diff) + '</span></span>' +
+        '<span class="wl-val">' + kgU(p.w) + '</span>' + svgIco('<path d="M9.5 6l6 6-6 6"/>') + '</button></li>';
+    }).join('') + '</ul>';
+    if (desc.length > WL_SHORT) html += '<button type="button" class="btn small ghost hist-more" data-action="wt-more" aria-expanded="' + !!state.wlAll + '">' + (state.wlAll ? 'Voir moins' : 'Voir les ' + desc.length + ' pesées') + '</button>';
+    el.innerHTML = html;
+  }
+  /* Fenêtre « Pesée » : nouvelle pesée (jour au choix) ou correction d’une pesée */
+  let wtDate = null;
+  function openWeightDlg(date) {
+    const all = allWeights(), t = todayISO(), has = d => all.some(p => p.date === d);
+    const cur = date ? all.find(p => p.date === date) : null;
+    wtDate = cur ? date : null;
+    const day = cur ? date : !has(t) ? t : !has(addDays(t, -1)) ? addDays(t, -1) : t;
+    $('#wtTitle').textContent = cur ? 'Pesée du ' + wDayLabel(date).toLowerCase() : 'Nouvelle pesée';
+    $('#wtDateField').hidden = !!cur;
+    const di = $('#wt-date');
+    di.max = t;
+    di.value = day;
+    const vi = $('#wt-val');
+    vi.value = cur ? fmtInput(cur.w) : '';
+    vi.removeAttribute('aria-invalid');
+    $('#wtDel').hidden = !cur;
+    $('#wtError').textContent = '';
+    wtHint();
+    openDlg('#wtDlg');
+    setTimeout(() => { try { vi.focus(); if (vi.value) vi.select(); } catch (e) { /* champ masqué */ } }, 60);
+  }
+  function wtHint() {
+    const el = $('#wtHint'), d = $('#wt-date').value;
+    const cur = !wtDate && isISO(d) ? weightOn(d) : null;
+    el.textContent = cur != null ? 'Tu as déjà noté ' + kgU(cur) + ' ce jour-là : cette pesée la remplacera.' : '';
+    el.hidden = cur == null;
+  }
+  function saveWeightDlg() {
+    const t = todayISO(), date = wtDate || $('#wt-date').value, vi = $('#wt-val'), err = $('#wtError');
+    if (!isISO(date) || date > t) { err.textContent = 'Choisis un jour : aujourd’hui ou avant.'; $('#wt-date').focus(); return; }
+    const w = parseNum(vi.value.trim());
+    if (w == null || w <= 20 || w >= 400) { err.textContent = 'Écris ton poids en kilos, par exemple 83,9.'; vi.setAttribute('aria-invalid', 'true'); vi.focus(); return; }
+    const prev = weightOn(date);
+    closeDlg('#wtDlg');
+    if (prev === w) return;
+    setWeightOn(date, w).then(() => toast('Pesée du ' + dmFr(date) + ' : ' + kgU(w), 'Annuler', () => setWeightOn(date, prev).catch(weightFail)), weightFail);
+  }
+  function deleteWeight(date) {
+    const prev = date ? weightOn(date) : null;
+    closeDlg('#wtDlg');
+    if (prev == null) return;
+    setWeightOn(date, null).then(() => toast('Pesée du ' + dmFr(date) + ' supprimée', 'Annuler', () => setWeightOn(date, prev).catch(weightFail)), weightFail);
+  }
+  const weightFail = () => toast('Impossible d’enregistrer cette pesée pour l’instant. Réessaie dans un moment.');
+  /* Lecture ponctuelle d’un document (journée pas encore chargée) */
+  function readDocOnce(path) {
+    return new Promise((res, rej) => {
+      let un = null, done = false;
+      const stop = () => { if (un) un(); else setTimeout(() => { if (un) un(); }, 0); };
+      const timer = setTimeout(() => { if (!done) { done = true; stop(); rej(new Error('lecture trop longue')); } }, 8000);
+      un = state.store.watchDoc(path, data => { if (done) return; done = true; clearTimeout(timer); res(data); stop(); });
+    });
+  }
+  /* Poids d’un jour (null pour l’effacer). La journée ouverte dans Jour passe par son propre enregistrement ;
+     une autre journée est relue telle quelle (repas compris) et seul son poids change */
+  function setWeightOn(date, w) {
+    if (!state.store || state.readOnly) return Promise.reject(new Error('lecture seule'));
+    if (date === state.date && state.dayLoaded) {
+      state.day.weight = w;
+      touchDay(true);
+      renderHabits();
+      renderSuivi();
+      return Promise.resolve();
+    }
+    const write = base => {
+      const day = base ? cloneDay(base) : emptyDay(date);
+      day.weight = w;
+      day.updatedAt = Date.now();
+      upsertHistory(day);
+      save('days/' + date, dayBody(day));
+      renderSuivi();
+    };
+    const cached = state.history.find(d => d.date === date);
+    if (cached) { write(cached); return Promise.resolve(); }
+    return readDocOnce('days/' + date).then(data => write(data ? normDay(date, data) : null));
+  }
+  /* Calories : la moyenne des 7 jours avant aujourd’hui (la journée en cours n’est pas finie) */
+  function renderKcalSummary() {
+    const el = $('#kSum');
+    const end = todayISO(), from = addDays(end, -7), to = addDays(end, -1);
+    const days = allDays().filter(d => d.date >= from && d.date <= to && d.entries.length);
+    if (!days.length) { el.innerHTML = ''; return; }
     const tots = days.map(dayTotals);
     const avgK = mean(tots.map(x => x.kcal)), avgP = mean(tots.map(x => x.protein)), avgGoal = mean(days.map(d => dayGoals(d).kcal));
-    el.innerHTML = '<h2>Ces 7 derniers jours</h2><p class="sub">' + days.length + (days.length > 1 ? ' jours notés' : ' jour noté') + ' sur 7</p>' +
+    const sameMonth = from.slice(0, 7) === to.slice(0, 7);
+    el.innerHTML = '<p class="k-period">Moyenne du ' + esc(sameMonth ? (dateOf(from).getDate() === 1 ? '1er' : String(dateOf(from).getDate())) : dmFr(from)) + ' au ' + esc(dmFr(to)) + ' · ' + days.length + (days.length > 1 ? ' jours notés' : ' jour noté') + ' sur 7</p>' +
       '<div class="stats">' +
-        '<div class="stat"><span class="stat-lbl">Calories par jour</span><span class="stat-val">' + fmt(avgK, 0) + '</span><span class="stat-sub">' + fmt(avgK / avgGoal * 100, 0) + ' % de l’objectif (' + fmt(avgGoal, 0) + ' kcal)</span></div>' +
-        '<div class="stat"><span class="stat-lbl">Protéines par jour</span><span class="stat-val">' + fmt(avgP, 0) + ' g</span><span class="stat-sub">objectif ' + fmt(state.goals.protein, 0) + ' g</span></div>' +
+        '<div class="stat"><span class="stat-lbl">Calories par jour</span><span class="stat-val">' + fmt(avgK, 0) + '</span><span class="stat-sub">' + fmt(avgK / avgGoal * 100, 0) + '\u00a0% de l’objectif (' + nb(fmt(avgGoal, 0)) + '\u00a0kcal)</span></div>' +
+        '<div class="stat"><span class="stat-lbl">Protéines par jour</span><span class="stat-val">' + fmt(avgP, 0) + '<small> g</small></span><span class="stat-sub">objectif ' + fmt(state.goals.protein, 0) + '\u00a0g</span></div>' +
       '</div>';
   }
-  function renderWeekTable() {
-    const rows = weeklyRows(), el = $('#weekTable');
+  function renderWeeks() {
+    const rows = weeklyRows(), el = $('#weekTable'), cur = mondayOf(todayISO());
     if (!rows.length) { el.innerHTML = '<p class="chart-empty">Les semaines apparaîtront ici dès que tu auras noté des repas, ton poids ou une séance.</p>'; return; }
-    el.innerHTML = '<table class="wtable"><thead><tr><th scope="col">Semaine du</th><th scope="col" class="num">Poids moyen</th><th scope="col" class="num">Variation</th><th scope="col" class="num">kcal par jour</th><th scope="col" class="num">Protéines par jour</th><th scope="col" class="num">Repas notés</th><th scope="col" class="num">Séances</th><th scope="col" class="num">Créatine</th></tr></thead><tbody>' +
-      rows.map(r => '<tr><th scope="row">' + esc(dfDM.format(dateOf(r.week))) + '</th>' +
-        '<td class="num">' + (r.avgW != null ? fmt(r.avgW, 1) + ' kg' : '—') + '</td>' +
-        '<td class="num">' + (r.delta != null ? fmtSigned(r.delta, 1) + ' kg' : '—') + '</td>' +
-        '<td class="num">' + (r.avgK != null ? fmt(r.avgK, 0) : '—') + '</td>' +
-        '<td class="num">' + (r.avgP != null ? fmt(r.avgP, 0) + ' g' : '—') + '</td>' +
-        '<td class="num">' + r.logged + ' / 7</td>' +
-        '<td class="num">' + r.sessions + '</td>' +
-        '<td class="num">' + r.crea + ' / 7</td></tr>').join('') +
-      '</tbody></table>';
+    el.innerHTML = '<ul class="weeks">' + rows.map(r => {
+      const bits = [];
+      if (r.avgK != null) bits.push(nb(fmt(r.avgK, 0) + ' kcal') + ' et ' + nb(fmt(r.avgP, 0) + ' g') + ' de protéines par jour (' + r.kcal.length + (r.kcal.length > 1 ? ' jours notés)' : ' jour noté)'));
+      if (r.sessions) bits.push(nb(r.sessions + (r.sessions > 1 ? ' séances' : ' séance')));
+      if (r.crea) bits.push(nb('créatine ' + r.crea + '/' + r.days));
+      return '<li><div class="wk-top"><span class="wk-name">Semaine du ' + esc(dmFr(r.week)) + (r.week === cur ? ' <em>en cours</em>' : '') + '</span>' +
+        (r.avgW != null ? '<span class="wk-w"><strong>' + kgU(r.avgW) + '</strong>' + (r.delta != null ? '<span>' + kg1s(r.delta) + '\u00a0kg</span>' : '') + '</span>' : '') + '</div>' +
+        (bits.length ? '<p class="wk-sub">' + esc(bits.join(' · ')) + '</p>' : '') + '</li>';
+    }).join('') + '</ul>';
   }
   function placeTip(box, tip, x, y) {
     tip.hidden = false;
@@ -7471,22 +7692,14 @@ function consFood(t, idx, byId, prev, viaNi) {
     tip.style.left = Math.max(tw / 2 + 2, Math.min(bw - tw / 2 - 2, x)) + 'px';
     tip.style.top = Math.max(tip.offsetHeight + 14, y) + 'px';
   }
-  /* Poids du matin : la moyenne sur 7 jours, calculée jour par jour, en courbe lisse ; les pesées en points discrets.
-     La période part de la première pesée (pas de vide à gauche) et se choisit parmi 1 mois, 3 mois, 6 mois ou tout,
-     seulement quand ça change quelque chose (choix gardé sur l’appareil, clé cpm.wrange).
-     En haut de la carte : la moyenne du jour en grand et l’évolution sur la période ; au doigt, les valeurs du jour touché. */
+  /* Poids du matin : en haut, la dernière pesée en grand, la moyenne sur 7 jours et l’écart depuis le début de la période.
+     La courbe : les pesées en points (au doigt ou au clavier, celle touchée passe en grand) et la moyenne sur 7 jours en trait.
+     La période part de la première pesée et se choisit parmi 1 mois, 3 mois, 6 mois ou tout, seulement quand ça change
+     quelque chose (choix gardé sur l’appareil, clé cpm.wrange). */
   const W_RANGES = [['1m', '1 mois', 30], ['3m', '3 mois', 91], ['6m', '6 mois', 182], ['all', 'Tout', Infinity]];
   let wRenderSeq = 0, wRangeKey = null;
-  const dayGap = (a, b) => Math.round((dateOf(b) - dateOf(a)) / 864e5);
   const dfMon = new Intl.DateTimeFormat('fr-FR', { month: 'short' });
   const dfMonY = new Intl.DateTimeFormat('fr-FR', { month: 'short', year: '2-digit' });
-  /* Kilos toujours avec une décimale (83,0 et pas 83), signe + ou − pour une évolution */
-  const NF1 = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-  const kg1 = v => NF1.format(Math.round(v * 10) / 10 || 0);
-  const kg1s = v => (Math.round(v * 10) < 0 ? '−' : '+') + kg1(Math.abs(v));
-  /* Espaces insécables : « 81,9 kg » et « le 22 oct. » ne se coupent pas en fin de ligne */
-  const nb = s => String(s).replace(/ /g, '\u00a0');
-  const kgU = v => kg1(v) + '\u00a0kg';
   /* Courbe monotone par des points d’abscisses croissantes : lisse, sans bosse qui dépasse les valeurs */
   function smoothPath(p) {
     const f = v => v.toFixed(1);
@@ -7523,7 +7736,7 @@ function consFood(t, idx, byId, prev, viaNi) {
         if (w && w > 20 && w < 400) m.set(d.id, w);
       }
       state.wOld = m;
-      if (state.tab === 'suivi') renderWeightChart();
+      if (state.tab === 'suivi') renderSuivi();
     }, () => {
       /* Lecture impossible : la courbe garde les journées récentes, sans réessayer en boucle */
       if (state.store === st && state.wOldGen === gen) state.wOld = new Map();
@@ -7538,20 +7751,30 @@ function consFood(t, idx, byId, prev, viaNi) {
     const box = $('#wChart'), sum = $('#wSum'), rangeBox = $('#wRange'), legend = $('#wLegend');
     const seq = ++wRenderSeq;
     const end = todayISO();
-    /* Pesées : les journées suivies en continu font foi ; les pesées plus anciennes, lues à part, complètent avant elles */
-    if (state.historyCapped && !state.wOld) wantOldWeights();
-    const recent = allDays(), wmap = new Map();
-    if (state.wOld) {
-      const loaded = new Set(recent.map(d => d.date));
-      for (const [date, w] of state.wOld) if (!loaded.has(date)) wmap.set(date, w);
-    }
-    for (const d of recent) if (d.weight != null) wmap.set(d.date, d.weight);
-    const all = [...wmap].filter(e => e[0] <= end).sort((a, b) => (a[0] < b[0] ? -1 : 1)).map(e => ({ date: e[0], w: e[1] }));
-    if (all.length < 2) {
+    const all = allWeights();
+    let model = null;
+    /* En-tête : la pesée en grand (le chiffre noté), puis la moyenne sur 7 jours et l’écart depuis le début de la période */
+    const setSum = (p, when, avg, from) => {
+      const n = model ? model.nAt(p.date) : 7;
+      sum.innerHTML = '<div class="wc-now"><span class="wc-val">' + kg1(p.w) + '<small>kg</small></span><span class="wc-when">' + esc(when) + '</span></div>' +
+        '<div class="wc-stats"><div class="wc-stat"><span class="wc-sl">Moyenne sur 7 jours' + (n < 7 ? ' (' + n + (n > 1 ? '\u00a0pesées)' : '\u00a0pesée)') : '') + '</span><span class="wc-sv">' + (avg != null ? kgU(avg) : '—') + '</span></div>' +
+        (from ? '<div class="wc-stat"><span class="wc-sl">Depuis le\u00a0' + esc(dmFr(from.date)) + '</span><span class="wc-sv">' + (from.date !== p.date ? kg1s(p.w - from.w) + '\u00a0kg' : '—') + '</span></div>' : '') +
+        '</div>';
+    };
+    if (!all.length) {
       rangeBox.innerHTML = '';
       sum.innerHTML = '';
       legend.hidden = true;
-      box.innerHTML = '<p class="chart-empty">Note ton poids du matin dans l’onglet Jour : la courbe apparaît dès 2 pesées.</p>';
+      box.innerHTML = '<p class="chart-empty">Note ton poids du matin dans l’onglet Jour ou avec « Ajouter » dans Pesées : la courbe apparaît dès 2 pesées.</p>';
+      return;
+    }
+    model = weightModel(all);
+    const lastW = all[all.length - 1];
+    if (all.length < 2) {
+      rangeBox.innerHTML = '';
+      legend.hidden = true;
+      setSum(lastW, whenTxt(lastW.date), model.avgAt(lastW.date), null);
+      box.innerHTML = '<p class="chart-empty">La courbe apparaît dès ta 2ᵉ pesée.</p>';
       return;
     }
     /* Périodes proposées : seulement celles qui montrent autre chose que « Tout » */
@@ -7566,33 +7789,14 @@ function consFood(t, idx, byId, prev, viaNi) {
     let start = days === Infinity ? all[0].date : addDays(end, 1 - days);
     if (start < all[0].date) start = all[0].date;
     if (dayGap(start, end) < 13) start = addDays(end, -13);
-    /* Un poids par jour : la pesée, sinon la valeur sur la droite entre les deux pesées qui l’encadrent quand elles
-       sont à 7 jours au plus, pour que la moyenne ne saute pas quand un jour manque. Plus d’une semaine sans pesée :
-       rien n’est inventé, la courbe s’arrête et un pointillé relie ses deux bords */
-    const byDate = new Map(all.map(p => [p.date, p.w]));
-    const daily = new Map();
-    all.forEach((a, i) => {
-      daily.set(a.date, a.w);
-      const b = all[i + 1], gap = b ? dayGap(a.date, b.date) : 0;
-      if (gap <= 7) for (let k = 1; k < gap; k++) daily.set(addDays(a.date, k), a.w + (b.w - a.w) * k / gap);
-    });
-    /* Moyenne des 7 derniers jours, pour chaque jour qui a une valeur (dès la première) */
-    const avgAt = d => {
-      const v = [];
-      for (let k = 0; k < 7; k++) { const x = daily.get(addDays(d, -k)); if (x != null) v.push(x); }
-      return mean(v);
-    };
-    const lastW = all[all.length - 1];
-    const series = [];
-    for (let d = start; d <= end; d = addDays(d, 1)) series.push({ date: d, w: byDate.has(d) ? byDate.get(d) : null, avg: daily.has(d) ? avgAt(d) : null });
-    const pts = series.filter(s => s.avg != null), raw = series.filter(s => s.w != null);
-    const whenTxt = iso => (iso === end ? 'aujourd’hui' : iso === addDays(end, -1) ? 'hier' : nb('le ' + dfDM.format(dateOf(iso))));
-    if (!pts.length) {
+    const raw = all.filter(p => p.date >= start);
+    if (!raw.length) {
       legend.hidden = true;
-      sum.innerHTML = '<p class="wc-sub">Dernière pesée : ' + kgU(lastW.w) + ', ' + esc(whenTxt(lastW.date)) + '.</p>';
+      setSum(lastW, whenTxt(lastW.date), model.avgAt(lastW.date), null);
       box.innerHTML = '<p class="chart-empty">Aucune pesée sur cette période.</p>';
       return;
     }
+    const pts = raw.map(p => ({ date: p.date, avg: model.avgAt(p.date) }));
     legend.hidden = false;
     const W = Math.max(280, Math.floor(box.clientWidth || 640)), H = 220;
     const m = { l: 36, r: 12, t: 12, b: 28 };
@@ -7600,19 +7804,21 @@ function consFood(t, idx, byId, prev, viaNi) {
     const plotW = W - m.l - m.r, yb = H - m.b, padX = 8;
     /* Un peu d’air à gauche et à droite : la première et la dernière pesée ne collent ni aux kilos ni au bord */
     const X = iso => m.l + padX + (dateOf(iso).getTime() - t0) / (t1 - t0) * (plotW - 2 * padX);
-    /* Tronçons de jours qui se suivent ; entre deux tronçons (plus d’une semaine sans pesée), un pointillé droit.
-       Si la période commence au milieu d’un tel trou, le pointillé part du bord gauche */
+    /* Tronçons : pesées à 7 jours d’écart au plus, reliées en trait plein ; au-delà (plus d’une semaine sans pesée),
+       un pointillé droit. La période qui commence entre deux pesées part du bord gauche, à la hauteur entre les deux */
     const runs = [];
-    pts.forEach((s, i) => { if (i && dayGap(pts[i - 1].date, s.date) === 1) runs[runs.length - 1].push(s); else runs.push([s]); });
+    pts.forEach((s, i) => { if (i && dayGap(pts[i - 1].date, s.date) <= 7) runs[runs.length - 1].push(s); else runs.push([s]); });
     const gaps = runs.slice(1).map((r, i) => [runs[i][runs[i].length - 1], r[0]]);
     const before = all.filter(p => p.date < start).pop();
+    let edge = null;
     if (before && pts[0].date > start) {
-      const a = { date: before.date, avg: avgAt(before.date) }, b = pts[0];
-      gaps.unshift([{ date: start, avg: a.avg + (b.avg - a.avg) * dayGap(a.date, start) / dayGap(a.date, b.date) }, b]);
+      const a = { date: before.date, avg: model.avgAt(before.date) }, b = pts[0], g = dayGap(a.date, b.date);
+      edge = { date: start, avg: a.avg + (b.avg - a.avg) * dayGap(a.date, start) / g };
+      if (g <= 7) runs[0].unshift(edge); else gaps.unshift([edge, b]);
     }
     /* Échelle des kilos : graduations rondes (au plus 6), sur au moins 2 kg de haut pour que les petites
        variations d’un jour à l’autre ne prennent pas toute la hauteur */
-    const vals = raw.map(p => p.w).concat(pts.map(p => p.avg), gaps.map(g => g[0].avg));
+    const vals = raw.map(p => p.w).concat(pts.map(p => p.avg), edge ? [edge.avg] : []);
     let lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
     if (hi - lo < 2) { const c = (hi + lo) / 2; lo = c - 1; hi = c + 1; }
     const pad = (hi - lo) * 0.06;
@@ -7631,7 +7837,7 @@ function consFood(t, idx, byId, prev, viaNi) {
     if (spanDays <= 75) {
       let d = mondayOf(start);
       if (d < start) d = addDays(d, 7);
-      for (; d <= end; d = addDays(d, 7)) ticks.push({ d, label: dfDM.format(dateOf(d)) });
+      for (; d <= end; d = addDays(d, 7)) ticks.push({ d, label: dfDM.format(dateOf(d)).replace(/^1 /, '1er ') });
       every = Math.max(1, Math.ceil(62 / (7 * pxDay)));
     } else {
       const s0 = dateOf(start), years = dateOf(start).getFullYear() !== dateOf(end).getFullYear();
@@ -7652,66 +7858,56 @@ function consFood(t, idx, byId, prev, viaNi) {
     const dashed = gaps.map(([a, b]) => 'M' + X(a.date).toFixed(1) + ',' + Y(a.avg).toFixed(1) + 'L' + X(b.date).toFixed(1) + ',' + Y(b.avg).toFixed(1)).join('');
     const lineSvg = (dashed ? '<path class="wt-line wt-gap" d="' + dashed + '"/>' : '') + (solid ? '<path class="wt-line" d="' + solid + '"/>' : '');
     legend.querySelector('.wc-lg-gap').hidden = !dashed;
-    /* Pesées : des points un peu plus gros quand il y a de la place entre eux */
+    /* Pesées par-dessus la courbe : des points un peu plus gros quand il y a de la place, la dernière mise en avant */
     const dotR = pxDay >= 7 ? 3.75 : pxDay >= 2.5 ? 3.25 : 2.6;
-    const dots = raw.map(p => '<circle class="wt-dot" cx="' + X(p.date).toFixed(1) + '" cy="' + Y(p.w).toFixed(1) + '" r="' + dotR + '"/>').join('');
-    const last = pts[pts.length - 1], first = pts[0];
-    const moved = first.date !== last.date, delta = last.avg - first.avg;
-    const sumDefault = () => {
-      sum.innerHTML = '<div class="wc-now"><span class="wc-val">' + kg1(last.avg) + '<small>kg</small></span>' +
-        (moved ? '<span class="wc-delta">' + kg1s(delta) + '\u00a0kg depuis le ' + esc(nb(dfDM.format(dateOf(first.date)))) + '</span>' : '') + '</div>' +
-        '<p class="wc-sub">Moyenne sur 7 jours · ' +
-        (lastW.date === end ? 'pesée du jour ' + kgU(lastW.w) : 'dernière pesée ' + kgU(lastW.w) + ' ' + esc(whenTxt(lastW.date))) + '</p>';
-    };
-    const sumAt = s => {
-      sum.innerHTML = '<div class="wc-now"><span class="wc-val">' + kg1(s.avg) + '<small>kg</small></span><span class="wc-delta">' + esc(cap1(dfShort.format(dateOf(s.date)))) + '</span></div>' +
-        '<p class="wc-sub">Moyenne sur 7 jours · ' + (s.w != null ? 'pesée du jour ' + kgU(s.w) : 'pas de pesée ce jour-là') + '</p>';
-    };
-    const aria = 'Poids du matin, moyenne sur 7 jours : ' + kg1(last.avg) + ' kg' + (moved ? ', ' + kg1s(delta) + ' kg depuis le ' + dfDM.format(dateOf(first.date)) : '') + '. ' + raw.length + (raw.length > 1 ? ' pesées' : ' pesée') + ' sur la période. Flèches gauche et droite pour parcourir les jours.';
+    const dots = raw.slice(0, -1).map(p => '<circle class="wt-dot" cx="' + X(p.date).toFixed(1) + '" cy="' + Y(p.w).toFixed(1) + '" r="' + dotR + '"/>').join('') +
+      '<circle class="wt-dot wt-last" cx="' + X(lastW.date).toFixed(1) + '" cy="' + Y(lastW.w).toFixed(1) + '" r="' + (dotR + 1.5) + '"/>';
+    const first = raw[0], from = raw.length > 1 ? first : null;
+    const sumDefault = () => setSum(lastW, whenTxt(lastW.date), model.avgAt(lastW.date), from);
+    const aria = 'Poids du matin : dernière pesée ' + kg1(lastW.w) + ' kg ' + whenTxt(lastW.date) + ', moyenne sur 7 jours ' + kg1(model.avgAt(lastW.date)) + ' kg. ' + raw.length + (raw.length > 1 ? ' pesées' : ' pesée') + ' sur la période. Flèches gauche et droite pour parcourir les pesées.';
     box.innerHTML = '<svg class="wt-svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" tabindex="0" role="img" aria-label="' + esc(aria) + '">' +
       grid + '<line class="base" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + yb + '" y2="' + yb + '"/>' + xl +
-      dots + lineSvg +
-      '<circle class="wt-end" cx="' + X(last.date).toFixed(1) + '" cy="' + Y(last.avg).toFixed(1) + '" r="4.5"/>' +
-      '<line class="xhair" x1="0" x2="0" y1="' + m.t + '" y2="' + yb + '" visibility="hidden"/><circle class="wt-hlw" r="4.5" cx="0" cy="0" visibility="hidden"/><circle class="wt-hl" r="5.5" cx="0" cy="0" visibility="hidden"/>' +
+      lineSvg + '<line class="xhair" x1="0" x2="0" y1="' + m.t + '" y2="' + yb + '" visibility="hidden"/>' + dots +
+      '<circle class="wt-ht" r="3.5" cx="0" cy="0" visibility="hidden"/><circle class="wt-hl" r="' + (dotR + 4.5) + '" cx="0" cy="0" visibility="hidden"/>' +
       '<rect class="hit" x="' + m.l + '" y="0" width="' + plotW + '" height="' + H + '"/></svg>';
-    const svg = box.querySelector('svg'), xh = svg.querySelector('.xhair'), hl = svg.querySelector('.wt-hl'), hlw = svg.querySelector('.wt-hlw');
+    const svg = box.querySelector('svg'), xh = svg.querySelector('.xhair'), hl = svg.querySelector('.wt-hl'), ht = svg.querySelector('.wt-ht');
     let idx = null, timer = null;
     const show = i => {
       if (seq !== wRenderSeq) return;
       idx = i;
-      const s = pts[i], x = X(s.date).toFixed(1);
+      const p = raw[i], x = X(p.date).toFixed(1), a = model.avgAt(p.date);
       xh.setAttribute('x1', x); xh.setAttribute('x2', x); xh.setAttribute('visibility', 'visible');
-      hl.setAttribute('cx', x); hl.setAttribute('cy', Y(s.avg).toFixed(1)); hl.setAttribute('visibility', 'visible');
-      if (s.w != null) { hlw.setAttribute('cx', x); hlw.setAttribute('cy', Y(s.w).toFixed(1)); hlw.setAttribute('visibility', 'visible'); }
-      else hlw.setAttribute('visibility', 'hidden');
-      sumAt(s);
+      hl.setAttribute('cx', x); hl.setAttribute('cy', Y(p.w).toFixed(1)); hl.setAttribute('visibility', 'visible');
+      ht.setAttribute('cx', x); ht.setAttribute('cy', Y(a).toFixed(1)); ht.setAttribute('visibility', 'visible');
+      setSum(p, wDayLabel(p.date), a, from);
     };
     const reset = () => {
       clearTimeout(timer);
       if (seq !== wRenderSeq) return;
       idx = null;
-      [xh, hl, hlw].forEach(e => e.setAttribute('visibility', 'hidden'));
+      [xh, hl, ht].forEach(e => e.setAttribute('visibility', 'hidden'));
       sumDefault();
     };
     const nearest = cx => {
       const r = svg.getBoundingClientRect(), sx = (cx - r.left) * (W / r.width);
       let best = 0, bd = Infinity;
-      pts.forEach((p, i) => { const d = Math.abs(X(p.date) - sx); if (d < bd) { bd = d; best = i; } });
+      raw.forEach((p, i) => { const d = Math.abs(X(p.date) - sx); if (d < bd) { bd = d; best = i; } });
       return best;
     };
-    svg.addEventListener('pointerdown', ev => { clearTimeout(timer); show(nearest(ev.clientX)); });
+    svg.addEventListener('pointerdown', ev => { svg.classList.add('ptr'); clearTimeout(timer); show(nearest(ev.clientX)); });
     svg.addEventListener('pointermove', ev => { clearTimeout(timer); show(nearest(ev.clientX)); });
     svg.addEventListener('pointerleave', ev => { if (ev.pointerType === 'mouse') reset(); });
-    /* Au doigt : la valeur touchée reste affichée un instant, puis la carte revient au jour même */
+    /* Au doigt : la pesée touchée reste affichée un instant, puis la carte revient à la dernière pesée */
     svg.addEventListener('pointerup', ev => { if (ev.pointerType !== 'mouse') { clearTimeout(timer); timer = setTimeout(reset, 2500); } });
     svg.addEventListener('pointercancel', () => { clearTimeout(timer); timer = setTimeout(reset, 800); });
-    svg.addEventListener('focus', () => show(idx == null ? pts.length - 1 : idx));
+    svg.addEventListener('focus', () => show(idx == null ? raw.length - 1 : idx));
     svg.addEventListener('blur', reset);
     svg.addEventListener('keydown', ev => {
       const k = ev.key;
+      svg.classList.remove('ptr');
       if (k === 'ArrowLeft' || k === 'ArrowRight' || k === 'Home' || k === 'End') {
-        const at = idx == null ? pts.length - 1 : idx;
-        show(k === 'Home' ? 0 : k === 'End' ? pts.length - 1 : Math.max(0, Math.min(pts.length - 1, at + (k === 'ArrowLeft' ? -1 : 1))));
+        const at = idx == null ? raw.length - 1 : idx;
+        show(k === 'Home' ? 0 : k === 'End' ? raw.length - 1 : Math.max(0, Math.min(raw.length - 1, at + (k === 'ArrowLeft' ? -1 : 1))));
         ev.preventDefault();
       } else if (k === 'Escape') reset();
     });
@@ -7747,7 +7943,8 @@ function consFood(t, idx, byId, prev, viaNi) {
       goals += '<line class="goal-halo" x1="' + gx1 + '" x2="' + gx2 + '" y1="' + gy + '" y2="' + gy + '"/><line class="goal" x1="' + gx1 + '" x2="' + gx2 + '" y1="' + gy + '" y2="' + gy + '"/>';
       if (d.kcal != null && d.kcal > 0) {
         const y = Y(d.kcal), x = cx - bw / 2, r = Math.min(4, (y0 - y) / 2, bw / 2);
-        bars += '<path class="kbar" data-i="' + i + '" d="M' + x.toFixed(1) + ',' + y0.toFixed(1) + 'V' + (y + r).toFixed(1) + 'Q' + x.toFixed(1) + ',' + y.toFixed(1) + ' ' + (x + r).toFixed(1) + ',' + y.toFixed(1) +
+        /* Aujourd’hui : la journée n’est pas finie, barre plus claire */
+        bars += '<path class="kbar' + (d.date === end ? ' today' : '') + '" data-i="' + i + '" d="M' + x.toFixed(1) + ',' + y0.toFixed(1) + 'V' + (y + r).toFixed(1) + 'Q' + x.toFixed(1) + ',' + y.toFixed(1) + ' ' + (x + r).toFixed(1) + ',' + y.toFixed(1) +
           'H' + (x + bw - r).toFixed(1) + 'Q' + (x + bw).toFixed(1) + ',' + y.toFixed(1) + ' ' + (x + bw).toFixed(1) + ',' + (y + r).toFixed(1) + 'V' + y0.toFixed(1) + 'Z"/>';
       }
       hits += '<rect class="hit" data-i="' + i + '" x="' + x0.toFixed(1) + '" y="' + m.t + '" width="' + band.toFixed(1) + '" height="' + (H - m.t - m.b + 22) + '"/>';
@@ -7755,26 +7952,33 @@ function consFood(t, idx, byId, prev, viaNi) {
     box.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" tabindex="0" role="img" aria-label="Calories des 14 derniers jours face à l’objectif. Flèches gauche et droite pour parcourir.">' +
       grid + bars + goals + '<line class="base" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + y0.toFixed(1) + '" y2="' + y0.toFixed(1) + '"/>' + labels + hits + '</svg><div class="tip" hidden></div>';
     const svg = box.querySelector('svg'), tip = box.querySelector('.tip');
-    let idx = 13;
+    let idx = 13, timer = null;
     const show = i => {
+      clearTimeout(timer);
       idx = i;
-      const d = data[i];
+      const d = data[i], now = d.date === end;
       svg.classList.add('hovering');
       svg.querySelectorAll('.kbar').forEach(b => b.classList.toggle('on', b.dataset.i === String(i)));
       tip.innerHTML = d.kcal != null
-        ? '<strong>' + fmt(d.kcal, 0) + ' kcal</strong><span>' + esc(cap1(dfShort.format(dateOf(d.date)))) + '</span><span>' + fmt(d.kcal / d.goal * 100, 0) + ' % de l’objectif (' + fmt(d.goal, 0) + ')</span>'
-        : '<strong>Rien de noté</strong><span>' + esc(cap1(dfShort.format(dateOf(d.date)))) + '</span>';
+        ? '<strong>' + fmt(d.kcal, 0) + ' kcal' + (now ? ' pour l’instant' : '') + '</strong><span>' + esc(now ? 'Aujourd’hui' : cap1(dfShort.format(dateOf(d.date)))) + '</span><span>' + fmt(d.kcal / d.goal * 100, 0) + ' % de l’objectif (' + fmt(d.goal, 0) + ')</span>'
+        : '<strong>Rien de noté</strong><span>' + esc(now ? 'Aujourd’hui' : cap1(dfShort.format(dateOf(d.date)))) + '</span>';
       const scale = box.clientWidth / W;
       placeTip(box, tip, (m.l + band * i + band / 2) * scale, Y(Math.max(d.kcal || 0, d.goal)) * scale);
     };
-    const hide = () => { svg.classList.remove('hovering'); svg.querySelectorAll('.kbar.on').forEach(b => b.classList.remove('on')); tip.hidden = true; };
-    svg.addEventListener('pointermove', ev => { const h = ev.target.closest && ev.target.closest('[data-i]'); if (h) show(Number(h.dataset.i)); });
-    svg.addEventListener('pointerleave', hide);
+    const hide = () => { clearTimeout(timer); svg.classList.remove('hovering'); svg.querySelectorAll('.kbar.on').forEach(b => b.classList.remove('on')); tip.hidden = true; };
+    const at = ev => { const h = ev.target.closest && ev.target.closest('[data-i]'); return h ? Number(h.dataset.i) : null; };
+    svg.addEventListener('pointerdown', ev => { svg.classList.add('ptr'); const i = at(ev); if (i != null) show(i); });
+    svg.addEventListener('pointermove', ev => { const i = at(ev); if (i != null && (i !== idx || tip.hidden)) show(i); });
+    svg.addEventListener('pointerleave', ev => { if (ev.pointerType === 'mouse') hide(); });
+    /* Au doigt : la bulle reste un instant */
+    svg.addEventListener('pointerup', ev => { if (ev.pointerType !== 'mouse') { clearTimeout(timer); timer = setTimeout(hide, 2500); } });
     svg.addEventListener('focus', () => show(idx));
     svg.addEventListener('blur', hide);
     svg.addEventListener('keydown', ev => {
+      svg.classList.remove('ptr');
       if (ev.key === 'ArrowLeft') { show(Math.max(0, idx - 1)); ev.preventDefault(); }
       else if (ev.key === 'ArrowRight') { show(Math.min(13, idx + 1)); ev.preventDefault(); }
+      else if (ev.key === 'Escape') hide();
     });
   }
 
@@ -8281,6 +8485,11 @@ function consFood(t, idx, byId, prev, viaNi) {
         case 'theme': applyTheme(document.documentElement.getAttribute('data-app-theme') === 'light' ? 'dark' : 'light', true); break;
         case 'theme-set': applyTheme(b.dataset.theme === 'light' ? 'light' : 'dark', true); break;
         case 'w-range': wRangeKey = b.dataset.r; lsSet('cpm.wrange', b.dataset.r); renderWeightChart(); break;
+        case 'wt-add': openWeightDlg(null); break;
+        case 'wt-edit': openWeightDlg(b.dataset.date); break;
+        case 'wt-more': state.wlAll = !state.wlAll; renderWeightList(); break;
+        case 'wt-close': closeDlg('#wtDlg'); break;
+        case 'wt-delete': deleteWeight(wtDate); break;
         case 'go-workout': setTab('seances'); window.scrollTo(0, 0); if (b.dataset.id) openWorkout(b.dataset.id); else startWorkout(b.dataset.pid || null); break;
         case 'welcome-hide': state.ui = { welcomeHidden: true }; save('settings/ui', { welcomeHidden: true, updatedAt: Date.now() }); renderWelcome(); toast('Tu retrouveras ces étapes dans les onglets Objectifs, Produits et Séances, et ton profil en haut de l’écran'); break;
         case 'starter-products': addStarterProducts(); break;
@@ -8585,6 +8794,8 @@ function consFood(t, idx, byId, prev, viaNi) {
       if (t.matches('[data-qty]')) onEntryQty(t);
       else if (t.matches('[data-sk]')) onSetInput(t);
       else if (t.id === 'weightInput') onWeight(t);
+      else if (t.id === 'wt-date') wtHint();
+      else if (t.id === 'wt-val') { t.removeAttribute('aria-invalid'); $('#wtError').textContent = ''; }
       else if (t.id === 'addSearch') { addState.q = t.value; renderPickList(); }
       else if (t.id === 'addQty') { addState.qtyStr = t.value; updateQtyLive(); }
       else if (t.id === 'prodSearch') renderProdList();
@@ -8681,6 +8892,7 @@ function consFood(t, idx, byId, prev, viaNi) {
       if (f.id === 'prodForm') saveProductForm();
       else if (f.id === 'assistForm') submitAssist();
       else if (f.id === 'meForm') saveMe();
+      else if (f.id === 'wtForm') saveWeightDlg();
       else if (f.id === 'goalsForm') { const g = readGoalsForm(true); if (g) commitGoals(g, 'Objectifs enregistrés'); }
       else if (f.id === 'exNewForm') createCustomExercise();
       else if (f.dataset.wnaming) saveAsProgram(curWorkout(), f.querySelector('input').value);
