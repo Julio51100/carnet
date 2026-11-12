@@ -220,8 +220,15 @@ def build(src, out, assets, media_dir, fonts_dir):
         sys.exit('La source ne pointe pas vers %s : lance d’abord src/build_media.py' % atlas[-1])
     core = ['./', 'manifest.webmanifest', 'fonts/instrument-sans-latin.woff2', 'fonts/instrument-sans-latin-ext.woff2',
             'icons/icon-192.png', 'icons/favicon-32.png']
+    # Lecteur de codes-barres (vendor/) : gardé sur le téléphone tant que ses fichiers ne changent pas
+    vendor_dir = os.path.join(out, 'vendor')
+    vendor = [os.path.join(vendor_dir, f) for f in sorted(os.listdir(vendor_dir))] if os.path.isdir(vendor_dir) else []
+    for name in re.findall(r"'(vendor/[^']+)'", source):
+        if not os.path.exists(os.path.join(out, name)):
+            sys.exit('Fichier manquant : %s (voir CLAUDE.md, « Scan de code-barres »)' % name)
+    libs_version = file_hash(vendor)[:8] if vendor else 'v1'
     sw = read(os.path.join(HERE, 'sw.template.js'))
-    sw = (sw.replace('__VERSION__', version).replace('__MEDIA__', media_version)
+    sw = (sw.replace('__VERSION__', version).replace('__MEDIA__', media_version).replace('__LIBS__', libs_version)
             .replace('__CORE_FILES__', json.dumps(core)).replace('__MEDIA_FILES__', json.dumps(atlas)))
     write(os.path.join(out, 'sw.js'), sw)
     write(os.path.join(out, '.nojekyll'), '')

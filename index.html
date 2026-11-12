@@ -32,7 +32,7 @@
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin-ext.woff2) format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 700; font-stretch: 75% 100%; font-display: swap; src: url(fonts/instrument-sans-latin.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 </style>
-<script>window.CARNET_VERSION = "2026-10-28.e3e6f1";</script>
+<script>window.CARNET_VERSION = "2026-11-12.befae8";</script>
 <style>
 /* Carnet de bord calme : fond graphite profond, cartes à filet fin, actions en encre claire (version claire en option).
    Les couleurs des macros (protéines, glucides, lipides) sont les seules teintes vives ; les chiffres clés
@@ -202,7 +202,7 @@ textarea { width: 100%; resize: vertical; font-family: ui-monospace, "SF Mono", 
 .dateblock { position: relative; min-width: 0; max-width: 100%; margin-left: -8px; padding: 2px 8px; border-radius: 12px; transition: background-color .15s ease; }
 .dateblock:hover { background: var(--surface-3); }
 .dateblock:focus-within { outline: 2px solid var(--focus); outline-offset: 0; }
-.dateblock h2 { margin: 0; display: inline-flex; align-items: center; gap: 6px; font-size: clamp(22px, 7.4vw, 30px); font-weight: 600; line-height: 1.15; letter-spacing: -.022em; white-space: nowrap; text-wrap: nowrap; }
+.dateblock h2 { margin: 0; display: inline-flex; align-items: center; gap: 6px; min-height: calc(1.15 * clamp(22px, 7.4vw, 30px)); font-size: clamp(22px, 7.4vw, 30px); font-weight: 600; line-height: 1.15; letter-spacing: -.022em; white-space: nowrap; text-wrap: nowrap; }
 @media (max-width: 359px) { .dateblock h2 { white-space: normal; text-wrap: balance; } }
 .dateblock h2::after { content: ""; width: 16px; height: 16px; flex: none; background: var(--muted); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.5 9.5l5.5 5.5 5.5-5.5'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.5 9.5l5.5 5.5 5.5-5.5'/%3E%3C/svg%3E") center / contain no-repeat; }
 .daysub { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; color: var(--muted); font-size: 13.5px; }
@@ -323,6 +323,14 @@ textarea { width: 100%; resize: vertical; font-family: ui-monospace, "SF Mono", 
 .meal.empty .meal-head h3 { font-weight: 500; color: var(--fg-2); }
 .meal-sum { display: flex; flex-wrap: wrap; gap: 0 9px; font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .meal-sum:empty { display: none; }
+/* Repas vide : refaire le même que la dernière fois, d’un appui */
+.meal-redo-slot:empty { display: none; }
+.meal-redo { align-self: flex-start; max-width: 100%; display: inline-flex; align-items: center; gap: 6px; margin: 2px 0 0 -2px; padding: 6px 11px 6px 8px; border: 1px solid var(--line-2); border-radius: 999px; background: transparent; color: var(--fg-2); font-size: 12.5px; font-weight: 600; line-height: 1.15; font-variant-numeric: tabular-nums; transition: background-color .15s ease, color .15s ease; }
+.meal-redo:hover { background: var(--surface-2); color: var(--fg); }
+.meal-redo .ico { width: 14px; height: 14px; stroke-width: 2.1; }
+.meal-redo span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.meal-redo small { font-size: inherit; font-weight: 500; color: var(--muted); }
+@media (max-width: 359px) { .meal-redo small { display: none; } }
 .mv { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
 .mv .dot { width: 6px; height: 6px; }
 .meal-kcal { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
@@ -1034,6 +1042,8 @@ body.exo-sorting .we-head, body.exo-sorting .add-exo, body.exo-sorting .we-notes
 /* ---------- Bouton flottant ---------- */
 .fab { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(var(--nav-h) + 16px + env(safe-area-inset-bottom, 0px)); z-index: 30; display: inline-flex; align-items: center; gap: 8px; border: 0; border-radius: 999px; padding: 14px 20px 14px 16px; background: var(--fg); color: var(--on-fg); font-weight: 600; font-size: 15px; line-height: 1; box-shadow: var(--shadow); }
 .fab .ico { width: 19px; height: 19px; stroke-width: 2.2; }
+/* Pendant le repos, le minuteur occupe la place du bouton : le bouton passe juste au-dessus */
+body.has-rest .fab { bottom: calc(var(--nav-h) + 76px + env(safe-area-inset-bottom, 0px)); }
 @media (min-width: 920px) { .fab { display: none; } }
 
 /* ---------- Fenêtres ---------- */
@@ -1125,6 +1135,8 @@ dialog::backdrop { background: var(--backdrop); -webkit-backdrop-filter: blur(2p
 .pick-row { display: flex; align-items: center; gap: 2px; }
 .pick-row .pick { flex: 1 1 auto; min-width: 0; }
 .pick-quick { flex: none; margin-right: 4px; font-variant-numeric: tabular-nums; }
+.pick-added { flex: none; display: inline-flex; align-items: center; gap: 5px; margin-right: 8px; padding: 0 4px; font-size: 13px; font-weight: 600; color: var(--good); }
+.pick-added .ico { width: 16px; height: 16px; stroke-width: 2.2; }
 .pick-thumb, .exo-thumb { flex: none; border: 0; background: none; padding: 4px; margin: 0; border-radius: 12px; color: inherit; }
 .pick-thumb:hover, .exo-thumb:hover { background: var(--surface-3); }
 .exo-thumb { margin: -4px 0 -4px -4px; }
@@ -1189,7 +1201,10 @@ dialog::backdrop { background: var(--backdrop); -webkit-backdrop-filter: blur(2p
 .toast button { flex: none; border: 0; background: none; padding: 0; color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bottom, 0px)); }
 /* Sur l’onglet Jour (téléphone), le message s’affiche au-dessus du bouton « Ajouter un aliment » */
-@media (max-width: 919px) { body:not(.has-rest):has(#fab:not([hidden])) .toast { bottom: calc(var(--nav-h) + 76px + env(safe-area-inset-bottom, 0px)); } }
+@media (max-width: 919px) {
+  body:not(.has-rest):has(#fab:not([hidden])) .toast { bottom: calc(var(--nav-h) + 76px + env(safe-area-inset-bottom, 0px)); }
+  body.has-rest:has(#fab:not([hidden])) .toast { bottom: calc(var(--nav-h) + 136px + env(safe-area-inset-bottom, 0px)); }
+}
 @media (min-width: 920px) {
   .toast { bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
   body.has-rest .toast { bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
@@ -2499,6 +2514,7 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
     edit: svgIco('<path d="M4.5 19.5h4l10-10a2.83 2.83 0 0 0-4-4l-10 10v4z"/><path d="M13 7l4 4"/>'),
     share: svgIco('<path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M8 10.5H7a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1"/>'),
     dots: svgIco('<circle cx="12" cy="5.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="18.5" r="1.4" fill="currentColor" stroke="none"/>'),
+    redo: svgIco('<path d="M19.5 12a7.5 7.5 0 1 1-2.6-5.7"/><path d="M19.6 4.2v4.4h-4.4"/>'),
     grip: svgIco([6, 12, 18].map(y => '<circle cx="9" cy="' + y + '" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="' + y + '" r="1.5" fill="currentColor" stroke="none"/>').join(''))
   };
   const NF = [0, 1, 2].map(d => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: d }));
@@ -2542,6 +2558,7 @@ body.has-rest .toast { bottom: calc(var(--nav-h) + 80px + env(safe-area-inset-bo
   const dfDM = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' });
   const dfWdN = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric' });
   const dfFull = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  const dfWdLong = new Intl.DateTimeFormat('fr-FR', { weekday: 'long' });
   const isISO = s => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s);
 
   function unitShort(unit, qty) { return unit === 'unité' ? (qty > 1 ? 'unités' : 'unité') : unit; }
@@ -3717,10 +3734,16 @@ function consFood(t, idx, byId, prev, viaNi) {
     await conn();
     return {
       kind: 'idb',
+      /* Tout le carnet en deux lectures (clés et valeurs, dans le même ordre) : bien plus rapide qu’un document à la fois */
       loadAll: () => run('readonly', st => {
         const out = {};
-        const req = st.openCursor();
-        req.onsuccess = () => { const c = req.result; if (c) { out[c.key] = c.value; c.continue(); } };
+        if (st.getAll && st.getAllKeys) {
+          const rk = st.getAllKeys(), rv = st.getAll();
+          rv.onsuccess = () => { const keys = rk.result || [], vals = rv.result || []; for (let i = 0; i < keys.length; i++) out[keys[i]] = vals[i]; };
+        } else {
+          const req = st.openCursor();
+          req.onsuccess = () => { const c = req.result; if (c) { out[c.key] = c.value; c.continue(); } };
+        }
         return out;
       }),
       put: (k, v) => run('readwrite', st => { st.put(v, k); }),
@@ -3779,26 +3802,43 @@ function consFood(t, idx, byId, prev, viaNi) {
       for (const k of [...failed]) track(k, k in data ? backend.put(k, clone(data[k])) : backend.del(k));
     }
     const subs = new Set();
-    const notify = () => queueMicrotask(() => subs.forEach(s => s.fire()));
     const clone = v => JSON.parse(JSON.stringify(v));
+    /* Une écriture ne réveille que les vues qui suivent ce document ou sa collection (une seule fois par vue,
+       même après plusieurs écritures d’affilée) : valider une série ne fait plus relire les journées et les produits. */
+    const colOf = path => path.slice(0, path.lastIndexOf('/'));
+    let dirty = null;
+    function notify(path) {
+      if (!dirty) {
+        dirty = new Set();
+        queueMicrotask(() => {
+          const d = dirty;
+          dirty = null;
+          subs.forEach(s => { if (d.has('*') || d.has(s.path)) s.fire(); });
+        });
+      }
+      if (!path) { dirty.add('*'); return; }
+      dirty.add(path);
+      dirty.add(colOf(path));
+    }
+    /* Tri et limite sur les documents gardés en mémoire : seuls ceux qui sont rendus sont recopiés */
     function colDocs(path, opt) {
-      const depth = path.split('/').length + 1;
-      let list = Object.keys(data).filter(k => k.startsWith(path + '/') && k.split('/').length === depth).map(k => ({ id: k.slice(path.length + 1), data: clone(data[k]) }));
+      const pre = path + '/', depth = path.split('/').length + 1;
+      let keys = Object.keys(data).filter(k => k.startsWith(pre) && k.split('/').length === depth);
       if (opt && opt.order) {
         const f = opt.order, m = opt.dir === 'desc' ? -1 : 1;
-        list.sort((a, b) => { const x = a.data[f], y = b.data[f]; return (x < y ? -1 : x > y ? 1 : 0) * m; });
-      } else list.sort((a, b) => (a.id < b.id ? -1 : 1));
-      if (opt && opt.limit) list = list.slice(0, opt.limit);
-      return list;
+        keys.sort((a, b) => { const x = data[a][f], y = data[b][f]; return (x < y ? -1 : x > y ? 1 : 0) * m; });
+      } else keys.sort();
+      if (opt && opt.limit) keys = keys.slice(0, opt.limit);
+      return keys.map(k => ({ id: k.slice(pre.length), data: clone(data[k]) }));
     }
-    function add(fire) { const s = { fire }; subs.add(s); queueMicrotask(fire); return () => subs.delete(s); }
+    function add(path, fire) { const s = { path, fire }; subs.add(s); queueMicrotask(fire); return () => subs.delete(s); }
     return {
       kind: 'local',
-      watchCol: (path, cb, opt) => add(() => cb(colDocs(path, opt))),
+      watchCol: (path, cb, opt) => add(path, () => cb(colDocs(path, opt))),
       readCol: (path, opt) => Promise.resolve(colDocs(path, opt)),
-      watchDoc: (path, cb) => add(() => cb(data[path] ? clone(data[path]) : null)),
-      put(path, body) { data[path] = clone(body); track(path, backend.put(path, clone(body))); notify(); return Promise.resolve(true); },
-      del(path) { delete data[path]; track(path, backend.del(path)); notify(); return Promise.resolve(true); },
+      watchDoc: (path, cb) => add(path, () => cb(data[path] ? clone(data[path]) : null)),
+      put(path, body) { data[path] = clone(body); track(path, backend.put(path, clone(body))); notify(path); return Promise.resolve(true); },
+      del(path) { delete data[path]; track(path, backend.del(path)); notify(path); return Promise.resolve(true); },
       dump: () => clone(data),
       load(obj) { data = clone(obj); failed.clear(); track('*', backend.replaceAll(clone(data))); notify(); }
     };
@@ -3868,6 +3908,7 @@ function consFood(t, idx, byId, prev, viaNi) {
       return mine && mine.updatedAt > inc.updatedAt ? mine : inc;
     });
     renderJournalTools();
+    renderMealRedo();
     renderHabits();
     renderSuivi();
     renderBackupNudge();
@@ -4161,9 +4202,21 @@ function consFood(t, idx, byId, prev, viaNi) {
       (state.space === 'device' ? '<p class="wel-note">Ton carnet est enregistré sur cet appareil uniquement. Fais une sauvegarde de temps en temps depuis l’onglet Objectifs.</p>' : '') +
       '</section>';
   }
+  /* Le jour tient toujours sur une ligne, à côté des flèches : une longue date (« Mercredi 30 septembre ») s’écrit un peu plus petit */
+  function fitDayTitle() {
+    const h = $('#dayTitle'), box = h && h.closest('.daymain');
+    if (!h || !box) return;
+    h.style.fontSize = '';
+    const avail = box.clientWidth - 8;
+    if (avail <= 0 || getComputedStyle(h).whiteSpace !== 'nowrap' || h.scrollWidth <= avail) return;
+    /* Le chevron et son écart (22 px) ne rétrécissent pas avec le texte */
+    const size = parseFloat(getComputedStyle(h).fontSize) || 28;
+    h.style.fontSize = Math.max(17, Math.floor(size * (avail - 22) / (h.scrollWidth - 22) * 2) / 2) + 'px';
+  }
   function renderDaybar() {
     const d = dateOf(state.date);
     $('#dayTitle').textContent = cap1(dfLong.format(d));
+    fitDayTitle();
     const diff = Math.round((d - dateOf(todayISO())) / 864e5);
     $('#daySub').textContent = diff === 0 ? 'Aujourd’hui' : diff === -1 ? 'Hier' : diff === 1 ? 'Demain' : diff < 0 ? 'Il y a ' + (-diff) + ' jours' : 'Dans ' + diff + ' jours';
     $('#datePick').value = state.date;
@@ -4300,12 +4353,66 @@ function consFood(t, idx, byId, prev, viaNi) {
       }
       return '<section class="meal' + (items.length ? '' : ' empty') + '" data-meal="' + m.id + '">' +
         '<header class="meal-head"><span class="meal-ico" aria-hidden="true">' + svgIco(MEAL_ICON[m.id]) + '</span>' +
-          '<div class="meal-title"><h3>' + m.label + '</h3><span class="meal-sum" data-meal-sum="' + m.id + '">' + (items.length ? macrosHtml(tv) : '') + '</span></div>' +
+          '<div class="meal-title"><h3>' + m.label + '</h3><span class="meal-sum" data-meal-sum="' + m.id + '">' + (items.length ? macrosHtml(tv) : '') + '</span>' +
+            (items.length ? '' : '<span class="meal-redo-slot" data-redo="' + m.id + '"></span>') + '</div>' +
           '<span class="meal-kcal" data-meal-kcal="' + m.id + '">' + (items.length ? '<strong>' + fmt(tv.kcal, 0) + '</strong> kcal' : '') + '</span>' +
           '<button type="button" class="meal-add" data-action="add-open" data-meal="' + m.id + '" aria-label="Ajouter un aliment ' + MEAL_TO[m.id] + '">' + ICON.plus + '</button></header>' +
         (items.length ? '<ul class="entries">' + items.map(entryRow).join('') + '</ul>' : '') +
         foot + '</section>';
     }).join('');
+    renderMealRedo();
+  }
+  /* Refaire un repas : sous un repas vide, les aliments du même repas la dernière fois qu’il a été noté
+     (dans les 14 jours avant le jour affiché), à ajouter d’un appui */
+  const REDO_DAYS = 14;
+  function redoSource(meal) {
+    const from = addDays(state.date, -REDO_DAYS);
+    let best = null;
+    for (const d of state.history) {
+      if (d.date >= state.date || d.date < from || (best && d.date <= best.date)) continue;
+      if (d.entries.some(e => e.meal === meal && e.qty > 0)) best = d;
+    }
+    if (!best) return null;
+    const items = best.entries.filter(e => e.meal === meal && e.qty > 0);
+    return { date: best.date, items, kcal: sumVals(items.map(entryVals)).kcal };
+  }
+  function redoLabel(iso) {
+    const t = todayISO();
+    if (iso === t) return 'Comme aujourd’hui';
+    if (iso === addDays(t, -1)) return 'Comme hier';
+    if (iso < t && iso >= addDays(t, -6)) return 'Comme ' + dfWdLong.format(dateOf(iso));
+    return 'Comme le ' + dmFr(iso);
+  }
+  function renderMealRedo() {
+    document.querySelectorAll('#meals [data-redo]').forEach(slot => {
+      const meal = slot.dataset.redo, src = redoSource(meal);
+      let html = '';
+      if (src) {
+        const k = src.items.length, names = listFr(src.items.slice(0, 6).map(e => e.name)) + (k > 6 ? '…' : '');
+        html = '<button type="button" class="meal-redo" data-action="meal-redo" data-meal="' + meal + '" aria-label="' + esc(redoLabel(src.date) + ' ' + MEAL_TO[meal] + ' : ' + names + ', ' + fmt(src.kcal, 0) + ' kcal') + '" title="' + esc(names) + '">' +
+          ICON.redo + '<span>' + esc(redoLabel(src.date)) + '<small> · ' + fmt(src.kcal, 0) + ' kcal</small></span></button>';
+      }
+      if (slot.innerHTML !== html) slot.innerHTML = html;
+    });
+  }
+  function redoMeal(meal) {
+    const src = MEAL_LABEL[meal] ? redoSource(meal) : null;
+    if (!src) return;
+    const ids = new Set();
+    for (const e of src.items) {
+      const id = uid('e');
+      ids.add(id);
+      state.day.entries.push(Object.assign({}, e, { id, meal, n: Object.assign({}, e.n) }));
+    }
+    const date = state.date, k = src.items.length;
+    touchDay(true);
+    renderDay();
+    toast(k + (k > 1 ? ' aliments ajoutés ' : ' aliment ajouté ') + MEAL_TO[meal] + ', ' + redoLabel(src.date).toLowerCase(), 'Annuler', () => {
+      if (state.date !== date) return;
+      state.day.entries = state.day.entries.filter(e => !ids.has(e.id));
+      touchDay(true);
+      renderDay();
+    });
   }
   function entryRow(e) {
     const v = entryVals(e);
@@ -4571,13 +4678,36 @@ function consFood(t, idx, byId, prev, viaNi) {
     else if (addState.pane === 'templates') renderTemplateList();
   }
   /* Un produit de la liste ; les récents ont un bouton pour l’ajouter tout de suite avec la dernière quantité */
-  function pickItem(p, quick) {
-    const pick = '<button type="button" class="pick" data-action="pick" data-pid="' + esc(p.id) + '"><span class="pick-name">' + esc(p.name) + (p.catalog ? ' <span class="ftag">catalogue</span>' : '') + '</span>' +
+  function pickItem(p, quick, qty, added) {
+    const pick = '<button type="button" class="pick" data-action="pick" data-pid="' + esc(p.id) + '"' + (qty ? ' data-q="' + qty + '"' : '') + '><span class="pick-name">' + esc(p.name) + (p.catalog ? ' <span class="ftag">catalogue</span>' : '') + '</span>' +
       '<span class="pick-meta"><span>' + esc(refLabel(p)) + ' · ' + fmt(p.kcal, 0) + ' kcal</span>' +
       MACROS.map(m => '<span><i class="dot ' + m.cls + '"></i>' + m.short + ' ' + fmt(p[m.k]) + '</span>').join('') + '</span></button>';
     if (!quick) return '<li>' + pick + '</li>';
-    const q = qtyLabel(lastQty(p), p.unit);
-    return '<li class="pick-row">' + pick + '<button type="button" class="btn small pick-quick" data-action="quick-add" data-pid="' + esc(p.id) + '" aria-label="' + esc('Ajouter ' + q + ' de ' + p.name) + '">' + ICON.plus + esc(q) + '</button></li>';
+    if (added) return '<li class="pick-row">' + pick + '<span class="pick-added">' + ICON.check + 'Noté</span></li>';
+    const q = qtyLabel(qty || lastQty(p), p.unit);
+    return '<li class="pick-row">' + pick + '<button type="button" class="btn small pick-quick" data-action="quick-add" data-pid="' + esc(p.id) + '"' + (qty ? ' data-q="' + qty + '"' : '') + ' aria-label="' + esc('Ajouter ' + q + ' de ' + p.name) + '">' + ICON.plus + esc(q) + '</button></li>';
+  }
+  /* Aliments habituels d’un repas : ceux notés à ce repas au moins 2 jours sur les 4 dernières semaines,
+     du plus fréquent au moins fréquent, avec la quantité notée la dernière fois à ce repas.
+     Ceux déjà notés à ce repas le jour affiché restent à leur place, marqués « Noté » (la liste ne bouge pas sous le doigt). */
+  const HABIT_DAYS = 28;
+  function mealHabits(meal, n) {
+    const from = addDays(todayISO(), -HABIT_DAYS), stat = new Map();
+    for (const d of allDaysDesc()) {
+      if (d.date === state.date || d.date < from) continue;
+      const seen = new Set();
+      for (let i = d.entries.length - 1; i >= 0; i--) {
+        const e = d.entries[i];
+        if (e.meal !== meal || !(e.qty > 0) || seen.has(e.pid)) continue;
+        seen.add(e.pid);
+        const st = stat.get(e.pid);
+        if (st) st.n++; else stat.set(e.pid, { pid: e.pid, n: 1, qty: e.qty, at: d.date });
+      }
+    }
+    const here = new Set(state.day.entries.filter(e => e.meal === meal).map(e => e.pid));
+    return [...stat.values()].filter(st => st.n >= 2 && productById(st.pid))
+      .sort((a, b) => b.n - a.n || (a.at < b.at ? 1 : a.at > b.at ? -1 : 0)).slice(0, n)
+      .map(st => ({ p: productById(st.pid), qty: st.qty, added: here.has(st.pid) }));
   }
   /* Tes produits, puis les aliments cochés du catalogue ; la recherche trouve aussi tout le catalogue */
   function renderPickList() {
@@ -4590,10 +4720,12 @@ function consFood(t, idx, byId, prev, viaNi) {
       ul.innerHTML = list.length ? list.map(p => pickItem(p)).join('') : '<li class="empty">Aucun aliment ne correspond à « ' + esc(addState.q) + ' ».</li>';
       return;
     }
-    const on = catalogOn(), rec = recentProducts(5);
-    if (!state.products.length && !on.length && !rec.length) { ul.innerHTML = '<li class="empty">Aucun produit pour l’instant. Cherche un aliment du catalogue ou crée ton premier produit ci-dessous.</li>'; return; }
-    ul.innerHTML = (rec.length ? '<li class="pick-group">Récents</li>' + rec.map(p => pickItem(p, true)).join('') : '') +
-      (state.products.length ? (rec.length ? '<li class="pick-group">Tous les produits</li>' : '') + state.products.map(p => pickItem(p)).join('') : '') +
+    const hab = mealHabits(addState.meal, 6), habIds = new Set(hab.map(h => h.p.id));
+    const on = catalogOn(), rec = recentProducts(5 + hab.length).filter(p => !habIds.has(p.id)).slice(0, 5);
+    if (!state.products.length && !on.length && !rec.length && !hab.length) { ul.innerHTML = '<li class="empty">Aucun produit pour l’instant. Cherche un aliment du catalogue ou crée ton premier produit ci-dessous.</li>'; return; }
+    ul.innerHTML = (hab.length ? '<li class="pick-group">Souvent ' + MEAL_TO[addState.meal] + '</li>' + hab.map(h => pickItem(h.p, true, h.qty, h.added)).join('') : '') +
+      (rec.length ? '<li class="pick-group">Récents</li>' + rec.map(p => pickItem(p, true)).join('') : '') +
+      (state.products.length ? (rec.length || hab.length ? '<li class="pick-group">Tous les produits</li>' : '') + state.products.map(p => pickItem(p)).join('') : '') +
       (on.length ? '<li class="pick-group">Catalogue, aliments cochés</li>' + on.map(p => pickItem(p)).join('') : '');
   }
   function renderTemplateList() {
@@ -8389,6 +8521,8 @@ function consFood(t, idx, byId, prev, viaNi) {
       if (!hadController) { warmMedia(); return; }
       if (sw.controller) sw.controller.postMessage({ type: 'version?' });
     });
+    /* L’appli s’ouvre depuis la copie du téléphone : une version plus récente a pu arriver pendant l’ouverture */
+    if (sw.controller) sw.controller.postMessage({ type: 'page?' });
     sw.register('sw.js').then(reg => {
       let lastCheck = Date.now();
       document.addEventListener('visibilitychange', () => {
@@ -8496,7 +8630,7 @@ function consFood(t, idx, byId, prev, viaNi) {
     $('#fab').hidden = tab !== 'jour';
     renderHeader();
     try { localStorage.setItem('cpm.tab', tab); } catch (e) { /* stockage indisponible */ }
-    if (tab === 'jour') renderDayWorkout();
+    if (tab === 'jour') { renderDayWorkout(); fitDayTitle(); }
     if (tab === 'produits') renderProducts();
     if (tab === 'seances') renderSeances();
     if (tab === 'suivi') renderSuivi();
@@ -8549,7 +8683,7 @@ function consFood(t, idx, byId, prev, viaNi) {
           const p = productById(b.dataset.pid);
           if (!p) break;
           addState.pid = p.id;
-          addState.qtyStr = fmtInput(lastQty(p));
+          addState.qtyStr = fmtInput(Number(b.dataset.q) > 0 ? Number(b.dataset.q) : lastQty(p));
           addState.pane = 'qty';
           renderAdd();
           focusAdd();
@@ -8561,12 +8695,13 @@ function consFood(t, idx, byId, prev, viaNi) {
         case 'quick-add': {
           const p = productById(b.dataset.pid);
           if (!p) break;
-          const q = lastQty(p);
+          const q = Number(b.dataset.q) > 0 ? Number(b.dataset.q) : lastQty(p);
           addEntry(p, q, addState.meal);
           addState.last = p.name + ' · ' + qtyLabel(q, p.unit) + ' ajouté ' + MEAL_TO[addState.meal];
           renderAdd();
           break;
         }
+        case 'meal-redo': redoMeal(b.dataset.meal); break;
         case 'tpl-add': addTemplateToDay(b.dataset.id, addState.meal); break;
         case 'product-new-from-add': {
           const q = addState.q;
@@ -8959,6 +9094,9 @@ function consFood(t, idx, byId, prev, viaNi) {
       ro.observe($('#p-suivi'));
       ro.observe($('#p-seances'));
     }
+    /* La date se réajuste quand la largeur change ou quand la police de l’appli est arrivée */
+    window.addEventListener('resize', fitDayTitle);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitDayTitle).catch(() => null);
     const flushAll = () => { flushDay(); flushAllWorkouts(); flushProfile(); flushGenSettings(); flushFoods(); };
     window.addEventListener('pagehide', flushAll);
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushAll(); });
